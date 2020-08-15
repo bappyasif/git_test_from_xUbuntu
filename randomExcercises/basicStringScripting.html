@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic String Scripting Examples</title>
+</head>
+
+<body>
+    <script>
+        console.log("Double Quotes");
+        console.log('Single Quotes');
+        console.log(`Backticks Quotes`);
+        console.log(`Using Backticks with ${2+2}`);
+
+        function sum(a,b) {
+            return a + b;
+        }
+        console.log(`Expression Value : ${sum(2,2)}`);
+
+        let guestList = `Guests:
+        *Jane
+        *Gillian
+        *Marie
+        *Nina
+        `;
+        console.log(guestList);
+
+        guestList = "Guests: \n* Jane \n* Gillian \n* Marie \n* Nina"
+        console.log(guestList);
+
+        let str1 = "Hello\nWorld";
+        let str2 = `Hello
+        World`;
+        // console.log(str1 == str2);
+
+        console.log("\u00a9");
+        // console.log("\u{20331}");
+        console.log("\u{1f60d}");
+        
+        console.log(str1.length == str2.length);
+        console.log(str1[0]);
+        console.log(str2.charAt(str2.length - 1));
+
+        for(let char of str2) console.log(char);
+
+        let str = "Hi";
+        str[0] = "h";
+        console.log(str);
+        console.log(str.toLowerCase());
+
+        str = "Hello";
+        str = "h"+str.slice(1,str.length);
+        console.log(str);
+        console.log(str.toUpperCase());
+
+        console.log(str2.indexOf("world"));
+        console.log(str2.indexOf("World"));
+        console.log(str1.indexOf("world"));
+        console.log(str1.indexOf("World"));
+
+        console.log(str2.indexOf("o", 2));
+        console.log(str1.indexOf("l", 2));
+
+        str = "As sly as a fox, as strong as an ox";
+        let target = "as";
+
+        let pos = 0;
+        while(1===1) {
+            let foundPos = str.indexOf(target, pos);
+            if(foundPos === -1) break;
+
+            console.log(`Found "${target}" At : ${foundPos}`);
+            pos = foundPos + 1;
+        }
+
+        pos = -1;
+        while((pos = str.indexOf(target, pos + 1)) != -1) console.log(`Found "${target}" At : ${pos}`);
+
+        console.log(str2.lastIndexOf("l", str2.length))
+        console.log(str1.lastIndexOf("e", str1.length))
+
+        if(str2.indexOf("Hello")) console.log("Found It"); // finds at 0 making it false
+        if(str1.indexOf("Hello") != -1) console.log("Found It") // Works now
+        if(~str1.indexOf("Hello")) console.log("Found It") // Works now, as found
+        
+
+        console.log(str2.includes("d"));
+        console.log(str1.includes("ld", 2));
+
+        console.log(str.startsWith("As"));
+        console.log(str.endsWith("ox"));
+
+        console.log(str2.slice(2));
+        console.log(str1.slice(2, 4));
+
+        console.log(str2.slice(-4, -2));
+        console.log(str1.slice(-2, str1.length));
+
+        console.log(str2.substr(2,4));
+        console.log(str1.substr(8,2));
+
+        console.log("stringify".substring(6,2));
+        console.log("stringify".substr(-4, 2));
+
+        console.log("z".codePointAt(0));
+        console.log("Z".codePointAt(0));
+
+        console.log(String.fromCodePoint("z".codePointAt(0)));
+        console.log(String.fromCodePoint("Z".codePointAt(0)));
+
+        str = "";
+        for(let i = 65; i < 220; i++) {
+            str += " "+String.fromCodePoint(i);
+        }
+        console.log(str);
+
+        console.log("   howdy     ".trim());
+        console.log(str.repeat(2));
+
+
+        // Tasks
+
+        // first character make uppercase
+        console.log("john"[0].toUpperCase() + "john".slice(1)) ;
+        function ucFirst(str) {
+            if(!str) return str;
+            return str[0].toUpperCase() + str.slice(1);
+        }
+        console.log(ucFirst("jane"));
+
+        // Check for Spam Words
+        function checkSpam(str) {
+            if(!str)return str;
+            return str.toLowerCase().includes("viagra") || str.includes("XXX");
+        }
+        console.log(checkSpam("buy Viagra"));
+        console.log(checkSpam("free XXXXX"));
+
+        //  Turncate any given text
+        function turncateText(str, maxLength) {
+            // if(!str) return str;
+            // return str.slice(0, maxLength) + "...."
+            return str.length > maxLength ? str.slice(0, maxLength)+"...." : str;
+        }
+        console.log(turncateText("bcdefgh", 4));
+
+        // Extract Given Money Symbol
+        // console.log(typeof("$"));
+        function extractCurrencyValue(str) {
+            // if(typeof(str[0]) != "number") return str;
+            return str.slice(1);
+        }
+        console.log(extractCurrencyValue("$120"));
+    </script>
+</body>
+
+</html>

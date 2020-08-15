@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Logical Null Undefined</title>
+</head>
+
+<body>
+    <script>
+        let fName = "";
+        let lName = "";
+        let nName = "SuperDuper";
+        console.log(fName || lName || nName || "Anonymous")
+
+        console.log(true || "not this");
+        console.log(false || "print this");
+
+        console.log(1 && 0);
+        console.log(1 && 5);
+
+        console.log(1 && 2 && null && 3);
+        console.log(1 && 2 && 3);
+
+        console.log(!true);
+        console.log(!0);
+
+        console.log(!!null);
+        console.log(!!"non empty");
+
+        // tasks logicalOperators
+        console.log(null || 2 || undefined);
+
+        console.log(1 || alert(1) || 2 || alert(3));
+
+        console.log(1 && null && 2);
+
+        console.log(alert(1) && alert(2));
+
+        console.log(null || 2 && 3 || 4);
+
+        let age = 22;
+        if (age >= 14 && age <= 90) console.log("ranged");
+
+        if (!(age >= 14 && age <= 90)) console.log("notRanged");
+
+        if (-1 || 0) console.log("first");
+        if (-1 && 0) console.log("second");
+        if (null || -1 && 1) console.log("third");
+
+        function checkLogin() {
+            let user = prompt("User Name");
+            // if (user != "Admin") console.log("I don't know you");
+            if (user === "Admin") {
+                let pass = prompt("Enter Password");
+                if (pass === "TheMaster") {
+                    console.log("Welcome")
+                } else if (pass === null || pass === "") {
+                    console.log("Cancelled");
+                }
+                else {
+                    console.log("Wrong Password");
+                }
+            } else if (user === "" || user === null) {
+                console.log("Canceled");
+            } else {
+                console.log("I dont know you");
+            }
+        }
+
+        console.log(checkLogin());
+    </script>
+</body>
+
+</html>

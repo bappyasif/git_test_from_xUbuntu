@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Scripting</title>
+</head>
+<body>
+    <script>
+        console.log(23 + 97);
+        console.log(2+3+4+5+6+7);
+        console.log((4+6+9)/77);
+        console.log(((4+6+9)/77).toFixed(6));
+
+        let a = 11;
+        console.log(a);
+
+        console.log(9 * a);
+
+        try {
+            let b = 7 * c;
+        console.log(b);
+        } catch(er) {
+            console.log("Undefined Variable");
+        }
+
+        const MAX= 57;
+        let actual = MAX - 13;
+        let percentage = actual /MAX;
+        console.log(percentage);
+        console.log(percentage.toFixed(6));
+
+        var callbacks = [];
+        (function() {
+            for(var i = 0; i < 5; i++) {
+                // callbacks.push(i);
+                callbacks.push(function() {return i});
+            }
+        })();
+
+        // hoisted 
+        console.log(callbacks);
+        console.log(callbacks.map(x => x));
+        console.log(callbacks.map(x => x()));
+        console.log(callbacks.map(function(cb) {return cb()}))
+
+        // scoped
+        callbacks= [];
+        (function() {
+            for(let i = 0; i < 5; i++) {
+                callbacks.push(x => i);
+            }
+        })()
+
+        console.log(callbacks.map(x => x()));
+
+
+        // Numbers
+        let billion = 1e9;
+        console.log(billion);
+        console.log(7.3e9);
+        console.log(1e-6);
+        console.log(1.23e-6);
+
+        console.log(0xff); // hex 255
+        console.log(0b11111111); // binary 255
+        console.log(0o377); // octal 255
+        console.log(0xff === 0b11111111 === 0o377)
+        // console.log(0xff == 0b11111111 == 0o377)
+        console.log(0xff == 0b11111111)
+        console.log(0b11111111 === 0o377)
+        a = 0xff;
+        let b = 0b11111111; 
+        let c = 0o377;
+        console.log(a === b === c)
+
+        console.log(a.toString(16)); // base 16
+        console.log(b.toString(2)); // base 2
+        console.log(c.toString(8)); // base 8
+        console.log(c.toString(36)); // base 36
+
+        console.log(123456..toString(36)); // two dots
+        console.log((123456).toString(36));
+
+        b = 12.34;
+        console.log(Math.floor(b * 100)/100) // 2 decimal points precession
+        console.log((b/9).toFixed(2));
+        console.log((b/9).toFixed(1));
+
+        console.log(1e560); // infinity
+        console.log(9999999999999999); // self increasing
+        console.log(.1 + .2 == .3) // falsity
+        console.log(.1 + .2);
+        console.log(.1.toFixed(20) + .2);
+        console.log((.1 + .2).toFixed(2));
+        console.log((.1 + .2).toFixed(2)==.3);
+        console.log((.1*10 + .2*10)/10);
+        console.log(1.1 + 1.2 == 2.3)
+        
+        // console.log(isNan(NaN));
+        console.log(isNaN("str"));
+        // console.log(NaN === NaN);
+        console.log(isFinite("15"));
+        console.log(isFinite("str"));
+        console.log(isFinite(Infinity));
+        console.log(+"110px");
+        console.log(parseInt("110px"));
+        console.log(parseInt("a110px"));
+        console.log(parseFloat("110.56em"));
+        console.log(parseFloat("a110.56em"));
+        console.log(parseInt("0xff", 16));
+        console.log(parseInt("2n9c", 36));
+
+        console.log(Math.random());
+        console.log(Math.max(1,2,3,4,5,8));
+        console.log(Math.min(-1,2,3,4,5,8));
+        console.log(Math.pow(2,10));
+
+        // a = prompt("Enter Number : ");
+        // b = prompt("Enter Number : ");
+
+        // alert(+a + +b);
+
+        // alert(6.35.toFixed(1));
+        // alert((6.35*10)/10);
+        // alert(Math.round((6.35 * 10)/10));
+
+        function readNumber() {
+            let a;
+            do {
+                a = +prompt("Enter Number", 0);
+            } while(!isFinite(a));
+
+            if( a === null || a === "") return null;
+
+            return a;
+        }
+
+        // alert(`Read : ${readNumber()}`);
+
+        // b = 0;
+        // while(b != 10) {
+        //     b += .2;
+        // }
+        // console.log(b);
+
+        // c = 0;
+        // while(c < 11) {
+        //     c += .2;
+
+        //     // if(c > 9.8 && c < 10.2) alert(c);
+        //     // if(c > 9.8 && c < 10.2) console.log(c);
+        // }
+
+        function randomMinToMax(min,max) {
+            alert(min + Math.random()*(max - min))
+        }
+        // alert(randomMinToMax(1,5));
+        // alert(randomMinToMax(1,5));
+
+        function randomInteger(min, max) {
+            // alert(parseInt(min + Math.random() * (max - min)))
+            alert(Math.round(min - 0.5 + Math.random() * (max - min + 1)))
+        }
+        alert(randomInteger(1,5));
+        alert(randomInteger(1,5));
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get to Know Objects</title>
+</head>
+<body>
+    <script>
+        let user1 = new Object(); // constructor syntax
+        user1 = {}; // literal syntax
+
+        // const fixes value of user but not it's contents.
+        // it's only an error when expression is, user = ....
+        const user = {
+            name: "Jane", // prop1 = key : value
+            age: 29 // prop2 = key : value
+        }
+
+        console.log(user.name);
+        console.log(user.age);
+
+        user.isAdmin = true;
+        delete user.age;
+
+        console.log(user.isAdmin);
+        console.log(user);
+
+        user["likes whatevs"] = true;
+        console.log(user);
+
+        user.name = "Claire";
+        console.log(user.name);
+
+        delete user['likes whatevs'];
+        console.log(user);
+
+        let key = 'likes whateves';
+        // user.key = true; // won't work
+        user[key] = true;
+        // console.log(user.key); // won't work
+        console.log(user[key]);
+        console.log(user)
+        
+        key = prompt("What do you want to know about this user?", "name");
+        console.log(user[key]);
+
+        key = "name";
+        console.log(user.key); // dot notations are not used in a similiar way.
+
+        let fruit = prompt("which fruit to buy?", "apple")
+        let bag = {
+            [fruit]: 5
+        }
+        console.log(bag[fruit]);
+        console.log(bag.apple);
+
+        fruit = "apple";
+        bag = {
+            [fruit+"Computers"]: 5
+        };
+        console.log(bag.appleComputers);
+        console.log(bag);
+
+        function makeUser(name, age) {
+            return {
+                uName: name,
+                uAge: age
+            };
+        }
+        let user2 = makeUser("Kimmy", 29);
+        console.log(user2.uName);
+
+        function makeUser2(name, age) {
+            return {
+                name,
+                age
+            };
+        }
+        user2 = makeUser2("Kimmy", 29);
+        console.log(user2.name);
+
+        // There are no limitations on property names.
+        // They can be any strings or symbols as you like.
+        let obj = {
+            for: 1,
+            let: 2,
+            const: 3,
+            return: 4,
+            1: "test",
+            2: "test"
+        };
+        console.log(obj.for + obj.let + obj.const + obj.return);
+        console.log(obj[1], obj[2]);
+        obj.__proto__ = 5;
+        console.log(obj.__proto__);
+        console.log(obj);
+        console.log(obj.noSuchProperty === "undefined");
+        console.log(obj.noSuchProperty === undefined);
+
+        console.log("age" in user);
+        console.log(key in user);
+
+        obj.test = "undefined"; // undefined should not be explicitly defined
+        console.log("test" in obj, obj.test);
+
+        // let user3 = user + user2;
+        // console.log(user3);
+
+        // let user3 = user;
+        // console.log(user3);
+
+        for(let key in user) {
+            console.log(key, user[key]);
+        }
+
+        let codes = {
+            "49": "Ger",
+            "41": "Swi",
+            "44": "Gb",
+            "13": "USA"
+        }
+        for(let code in codes) {
+            console.log(code, /*codes.code*/codes[code]);
+        }
+
+        console.log(String(Math.trunc(Number("49"))));
+        console.log(String(Math.trunc(Number("+49")))); // +-49, +49- wont work
+        console.log(String(Math.trunc(Number(".2"))));
+        console.log(String(Math.trunc(Number("2.2"))));
+
+        codes = {
+            "+49" : "GER",
+            "+41" : "SWI",
+            "+44" : "GB",
+            "+13" : "USA"
+        }
+        for(let code in codes) {
+            console.log(code, codes[code]);
+        }
+
+        let a = {};
+        let b = a;
+        console.log(a === b && a == b);
+        a = {};
+        b = {};
+        console.log(a === b && a == b);
+
+        let user4 = user;
+        let clone = {};
+
+        for(let key in user4) {
+            clone[key] = user4[key];
+        }
+        console.log(clone, clone.name);
+        // console.log(Object.assign(clone, user4.name, user4.isAdmin));
+
+        user4 = {name: "Suede"}
+        let perm1 = {canView: true};
+        let perm2 = {canEdit: true};
+        Object.assign(user4, perm1, perm2);
+        console.log(user4);
+        Object.assign(user4, perm1, perm2, {name: "Katja"})
+        console.log(user4);
+        clone = Object.assign({}, user4);
+        console.log(clone);
+
+        function marry(man, woman) {
+            woman.husband = man;
+            man.wife = woman;
+
+            return {
+                father: man,
+                mother: woman
+            }
+        }
+
+        let family = marry ({name: "John"}, {name: "Ann"});
+        console.log(family);
+
+        delete family.father;
+        console.log(family);
+
+        delete family.mother.husband;
+        console.log(family);
+
+        user2 = {};
+        function sayHi() {
+            console.log("Saying Hi");
+        }
+        user2.sayHi = sayHi;
+        user2.sayHi();
+        user2.sayHi = function() {
+            console.log("Saying Hi");
+        }
+        user2.sayHi();
+
+        user2 = {
+            sayHi: function() {
+                console.log("Saying Hi");
+            }
+        }
+        user2.sayHi();
+
+        user2 = {
+            sayHi() {
+                console.log("Saying Hi");
+            }
+        }
+        user2.sayHi();
+
+        user.sayHi =  function() {
+            console.log(this.name); // "this" defined at runtime
+            console.log(user.name);
+        }
+        // console.log(user);
+        user.sayHi();
+
+        user2 = {
+            name: "Serena",
+            age: 29,
+            sayHi() {
+                // console.log(user.name); // no output
+                console.log(this.name); // shows output
+            }
+        }
+        let admin = user2;
+        user2 = null;
+        admin.sayHi();
+
+        admin = { name: "Admin" };
+        user2 = { name: "Venus" };
+        function sayHi() {
+            console.log("Saying Hi to "+this.name); // "this" has no vaue untill function is called 
+        }
+        user2.f = sayHi;
+        admin.f = sayHi; 
+
+        user2.f(); // value of "this" is whats before "."
+        admin["f"](); // metthod can reference "this"
+
+        user2 = {
+            fName: "Andrea",
+            sayHi() {
+                let arrowFunc = () => console.log(this.fName); // arrow have no "this"
+            }
+        }
+        user2.sayHi();
+
+        user2 = {
+            fName: "Andrea",
+            sayHi() {
+                let arrowFunc = () => console.log(this.fName); // arrow function gets value of this from outer context
+                arrowFunc();
+            }
+        }
+        user2.sayHi();
+
+        // Workout Tasks
+        // Task 01
+        let user3 = {};
+        // user3.name = "Siri";
+        // user3.surname = "Worldwide";
+        user3 = {
+            name : "Penelope",
+            surname: "Cruz"
+        }
+        user3.name = "Katja"
+        delete user3.name;
+        console.log(user3);
+
+        // Task 02
+        function isEmpty(obj) {
+            for(let key in obj) {
+                return false;
+                // if(key) {
+                //     return false
+                // }
+                // return true;
+            }
+            return true;
+        }
+        let schedule = {};
+        console.log(isEmpty(schedule));
+        schedule["8:30"] = "get up";
+        console.log(isEmpty(schedule));
+
+        // Task 03
+        let salaries = {
+            Jane : 110,
+            Ann : 160,
+            Shakira: 200,
+            Fauna: 220
+        }
+
+        let sum = 0;
+        for(let key in salaries) {
+            sum += salaries[key];
+            // return sum;
+        }
+        console.log(sum);
+
+        //  Task 04
+        function multiplyNumeric(obj) {
+            // for(let key in obj) {
+            //     console.log(typeof(obj[key]));
+            // }
+            for(let key in obj) {
+                if(typeof(obj[key]) === "number") {
+                    console.log(typeof(obj[key]));
+                    obj[key] *= 2;
+                }
+            }
+            // return null;
+            return obj;
+        }
+        let menu = {
+            width: 440,
+            height: 240,
+            title:"Some Menu",
+            prop: 220
+        }
+        console.log(multiplyNumeric(menu));
+
+        // Task 05
+        let calculator = {
+            prop1: 0,
+            prop2: 0,
+            read(a, b) {
+                this.prop1 = a;
+                this.prop2 = b;
+            },
+            read2() {
+                this.prop1 = +prompt("Enter Number", 0);
+                this.prop2 = +prompt("Enter Number", 0);
+            },
+            sum() {
+                return this.prop1 + this.prop2;
+            },
+            mul() {
+                return this.prop1 * this.prop2;
+            }
+        }
+        calculator.read(1,2);
+        calculator.read2();
+        console.log(calculator.sum(), calculator.mul());
+
+        // Task 06
+        let ladder = {
+            step: 0,
+            up() {
+                this.step++;
+            },
+            down() {
+                this.step--
+            },
+            showStep() {
+                console.log(this.step);
+            }
+        }
+        ladder.up();
+        ladder.up();
+        ladder.up();
+        ladder.up();
+        ladder.showStep();
+
+        ladder = {
+            step: 0,
+            up() {
+                this.step++;
+                return this;
+            },
+            down() {
+                this.step--;
+                return this;
+            },
+            showStep() {
+                console.log(this.step);
+                return this;
+            }
+        }
+        console.log(ladder.up().up().down().showStep());
+
+
+    </script>
+</body>
+</html>

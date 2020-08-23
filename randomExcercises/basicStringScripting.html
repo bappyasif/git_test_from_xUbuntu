@@ -8,11 +8,45 @@
 </head>
 
 <body>
+    <button>Press Here</button>
+    <h4></h4>
+    <section></section>
+    <article></article>
     <script>
         console.log("Double Quotes");
         console.log('Single Quotes');
         console.log(`Backticks Quotes`);
         console.log(`Using Backticks with ${2+2}`);
+
+        let s1 = '2 + 2';
+        let s2 = new String('2 + 2');
+        console.log(eval(s1));
+        console.log(eval(s2), eval(s2.valueOf()));
+        
+        let button = document.querySelector("button");
+        button.onclick = function() {
+            let name = prompt("What is your name");
+            alert(`Hello ${name}, nice to see you`);
+        }
+        
+        let myDate = "22" + '67';
+        console.log(myDate, typeof(myDate));
+        let examScore = 47;
+        let examHighestScore = 74;
+        let examReport = `You scored ${examScore} / ${examHighestScore}. (${Math.round(examScore/examHighestScore * 100)}%). ${examScore >= 49 ? "Well done, you've passed" : "Nice try, better luck next time"}`;
+        let showReport = document.querySelector("h4");
+        showReport.textContent = examReport;
+
+        let str4 = "Please locate where 'locate' occurs!";
+        console.log(str4.indexOf("locate", 15), str4.lastIndexOf("locate", 15));
+        console.log(str4.search("locate"));
+        str4  = "Apple, Banana, Kiwi, Peach";
+        console.log(str4.slice(-12, -6));
+        console.log(str4.substr(7,6));
+        str4 = "Please visit MicrosofT!";
+        console.log(str4.replace(/Microsoft/i, "W3Schools"));
+        str4 = "Please visit Microsoft and Microsoft!";
+        console.log(str4.replace(/Microsoft/g, "W3Schools"));
 
         function sum(a,b) {
             return a + b;
@@ -153,6 +187,80 @@
             return str.slice(1);
         }
         console.log(extractCurrencyValue("$120"));
+
+        //concat strings
+        let quoteStart = "Don't judge each day by the harvest you reap";
+        let quoteEnd = " but by the seeds that you plant";
+        let finalQuote = quoteStart + quoteEnd;
+        let section = document.querySelector("section");
+        section.innerHTML = " ";
+        let para1 = document.createElement("p");
+        para1.textContent = finalQuote;
+        section.appendChild(para1);
+
+        // Strings methods
+        let quote = "I do not like green eggs and ham. I do not like them, aBappy-I-Am";
+        let substring =  "green eggs and ham";
+        let index = quote.substr(substring);
+        let revisedQuote = quote.split(".")[0];
+        revisedQuote = quote.substr(0, quote.indexOf(".")) + ".";
+        let article = document.querySelector("article");
+        article.innerHTML = "";
+        let p1 = document.createElement("p");
+        p1.textContent = `The quote is ${quote.length} characters long`;
+        let p2 = document.createElement("p");
+        p2.textContent = revisedQuote;
+        article.appendChild(p1);
+        article.appendChild(p2);
+
+        // More methods
+        quote = "I dO nOT lIke gREen eGgs anD HAM";
+        section = document.createElement("section");
+        document.body.appendChild(section);
+        section.innerHTML = "";
+        function capitalizeString(str) {
+            return str.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+        }
+        // let fixedQuote = quote.toLowerCase().replace(/\b\w/g, l =>l.toUpperCase())+".";
+        // fixedQuote = fixedQuote.replace("Green Eggs And Ham", "no clue.");
+        let fixedQuote = capitalizeString(quote);
+        fixedQuote = fixedQuote.toLowerCase().replace("green eggs and ham", "no clue")+".";
+        section.innerText = capitalizeString(fixedQuote);
+
+        // Template Literals
+        let theorem = "Pythagorean theorem";
+        let a = 5;
+        let b = 8;
+
+        let myString = `Using *, we can work out that if the two shortest sides of a
+        right-angled triangle have lengths of * and *, the length of the hypotenuse is *.`;
+
+        myString = `Using ${theorem}, we can work out that if the two shortest sides of a
+        right-angled triangle have lengths of ${a} and ${b}, the length of the hypotenuse is ${Math.sqrt(a*a + b*b).toFixed(4)}.`;
+
+        article = document.createElement("article");
+        document.body.appendChild(article);
+        article.innerHTML = "";
+        para1 = document.createElement("p");
+        para1.textContent = myString;
+        article.appendChild(para1);
+
+        // find position
+        let txt = "abcdefghijklm";
+        console.log(txt.indexOf("h"));
+
+        // slice method
+        txt = "I can eat Peaches all day";
+        console.log(txt.slice(10), txt.slice(txt.indexOf("Peaches"), txt.indexOf("Peaches")+7));
+
+        // replace method
+        txt = "Hello World";
+        console.log(txt.replace("Hello", "Welcome"));
+
+        // to upper and lower
+        console.log(txt.toUpperCase());
+        console.log(txt.toLowerCase());
+
     </script>
 </body>
 

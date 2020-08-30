@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funtions's Nitty And Gritty </title>
+</head>
+
+<body>
+    <!--Built-In Browser Funtions Examples-->
+    <script>
+        let myText = "This is a string";
+        let newString = myText.replace("string", "modString");
+        console.log(newString);
+    </script>
+    <script>
+        let myArray = ["I", "love", "dark chocolate", "colorful frogs"];
+        let madeString = myArray.join(" ");
+        console.log(madeString);
+    </script>
+    <script>
+        console.log(Math.random());
+    </script>
+    <!--Anonymous Functions-->
+    <script>
+        // Mostly Used
+        let btn = document.createElement("button");
+        document.body.appendChild(btn);
+        btn.textContent = "Click Here";
+        btn.onclick = function () {
+            console.log("Anonymous fucntion");
+        }
+        // console.clear();
+
+        // Least Used
+        let greetings = function () {
+            console.log("Greetings Anonymous");
+        }
+        greetings();
+        // console.clear();
+
+    </script>
+
+    <!--Function Parameters-->
+    <script>
+        let myArr = ["I", "love", "dark chocolate", "colorful frogs"];
+        let madeStr = myArr.join(); // comma is default delimiter
+        console.log(madeStr);
+    </script>
+
+    <!--Function Scopes And Conflicts-->
+    <script>
+        let name = "Chris";
+        function greet() {
+            console.log("Greetings Chris");
+        }
+    </script>
+    <script>
+        name = "Zaptac";
+        function greet() {
+            console.log("Greetings "+name);
+        }
+    </script>
+    <script>
+        greet(); // when addding theese from external script only first greet runs
+    </script>
+    
+    <script>
+        let x = 1;
+        function a() {
+            let y = 2;
+            output(y);
+            output(x);
+            try {
+                output(z);
+            } catch (er) {
+                console.log(er)
+            }
+        }
+        function b() {
+            let z =3;
+            output(z);
+            output(x);
+            try {
+                output(y);
+            } catch (er) {
+                console.log(er)
+            }
+        }
+        function output(value) {
+            let para = document.createElement("p");
+            document.body.appendChild(para);
+            para.textContent = "Value: "+value;
+        }
+        a();
+        b();
+    </script>
+
+    <!--Nested Funtions-->
+    <script>
+        function bigFunc() {
+            let someValue = 11;
+            subFunc(someValue);
+            subFunc2(someValue);
+        }
+        function subFunc(value) {
+            console.log(value);
+        }
+        function subFunc2(value) {
+            console.log(value);
+        }
+        bigFunc();
+    </script>
+
+    <!--Skill Tests-->
+    <script>
+        // Task 01
+        let names = ["Siri", "Alexa", "Loren", "Rachel", "Claire", "Annie"]
+        let para = document.createElement("p");
+
+        function chooseName() {
+            let length = names.length;
+            let randomIndex = Math.floor(Math.random() * length);
+            para.textContent = names[randomIndex];
+            document.body.appendChild(para);
+        }
+
+        chooseName();
+    </script>
+
+    <canvas></canvas>
+    <script>
+        // Task 02
+        let canvas = document.querySelector("canvas");
+        let ctx = canvas.getContext("2d");
+
+        let x1 = 50;
+        let y1 = 60;
+        let width = 100;
+        let height = 75;
+        let color = "honeydew";
+
+        function draw() {
+            ctx.clearRect(0,0,width,height);
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.fillRect(x1,y1,width,height);
+            ctx.fill();
+        }
+
+        draw();
+    </script>
+
+    <script>
+        // Refactoring Task 01 Code
+        names = ["Siri", "Alexa", "Loren", "Rachel", "Claire", "Annie"]
+        para = document.createElement("p");
+
+        function chooseName1() {
+            let length = names.length;
+            let lBound = 0;
+            // let randomIndex = Math.floor(Math.random() * length);
+            let randomIndex = randomIdx(lBound, length);
+            para.textContent = names[randomIndex];
+            document.body.appendChild(para);
+        }
+
+        function randomIdx(lb, upperRange) {
+            let idx = lb + Math.floor(Math.random() * (upperRange - lb))
+            return idx;
+        }
+
+        chooseName1();
+    </script>
+    
+    <!--Return Values-->
+    <input type="text" class="numberInput">
+    <p class="para"></p>
+    <script>
+        let ipt = document.querySelector(".numberInput");
+        let p = document.querySelector(".para");
+
+        function squared(num) {
+            return num * num;
+        }
+
+        function cubed(num) {
+            return num * num * num;
+        }
+
+        function factorial(num) {
+            let x = num;
+            if(x < 1) return undefined;
+            if(x === 0) return 1;
+
+            x = num -1;
+            while(x > 1) {
+                num *= x;
+                x--;
+            }
+            return num;
+        }
+
+        ipt.onchange = function() {
+            let num  = ipt.value;
+            if(isNaN(num)) {
+                p.textContent = "Enter A Number Here ";
+            } else {
+                p.textContent = `${num} squared is ${squared(num)}
+                                ${num} cubed is ${cubed(num)}
+                                ${num} factorial is ${factorial(num)}`;
+            }
+        }
+    </script>
+
+</body>
+
+</html>

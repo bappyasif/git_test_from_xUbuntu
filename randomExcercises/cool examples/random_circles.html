@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Circles On Canvas</title>
+</head>
+<style>
+    html {
+        width: fit-content;
+        height: inherit;
+    }
+
+    canvas {
+        display: block;
+    }
+
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    button {
+        position: relative;
+        top: 5px;
+        left: 11px;
+    }
+</style>
+<body>
+    <button>Generate Circles</button>
+    <canvas></canvas>
+    <script>
+        let btn = document.querySelector("button");
+        let canvas = document.querySelector("canvas");
+        
+        let ctx = canvas.getContext("2d");
+        
+        let WIDTH = document.documentElement.clientWidth;
+        let HEIGHT = document.documentElement.clientHeight;
+
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+
+        function random(num) {
+            return Math.floor(Math.random()*num);
+        }
+
+        function draw() {
+            ctx.clearRect(0,0,WIDTH,HEIGHT);
+            for(let i = 0; i < 29; i++) {
+                ctx.beginPath();
+                ctx.fillStyle = "honeydew";
+                ctx.arc(random(WIDTH), random(HEIGHT), random(50), 0, 2 * Math.PI);
+                ctx.fill();                
+            }
+        }
+
+        btn.addEventListener("click", draw);
+
+    </script>
+</body>
+</html>

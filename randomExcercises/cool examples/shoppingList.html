@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Shopping List Example</title>
+</head>
+<style>
+    li {
+        margin-bottom: 11px;
+    }
+    li button {
+        font-size: 11px;
+        margin-left: 20px;
+        color: honeydew;
+    }
+</style>
+<body>
+    <div>
+        <label for="item">Enter a new item</label>
+        <input type="text" id="item">
+        <button>Add Item</button>
+    </div>
+    <ul></ul>
+
+    <script>
+        let ulEl = document.querySelector("ul");
+        let inputEl = document.querySelector("input");
+        let btn = document.querySelector("button");
+
+        function addItem(ev) {
+            let currValue = ev.target.value;
+            currValue = inputEl.textContent;
+            currValue = inputEl.value;
+            inputEl.innerHTML = "";
+
+            let liNode = document.createElement("li");
+            let spanNode = document.createElement("span");
+            let buttonNode = document.createElement("button");
+
+            liNode.appendChild(spanNode);
+            liNode.appendChild(buttonNode);
+
+            spanNode.textContent = currValue;
+            buttonNode.textContent = "Delete";
+            ulEl.appendChild(liNode);
+
+            buttonNode.addEventListener("click", deleteItem);
+            inputEl.value = "";
+        }
+
+        function deleteItem(ev) {
+            ev.target.parentNode.remove();
+        }
+
+        inputEl.focus();
+        btn.addEventListener("click", addItem);
+    </script>
+</body>
+</html>

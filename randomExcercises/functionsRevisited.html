@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Some More About About Functions</title>
+</head>
+
+<body>
+    <!--Functions Uses-->
+    <script>
+        // Funtions are useful when code duplication becomes an issue.
+        // Variables declared insidee any funtions are only visible to that scope.
+        function showMesage() {
+            let message = "Hello JavaScript";
+            console.log(message);
+        }
+        showMesage();
+        // console.log(message); // message scope is only accessible in that function block.
+
+        // Outer variables
+        let userName = "Jane";
+
+        function showName() {
+            userName = "Doe";
+            let message = "Hello " + userName
+            console.log(message);
+        }
+        console.log(userName);
+        showName();
+        console.log(userName);
+
+        // Outer variable only used when no local variable is found.
+        function showWho() {
+            let userName = "Delight";
+            let message = "Hello " + userName;
+            console.log(message);
+        }
+        showWho();
+        console.log(userName);
+
+    </script>
+    <!--Functions parameters-->
+    <script>
+        function usingParamters(from, text) {
+            from = "**" + from + "**";
+            console.log(from + " : " + text);
+        }
+        let from = "Annie";
+        usingParamters(from, "Hello");
+        console.log(from);
+
+        // If parameters not provided then it becomes undefined. To avoid
+        // complicacies it's sfer to provide a default value instead.
+        function usingParams(from, text = "no text were given") {
+            from = "*" + from + "*";
+            console.log(from + ":" + text);
+        }
+        usingParams("Saly");
+
+        function usingDefaults(from, text = anotherFuntion()) {
+            from = "/\\" + from + "/\\";
+            console.log(from + " : " + text);
+        }
+        usingDefaults("Tiffany");
+
+        function anotherFuntion() {
+            return "no text were given";
+        }
+
+        // Nullish coalescing
+        function nullishCoalescing(text, count) {
+            text = text || "empty";
+            count = count ?? "unknown";
+            console.log(text + " : " + count);
+        }
+        nullishCoalescing("", 0);
+        nullishCoalescing(20,);
+    </script>
+    <!--Retuning Value-->
+    <script>
+        // Directive return can be anywhere in code block and upon reaches
+        // function stops and returns value to callee and there can be multiple uses of return
+        function checkAge(age) {
+            // age >= 18 ? return true : return false;
+            if (age >= 18) {
+                return true;
+            } else {
+                confirm("do you have any permission slip from your parents");
+                return;
+                return
+                ("some" + "long" + age + "expression"); // won't work for newline
+                return (
+                    ("some" +
+                        "long" +
+                        age +
+                        "expression"
+                    ) // this works;
+                )
+            }
+        }
+
+        let age = +prompt("Age please", 18);
+        if (checkAge(age)) {
+            console.log("Access granted", age);
+        } else {
+            console.log("Access denied");
+            console.log(checkAge(age) === undefined);
+        }
+
+    </script>
+    <!--Naming Functions-->
+    <script>
+        // Functions are actions so their names are usually verbs.
+        // It's a common practice to use verbal prefix to describe action.
+
+        "get ..";
+        "calc..";
+        "create..";
+        "check..";
+        function showMsg() {
+            console.log("Showing Message");
+        }
+        function getAge() {
+            console.log("Showing Age");
+        }
+        function calcSum() {
+            console.log("Calculated Sum");
+        }
+        function createForm() {
+            console.log("Form Created");
+        }
+
+        function checkPermission() {
+            console.log("Permission checked");
+        }
+        showMsg();
+        getAge();
+        calcSum();
+        createForm();
+        checkPermission();
+
+        // Functions should be short and do one thing only, if it's a 
+        // bigger function then split it into shorter one's. Its easier to test and maintain.
+
+        function showPrimes(n) {
+            nextPrime: for (let i = 2; i < n; i++) {
+                for (let j = 2; j < i; j++) {
+                    if (i % j === 0) continue nextPrime;
+                }
+                console.log("Primes : ", i);
+            }
+        }
+        showPrimes(4);
+
+        function showPrime(n) {
+            for (let i = 2; i < n; i++) {
+                if (!isPrime(i)) continue;
+                console.log("Prime : " + i);
+            }
+        }
+        function isPrime(n) {
+            for (let i = 2; i < n; i++) {
+                if (n % i === 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        showPrime(4);
+    </script>
+
+    <!--Coding Tasks-->
+    <script>
+        // Task 01
+        function checkedAge(age) {
+            return age > 18 || confirm("Show permission slip please");
+        }
+        checkedAge(17);
+        function chkAge(age) {
+            // return age > 18 ? true : confirm("Show permission slip please");
+            return age > 18 ? true : false;
+        }
+        console.log(chkAge(17));
+
+        // Task 02
+        function getMinimum(a, b) {
+            return a < b ? console.log(a) : console.log(b);
+        }
+        getMinimum(3, -1);
+        getMinimum(2, 5);
+
+        // Task 03
+        let divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        let num = +prompt("Enter Number", 0);
+        let mult = +prompt("Enter Power", 1);
+
+        function calcPower() {
+            let result = 1;
+            for (let i = 1; i <= mult; i++) {
+                result *= num;
+            }
+            divEl.textContent = result;
+        }
+        calcPower();
+
+        // Task 04
+        function calcPow(x, n) {
+            let result = 1;
+            for (let i = 0; i < n; i++) {
+                result *= x;
+            }
+            // let divEl = document.createElement("div");
+            // document.body.appendChild(divEl);
+
+            let divEl = showExponential();
+            divEl.textContent = result;
+            // let divEl = showExponential();
+            return result;
+        }
+
+        function checkValues(x, n) {
+            if (n < 1) {
+                console.log("Power must be 1 or higher");
+            } else {
+                console.log(calcPow(x, n));
+            }
+        }
+        // if (mult < 1) {
+        //     console.log("Power must be 1 or higher");
+        // } else {
+        //     console.log(calcPow(num, mult));
+        // }
+
+        function askNumbers() {
+            let num = +prompt("Enter Number", 0);
+            let mult = +prompt("Enter Power", 1);
+            return checkValues(num, mult);
+        }
+
+        function showExponential() {
+            let divEl = document.createElement("div");
+            document.body.appendChild(divEl);
+            return divEl;
+        }
+
+        askNumbers();
+
+    </script>
+
+    <!--Function Expressions-->
+    <script>
+        function sayHi() {
+            console.log("Hello");
+        }
+        let func = sayHi;
+        func();
+        sayHi();
+        func = sayHi();
+        sayHi();
+        func;
+
+        let sayHello = function () {
+            console.log("Hello");
+        }
+        sayHello();
+
+        function askQuestion(ques, ok, no) {
+            if (confirm(ques)) ok()
+            else no()
+        }
+
+        function showOk() {
+            console.log("You agreed");
+        }
+
+        function showCancel() {
+            console.log("You cancelled");
+        }
+
+        askQuestion("You agree?", showOk, showCancel);
+
+        askQuestion(
+            "You agree",
+            function () { console.log("You agreed"); },
+            function () { console.log("You cancelled"); }
+        );
+        // Function declarations can be used earlier in code flow than its decclared
+        // where function expression needs to be present before it can be called.
+        sayWhat();
+        function sayWhat() {
+            console.log("Say What??");
+        }
+
+        let sayHuh = function () {
+            console.log("Say Huh!!");
+        }
+        sayHuh();
+
+        // functions declared within a code block is only accessible in that code block.
+        age = +prompt("Age please", 20);
+        let welcomeGreeting;
+        if (age < 18) {
+            showPermit();
+            function showPermit() {
+                console.log("Show Permit");
+            }
+            showPermit();
+        } else {
+            welcomeGreeting = function () {
+                console.log("Welcome Stranger");
+            }
+            welcomeGreeting();
+        }
+        try {
+            showPermit();
+            welcomeGreeting();
+        } catch (error) {
+            console.log(error)
+        }
+
+    </script>
+
+    <!--Arrow Functions-->
+    <script>
+        let showSum = (a, b) => a + b;
+        console.log(showSum(9, 9));
+
+        let showDouble = n => n * 2;
+        console.log(showDouble(3));
+
+        let sayHowdy = () => console.log("Howdy Partner");
+        sayHowdy();
+
+        age = 20;
+        let welcomeMsg = age < 18 ? 
+        () => console.log("Show permit") : 
+        () => console.log("Welcome Stranger");
+        welcomeMsg();
+
+        let sum = (a,b) => {
+            let result = a + b;
+            return result;
+        }
+        console.log(sum(9,9));
+
+        // Arrow functions have no native this.
+        // They can not be used as a constructor functions.
+        let group = {
+            title: "Some Group",
+            students: ["Serena", "Venus", "Claire", "Stephany"],
+            showList() {
+                this.students.forEach(student => console.log(student))
+            },
+            displayList() {
+                this.students.forEach(function(student){console.log(student)})
+            }
+        };
+        group.showList();
+        try {
+            group.displayList();
+        } catch (error) {
+            console.log(error);
+        }
+
+        // Arrow functions have no arguments variable
+        function defer(f, ms) {
+            return function() {
+                setTimeout(() => f.apply(this, arguments), ms)
+            }
+        }
+        function sayingHi(who) {
+            console.log("Hello "+who);
+            // alert("Hello "+who);
+        }
+        let sayHiDeferred = defer(sayingHi, 2000);
+        sayHiDeferred("Bappy");
+        // console.log(sayHiDeferred("Bappy"));
+
+        // Shorter version
+        function deferred(f, ms) {
+            return function(...args) {
+                let self = this;
+                setTimeout(function() {
+                    return f.apply(self, args)
+                }, ms)
+            }
+        }
+        sayHiDeferred = deferred(sayingHi, 2000);
+        sayHiDeferred("Bappy");
+        // console.log(sayHiDeferred("Bappy"));
+
+    </script>
+    
+    <!--Practice Tasks-->
+    <script>
+        // Task 01
+        function add7(n) {
+            return n + 7;
+        }
+
+        // Task 02
+        function multiuply(a,b) {
+            return a * b;
+        }
+
+        // Task 03
+        function capitalize(str) {
+            let strArr = str.split(" ");
+            let result = "";
+            for(let i = 0; i < strArr.length; i++) {
+                result += " "+strArr[i][0].toUpperCase() + strArr[i].toLowerCase().slice(1);
+            }
+            return result;
+            // return str[0].toUpperCase()+str.toLowerCase().slice(1);
+            // let strArr = str.split("");
+            // console.log(strArr[0].toUpperCase());
+            // return strArr.forEach(word => word[0].toUpperCase() + word.toLowerCase().slice(1)).join("");
+            // let result = strArr.forEach(word => word.charAt(0).toUpperCase())
+            // strArr.forEach(word => console.log(word[0]))
+            // return strArr.join("");
+            // return result;
+        }
+        console.log(capitalize("a hello"));
+        // console.log(capitalize("a hello"));
+
+        // Task 04
+        function lastLetter(str) {
+            return str[str.length -1];
+        }
+        console.log(lastLetter("abcd"));
+    </script>
+</body>
+
+</html>

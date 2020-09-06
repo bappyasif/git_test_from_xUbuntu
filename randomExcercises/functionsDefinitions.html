@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functions Definitions</title>
+</head>
+
+<body>
+    <script>
+        /* Functions parameters which are primitives are passed to functions as values
+         and value of this parameter if or when changed does not reflect globally */
+        function square(num) {
+            return num * num
+        }
+
+        /* When parameters are non-primitives and functions changes their values
+        this will be reflected globally as they are passed by reference. */
+        function myFunc(obj) {
+            obj.make = "Ford"
+        }
+
+        let myCar = { make: "Honda", year: "2020", model: "Accord" }
+        let x, y;
+
+        x = myCar.make;
+        console.log("X : ", x);
+
+        myFunc(myCar);
+        y = myCar.make;
+        console.log("Y : ", y);
+
+    </script>
+
+    <!--Function Expressions-->
+    <script>
+        // Can be anonymous function
+        let sqr = function (num) { return num * num }
+        x = sqr(2);
+        console.log("Anonymous : ", x);
+
+        // can be named function
+        let fact = function factorial(n) { return n < 2 ? 1 : n * factorial(n - 1) }
+        console.log("Factorial : ", fact(4))
+
+        // can be higher-order functions
+        function mapping(f, a) {
+            let result = [], i;
+            for (i = 0; i !== a.length; i++) {
+                result[i] = f(a[i]);
+            }
+            return result;
+        }
+
+        let someFunc = function (num) {
+            return num * num * num;
+        }
+
+        let numbers = [0, 1, 2, 5, 10];
+        let cube = mapping(someFunc, numbers);
+        console.log("Cubes : ", cube)
+        console.table(cube);
+
+        // can be defined based on a condition
+        let mFunc;
+        // console.log(x)
+        if (x !== 0) {
+            mFunc = function (x) { return x * x }
+            // console.log(x)
+        }
+        console.log("Conditional : ", mFunc(x));
+
+    </script>
+
+    <!--Calling Functions-->
+    <script>
+        // Defining a function does not execute it. Calling a function actually 
+        // performs actions with indicated parameters.
+        square(5);
+        // function hoisting works with function declaration not with function expression
+        console.log(square(5)); // does work
+        try {
+            console.log(squr(5)); // doesn't work
+        } catch (error) {
+            console.log(error)
+        }
+        let squr = function (n) { return n * n };
+
+        function factorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            } else {
+                return n * factorial(n - 1);
+            }
+        }
+        let a, b, c, d;
+        a = factorial(1);
+        b = factorial(2);
+        c = factorial(3);
+        d = factorial(4);
+        console.log(a, b, c, d);
+
+    </script>
+
+    <!--Function Scope-->
+    <script>
+        /* variables defined inside a fuunction can not be accessed from anywhere
+        outside function however a function can access all variables and functions 
+        defined inside that scope in which it is defined.*/
+
+        let n1 = 20, n2 = 3, nm = "Siri";
+        function mult() {
+            return n1 * n2; // access to global variables
+        }
+        mult();
+        console.log("Multiply : ", mult());
+
+        // A nested function example
+        function getScore() {
+            let n1 = 2, n2 = 3;
+
+            function add() {
+                return nm + " scored " + (n1 + n2);
+                // return nm + "scored" + n1 + n2;
+            }
+
+            return add();
+        }
+        console.log(getScore());
+    </script>
+
+    <!--Scope and function stack-->
+    <script>
+        // Recusrsive functions or recusion
+
+        // function can refer to itself by calling it's name, arguments.callee, 
+        // and an in-scope variable that refers to function itself;
+        let foo = function bar() {
+            try {
+                bar();
+                arguments.callee();
+                foo();
+                // break;
+            } catch (error) {
+                console.log(error)
+            }
+            console.log("bar function");
+            // break;
+        }
+        // foo();
+
+        // Simple loop
+        x = 0;
+        while ( x < 10) {
+            console.log(x);
+            x++;
+        }
+
+        // converting it to recursion
+        function loop(x) {
+            if(x >= 10) {
+                return
+            }
+            console.log(x);
+            loop(x + 1);
+        }
+        loop(0);
+
+        // stack like behavior when recursion is not in use, recursion uses
+        // a stack which is function stack.
+
+        function foo1(i) {
+            if(i < 0) {
+                return;
+            }
+            console.log("Begin : ",i);
+            foo1(i - 1);
+            console.log("End : ",i);
+        }
+        foo1(4);
+
+    </script>
+
+    <!--Nested functions and closures-->
+    <script>
+        // A closure is an eeexpression or commonly a function that can
+        // have free variables tied together with an environment that binds
+        // those variables or encloses that expression.
+
+        // Nested function is closure, it ca inherit arguments, variables of its
+        // containing function. inners have access to outer functions but outer function
+        // does not have access to inner vriables or functions, they have their own closure.
+
+        function addSquare(a, b) {
+            function square(n) {
+                return n * n;
+            }
+            return square(a) + square(b);
+        }
+        console.log(addSquare(2,3));
+        console.log(addSquare(3,4));
+
+        function outside(x) {
+            function inside(y) {
+                return x + y;
+            }
+            return inside;
+        }
+        let fnInside = outside(4);
+        let result = fnInside(5);
+        let result1 = outside(4)(5);
+        console.log(result, result1);
+
+        // multiply-nested functions
+        function a1(x) {
+            function b(y) {
+                function c(z) {
+                    // return x + y + z;
+                    console.log(x+y+z);
+                }
+                c(4);
+            }
+            b(2);
+        }
+        a1(1);
+        // console.log(a1(1));
+
+        // Name conflicts
+        function outside() {
+            let x = 10;
+            function inside(x) {
+                return x * 2;
+            }
+            return inside;
+        }
+        console.log(outside()(20));
+
+        // Closures
+
+        // On addition to other intricacies, a closure is created when
+        // inner function is somehow made available to outer function.
+
+        let pet = function(name) {
+            let getName = function() {
+                return name;
+            }
+            return getName;
+        }
+
+        let aPet = pet("Pixie");
+        console.log(aPet());
+
+        let createPet = function(name) {
+            let sex;
+
+            return {
+                setName: function(n) {
+                    name = n;
+                },
+                getName: function() {
+                    return name;
+                },
+                getSex: function() {
+                    return sex;
+                },
+                setSex: function(nS) {
+                    if(typeof(nS) === "string" && nS.toLowerCase() === "male" || nS.toLowerCase() === "female") {
+                        sex = nS;
+                    }
+                },
+                nestedName: function(n) {
+                    return n;
+                }
+            }
+        }
+        pet = createPet("Paleo");
+        console.log(pet.getName());
+        pet.setName("Pies");
+        pet.setSex("Female");
+        console.log(pet.getSex());
+        console.log(pet.getName());
+        console.log(pet.nestedName("xyza"))
+
+        // Arguments object
+
+        // It's partucuarly useful when parameters numbers are unknown at start.
+        function myConcat(separators) {
+            let result = [];
+            let i = 0;
+            for(i = 1; i < arguments.length; i++) {
+                result += " "+arguments[i] + separators;
+            }
+            return result;
+        }
+        console.log(myConcat("elphant", "giraffe", "tiger", "lion"));
+        console.log(myConcat(";", "elphant", "giraffe", "tiger", "lion"));
+
+    </script>
+
+    <!--Function Parameters-->
+    <script>
+        // Default Parameters
+
+        function multiply(a, b) {
+            b = typeof(b) !== "undefined" ? b : 1;
+            return a * b;
+        }
+        console.log(multiply(5));
+
+        function add(a, b = 2) {
+            return a + b;
+        }
+        console.log(add(5));
+
+        // Rest Parameters
+        function multi(multiplier, ...args) {
+            return args.map(x => multiplier * x);
+        }
+        let arr = multi(2, 1, 2, 3, 4);
+        console.log(arr);
+        console.table(arr);
+    </script>
+
+    <!--Arrow functions-->
+    <script>
+        // Also known as a fat arrow function
+        a = [
+            "Hydrogen",
+            "Helium",
+            "Lithium",
+            "Oxygen"
+        ];
+        let a2 = a.map(s=>s.length);
+        console.log(a2);
+        console.table(a2);
+
+        // No separate this keyword
+        function Person() {
+            let self = this;
+            self.age = 0;
+            setInterval(() => {self.age++},1100)
+        }
+        let p = new Person();
+        console.log(p);
+        
+        function Another() {
+            this.age = 0;
+            setInterval(() => {
+                this.age++;
+            }, 2000)
+        }
+        p = new Another();
+        console.log(p.age);
+
+    </script>
+
+    <!--Constructor Vs declaration Vs expressions-->
+    <script>
+        let adding = new Function("a","b", "return a + b");
+        console.log(adding);
+
+        p = 5;
+        function smFunc() {
+            let p = 9;
+            function decl() {
+                console.log(p);
+            }
+            let expr = function() {
+                console.log(p);
+            }
+            let cons = new Function("\tconsole.log(p);");
+
+            decl();
+            expr();
+            cons();
+
+            // console.log(decl());
+            // console.log(expr());
+            // console.log(cons());
+        }
+        smFunc();
+        // console.log(smFunc());
+
+        // Padded with leading zeros
+        function padZerros(num, len) {
+            let numStr = num.toString();
+            let numZeroes = len - numStr.length;
+            for(let i = 1; i <= numZeroes; i++) {
+                numStr = "0" + numStr;
+            }
+            return numStr;
+        }
+        console.log(padZerros(42, 4));
+        console.log(padZerros(42, 2));
+
+        function favAnimal(animal1) {
+            let animal = "someAnimal";
+            console.log(animal);
+        }
+        
+        favAnimal("Not Any");
+
+    </script>
+
+</body>
+
+</html>

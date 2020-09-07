@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solving Problems Using Proper Programing Techniques</title>
+</head>
+<body>
+    <!--
+        Plan: 
+        * Does it have any user interface? (Not really needed now)
+        * What will it look like? (we just need user to enter a number)
+        * What inputs will your program have? (numerical input)
+        * Will user enter data or input will be sourced from elsewhere? (user input)
+        * What is desired output?(A list of numbers from 1 to user input, but numbers 
+          that are divisibble by 3 will be denoted as "fizz" and numbers that are 
+          divisible by 5 will be displayed with "buzz" and last but not least  numbers 
+          that are divisible by both 3 and 5 will be replaced by word"fizzbuzz").
+    -->
+    <!--
+        Algorithm in Psuedo Code:
+        <> When a user inputs a number
+        <> Loop from 1 to entered number
+        <> If current number is multiple of 3 print "fizz"
+        <> If current number is multiple of 5 print "buzz"
+        <> If current number is multiple of both 3 and 5 print "fizzbuzz"
+        <> Otherwise print current number
+    -->
+
+    <!--Divide and Conquer(Implement)-->
+    <script>
+        // Getting input from user
+        let user_input = parseInt(prompt("Please enter number you'd like to Fizzbuzz upto :"));
+        // Loop from 1 to user input
+        for(let i = 1; i <= user_input; i++) {
+            // If current number is divisible by 3 & 5 print "fizzbuzz"
+            if( i % 3 === 0 && i % 5 === 0 ) {
+                console.log("FizzBuzz")
+            } // If current number is divisible by 3 print "fizz"
+            if( i % 3 === 0 ) {
+                console.log("Fizz");
+            // If current number is divisible by 3 print "fizz"
+            } else if(i % 5 === 0) {
+                console.log("Buzz");
+            } else {
+                // Otherwise print current number 
+                console.log(i);
+            }
+        }        
+    </script>
+
+    <!--Find 3rd highest number-->
+    <script>
+        // Data set
+        let numbers = [0,1,2,3,4,5,6,7,8,9];
+        // sort existing array in descending order then slice first 3 numbers
+        let result = numbers.sort((a,b)=>b-a).slice(0,3);
+        // sort result ascending order and pick first element as it's 3rd highest number
+        console.log(result.sort()[0]);
+        
+        
+        // let copy = numbers;
+        // let result = [];
+        // result = numbers.reduce((a,b) => Math.max(a,b));
+        // console.log(result);
+        // console.log(numbers);
+        // copy = copy.sort();
+        // // result.push(copy.pop());
+        // result = copy.pop();
+        // console.log(copy);
+        // console.log(result);
+        // result = copy.pop();
+        // result = copy.pop();
+        // console.log(copy);
+        // console.log(result);
+
+    </script>
+
+    <!--String manipulation downup function-->
+    <script>
+        // Plan:
+        // print string
+        // print sub string str.length - 1
+        // print sub string str.length - 2
+        // ....
+        // print sub string until str.length - n = 0
+        // print sub string until str.length - n = 0
+        // ....
+        // print sub string str.length + 2
+        // print sub string str.length + 1
+        // print string
+
+        /*
+            Psuedo Code:
+            function downup(string)
+                solve for simplest form (length === 1)
+                print string
+                otherwise break it into smaller parts
+                print string
+                downup(substring(string, string.length - 1))
+                print string
+        */
+
+        // Implementation of above problem
+        
+        // 1st approach
+        function downUp(str) {
+            if(str.length === 1) {
+                console.log(str);
+            } else {
+                console.log(str);
+                downUp(str.substring(str, str.length - 1));
+                console.log(str);
+            }
+            return;
+        }
+        console.log(downUp("Greetings"));
+
+        // 2nd approach
+        function downup(str) {
+            let end = str.length;
+            while(end > 1) {
+                console.log(str.substring(str, end));
+                end--;
+            }
+            while(end <= str.length) {
+                console.log(str.substring(str, end));
+                end++;
+            }
+            return;
+        }
+        console.log(downup("Greetings"));
+
+    </script>
+
+    <!--Towers of hanoi solution-->
+    <script>
+        /*
+            Plan:
+                * do it for simplest form
+                    * if stack height is 1 move to destination pillar.
+                * divide into simpler cases
+                    * when n stack height, move stack n-1, to extra pillar
+                    * transfer n stack from source to destination pillar
+                    * move n-1 stack from source to destination
+        */
+
+        /*
+            Psuedo code:
+                function hanoiMove(stack, source, destination, extra)
+                    if stack height == 1
+                        transfer stack from source to destination
+                    else
+                        hanoiMove(stack n - 1, source, extra, destination)  // notice place of extra is changed due to placement of stacks
+                        transfer nth stack from source to destination
+                        hanoiMove(stack n-1, extra, destination, source,) // notice place of extra is changed due to placement of stacks
+                OR
+
+                if stack height == 1
+                    move from A to C
+                othrwise
+                    start again with new seet of inputs
+                        use one fewer disk
+                        use same start post
+                        use extra post as destination post
+                    move largest disk from start post to dest
+                    start again with new sets of input.
+                        use one fewer disk
+                        use extra post as start post
+                        use sam dest post 
+
+        */
+
+        // Things to notice:
+        // top n-1 stacks at source tower represent a smaller size instance 
+        // of original problem "hanoiMove(n, 0, 2, 1)" and can be solved by calling hanoiMove(n-1, 0, 1, 2).
+        // only one disk can be moved at a time
+        // no disk can be placed on top of a smaller disk
+        // solve n-1 disks to move from A to B (recursive moves step 1)
+        // move disk n from A to C (recursive moves step 3)
+        // solve n - 1 disks to move from B to C (recursive moves step 2)
+
+
+        // Code Implementation
+        function hanoiMove(stack,source,dest, extra) {
+            if(stack.length === 0) return;
+            if(stack === 1) {
+                // ** Only one disk can be moved at a time
+                // move source to destination
+                // moveDisk(source, dest);
+                console.log("moving disk 1 from "+ source +" to " + dest +"post");
+
+            } else {
+                // ** No disk can be placed on top of a smaller disk.
+                hanoiMove(stack - 1, source, extra, dest) // stacjk moves to empty pillar position
+                // move last disk from source to destination
+                // moveDisk(source, dest);
+                console.log("moving disk "+stack+" from "+ source +" to " + dest +"post");
+                hanoiMove(stack - 1, extra, dest, source) // stack moving from extra pillar to destination
+            }
+            // return;
+        }
+        hanoiMove(3,0,2,1);
+        console.log("\n\n");
+        hanoiMove(4,0,2,1);
+        // console.log(hanoiMove(3,0,2,1));
+        
+    </script>
+</body>
+</html>

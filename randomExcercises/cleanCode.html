@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodness of Cleaner Code</title>
+</head>
+
+<body>
+    <div class="members-wrapper"></div>
+    <script>
+        // hard to read code
+        let x = function (z) {
+            let w = 0; z.forEach(function (q) {
+                w += q;
+            }); return w;
+        };
+        console.log(x([1, 2, 3, 4]));
+
+        // easy to read code
+        let sumArray = function (array) {
+            let sum = 0;
+            array.forEach(function (number) {
+                sum += number;
+            });
+            return sum;
+        };
+        console.log(sumArray([1, 2, 3, 4]));
+
+
+        // Line length, format style
+        let longLine = "something" + "another" + "something" + "another" +
+            "something" + "another" + "something" + "another";
+
+        // Naming things, names for functions and variables should always
+        // be descriptive. Variables can start with noun snd functions with verb
+
+        // Bad practice for naming
+        let getName = "Thor" || "nothing";  // not noun
+        function myName() {  // not verb
+            return getName;
+        }
+
+        // Good practice for naming
+        let numOfCount = 200 || "too many";
+        function getCount() {
+            return numOfCount;
+        }
+
+        // We need to comment our code as such that it describes "why" it works
+        // rather than "how" it works, because code already tells us that.
+
+        // square root of Newton-Raphson appoximation
+        let r = n = 10 / 2, t = 1;
+        while (Math.abs(r - (n / r)) > t) {
+            r = .5 * (r + (n / r));
+        }
+        console.log("r = ", r);
+
+        // Try to write code in a way as if there is no comments available
+        // It'll be forced to write plain and simple code possible.
+
+        // Cascading Code, chainable code
+        let str = "some string";
+        let customStr = function (str) {
+            let strArray = str.split(" ");
+            // console.log(strArray.forEach(word => word[0]));
+            // return strArray.forEach(word => word[0]);
+            // return strArray.
+            // return str.split(" ").forEach(word => word[0]);
+
+            // Capitalizes first letter of each word in a string
+            return strArray.map(word => word[0].toUpperCase() + word.toLowerCase().slice(1)).join(" ");
+        }
+        // customStr(str)
+        console.log(customStr(str));
+
+        let usersData = [
+            { firstName: "Jane", lastName: "Doe", id: 101, email: "abc@abcd.com" },
+            { firstName: "Lillian", lastName: "Doe", id: 110, email: "def@abcd.com" },
+            { firstName: "Missey", lastName: "Doe", id: 119, email: "ghi@abcd.com" },
+            { firstName: "Nini", lastName: "Doe", id: 128, email: "jkl@abcd.com" }
+        ];
+
+        function titleCaseNames(str) {
+            return str.replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+            })
+        }
+
+        let userController = {
+            currentUser: "",
+            findUser: function (userEmail) {
+                let arrLength = usersData.length, i;
+                for (i = arrLength - 1; i >= 0; i--) {
+                    if (usersData[i].email === userEmail) {
+                        this.currentUser = usersData[i];
+                        break;
+                    }
+                }
+                return this;
+            },
+            formatName: function () {
+                if (this.currentUser) {
+                    this.currentUser.fullName = titleCaseNames(this.currentUser.firstName) + " " + titleCaseNames(this.currentUser.lastName);
+                }
+                return this;
+            },
+            // createLayout: function() {
+            //     if(this.currentUser) {
+            //         this.currentUser.viewData = "Memeber : "+this.currentUser.fullName+ " "+
+            //         "ID: "+this.currentUser.id +" "+"E-mail : "+this.currentUser.email;
+            //     }
+            //     return this;
+            // }
+            createLayout: function () {
+                if (this.currentUser) {
+                    // this.currentUser.viewData = "<h2>Member: " + this.currentUser.fullName + "</h2>" + "<p>ID: " + this.currentUser.id + "</p>" + "<p>Email: " + this.currentUser.email + "</p>";
+                    this.currentUser.viewData = "Member: " + this.currentUser.fullName + "ID: " + this.currentUser.id + "Email: " + this.currentUser.email;
+                }
+                return this;
+            },
+
+            displayUser: function () {
+                if (!this.currentUser) return;
+
+                document.querySelector(".members-wrapper").append(this.currentUser.viewData);
+
+            }
+        }
+
+        console.log(userController.findUser("abc@abcd.com").formatName().createLayout());
+        let aUser = userController.findUser("abc@abcd.com");
+        let formatUserName = aUser.formatName();
+        // console.log(formatUserName);
+        console.log(formatUserName.createLayout());
+        console.log(userController.findUser("def@abcd.com").currentUser.firstName)
+        userController.findUser("abc@abcd.com").formatName().createLayout().displayUser();
+
+    </script>
+
+    <!-- <div class="members-wrapper"></div> -->
+</body>
+
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrays And Loops Basics</title>
+</head>
+
+<body>
+    <!--Arrays Basics-->
+    <script>
+        // Arrays are used to store multiple values ina single variable.
+        let cars = ["Tesla", "Saab", "Volvo", "BMW"];
+        // Spaces and line breaks are no concern for array declarations.
+        cars = [
+            "Tesla",
+            "Saab",
+            "Ford",
+            "BMW"
+        ];
+        // arrays can also be created using new keyword.
+        cars = new Array("Tesla", "Saab", "Ford", "BMW");
+        // Arrays are accessible by their index number.
+        console.log(cars[0], cars[2]);
+        // Array values can be chnged with a neew assignment
+        cars[1] = "Audi";
+        console.log(cars, cars[1]);
+        // Arrays are also objects
+        console.log(typeof (cars));
+        // Array elements can be of any type, such as objects
+        let someArray = [Date.now(), { firstName: "Jane", lastName: "Doe" }];
+        console.log(someArray[0], someArray[1].firstName);
+        // Array properties and methods
+        console.log(cars.length, cars.sort(), cars[cars.length - 1]);
+
+        // Looping through array elements
+        let divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        let htmlMarkup = "<ul>";
+        for (let i = 0; i < cars.length; i++) {
+            htmlMarkup += "<li>" + cars[i] + "</li>"
+        }
+        htmlMarkup += "</ul>";
+        divEl.innerHTML = htmlMarkup;
+        //  divEl.innerText = htmlMarkup;
+
+        // Using a forEach method
+        divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        htmlMarkup = "<ul>";
+        cars.forEach(someFunction);
+        htmlMarkup += "</ul>";
+
+        function someFunction(value) {
+            htmlMarkup += "<li>" + value + "</li>";
+        }
+        divEl.innerHTML = htmlMarkup;
+
+        // Adding new array elements with push() method
+        cars.push("Porche", "Cadilac");
+        console.log(cars);
+        // New elements can also be added using length property
+        cars[cars.length] = "Marcedees";
+        // Adding elements with high indexs will create undefined holes
+        cars[9] = "Concept Car";
+        console.log(cars);
+        // Associative arrays
+        // Many programmming languages support arrays with named indexes
+        // also with hashes, they are knowwn as associatve arrays.
+        // JavaScript does not support array with named indxes.
+        // In JavaScript we only use array with number indexes.
+        let person = [];
+        person[0] = "Jane";
+        person[1] = "Doe";
+        person[2] = 101;
+        console.log(person.length, person[0]);
+        // when named indexes are used some array methods and prroperties
+        // will produce incorrect results.
+        person = [];
+        person["firstName"] = "Jane";
+        person["lastName"] = "Doe";
+        person[2] = 209;
+        console.log(person.length, person[0]);
+
+        // Key differencce between Arrays and Objects, arrays are numbered indexes
+        // and objects are named indxes.
+        // when you need to use named indexes instead of numbered indexes it's
+        // better to use Objects over Arrays, as aassociative arrays are unsupported in JavaScript.
+
+        // There is no need to use array constructor notation for creating an array
+        // instead use [] notation.
+        let points = new Array(); // bad practice
+        points = []; // good practice
+        points = new Array(44, 45, 49, 48); // bad practice
+        points = [44, 45, 49, 48]; // good practice
+        // new keyword only complicates code. It can also produce some unexpected results
+        points = new Array(44, 49);
+        console.log(points)
+        points = new Array(44);
+        console.log(points);
+
+        // How to recognize an Array
+        // we typeof returns it's an object, but isArray() will chek if it's an Array or not.
+        console.log(Array.isArray(points));
+        // you can create your own Array checker function
+        function isAnArrayCheck(x) {
+            return x.constructor.toString().indexOf("Array") > -1;
+        }
+        console.log(isAnArrayCheck(points));
+        // Arrays can also be recognize using instaceof operator
+        console.log(points instanceof Array);
+    </script>
+
+    <!--Practice Test-->
+    <script>
+        console.log(cars[3]);
+        cars[0] = "Ford Bronco";
+        console.log(cars);
+        console.log(cars.length);
+        console.log(Object.values(cars).length);
+    </script>
+
+    <!--JavaScript Array Methods Exploration-->
+    <script>
+        // Convertinig arrays to strings
+        let fruits = ["Peach", "Apple", "Berries", "Orange"];
+        divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        divEl.innerHTML = "<h2>" + fruits.toString() + "</h2>";
+        // join() methods joins all array elemnts into a string
+        divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        divEl.innerHTML = "<h2>" + fruits.join(" ** ") + "</h2>";
+        // popping and pushing elements
+        console.log(fruits.pop(), fruits);
+        console.log(fruits.push("Orange"), fruits);
+        // shifting and unshifting elements
+        console.log(fruits.shift(), fruits);
+        console.log(fruits.unshift("Peach"), fruits);
+        // deleting an array element, may leave undefined holes
+        delete fruits[0];
+        console.log(fruits);
+        // splicing through an array, first parameter sayss which position
+        // second parameter how many should be removed, rest of them are new elelnets to be added
+        fruits.shift();
+        fruits.unshift("Peach");
+        fruits.splice(2, 0, "Kiwi", "Lemon");
+        console.log(fruits);
+        // splice method will return an array with deleted items
+        fruits.splice(2, 2, "citrus", "pomegranate");
+        console.log(fruits);
+        fruits.splice(2, 0, "Kiwi", "Lemon");
+        console.log(fruits.splice(2, 2, "Banana", "Watermelon"), fruits);
+        // splice method can be used for removing any elements
+        console.log(fruits.splice(2, 1), fruits);
+        // concat method merges existing arrays
+        let myGirls = ["cecille", "Celine"];
+        let myBoys = ["Zacko", "Junior"];
+        let myChildren = myGirls.concat(myBoys);
+        console.log(myChildren, myGirls.concat(myBoys, fruits));
+        // concat method can also take strings as arguments
+        myChildren = myChildren.concat("Carla");
+        console.log(myChildren);
+        // slicing through an array
+        let sliced = fruits.slice(1);
+        console.log(sliced, fruits);
+        sliced = fruits.slice(1, 3);
+        console.log(sliced, fruits);
+        sliced = fruits.slice(2);
+        console.log(sliced, fruits);
+        // finding max and min vlues in an array
+        points = [11, 22, 33, 44];
+        console.log(fruits.sort(), Math.max(points));
+        console.log(fruits.sort(), points.reduce((a, b) => Math.max(a, b)));
+
+    </script>
+
+    <!--Practice Tests-->
+    <script>
+        console.log(fruits.pop());
+        console.log(fruits.push("pomegranate"));
+        console.log(fruits.splice(1, 2));
+    </script>
+
+    <label for="search">Search by contact name: </label>
+    <input type="text" id="search">
+    <button>Search now</button>
+
+    <p></p>
+
+    <label for="number">Enter Integer </label>
+    <input type="number" id="number">
+    <button id="btn">Integer squares</button>
+
+    <p id="para"></p>
+    <!--Loops Basics-->
+    <script>
+        let cats = ["lidy", "kimi", "fifi", "gigi"];
+        divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        let info = "My cats are called : ";
+        let para = document.createElement("p");
+        divEl.appendChild(para);
+        for (let i = 0; i !== cats.length; i++) {
+            if (i === cats.length - 1) {
+                info += cats[i] + ".";
+            } else {
+                info += cats[i] + ", ";
+            }
+        }
+        para.textContent = info;
+
+        // exiting loops with break
+        para = document.querySelector("p");
+        let input = document.querySelector("#search");
+        let btn = document.querySelector("button");
+        let contacts = ["Loren:11112222", "Sarah:22223333"];
+        btn.addEventListener("click", function () {
+            let searchName = input.value.toLowerCase();
+            input.value = "";
+            input.focus();
+            for (let i = 0; i !== contacts.length; i++) {
+                let splitContact = contacts[i].split(":");
+                if (splitContact[0].toLowerCase() === searchName) {
+                    para.textContent = splitContact[0] + "\'s number is " + splitContact[1];
+                    break;
+                } else {
+                    para.textContent = "Searched contact not found";
+                }
+            }
+        })
+
+        // skipping iterations with continue
+        // it works same as breraks except breaking out of loop it skips to next iteration
+        para = document.querySelector("#para");
+        input = document.querySelector("#number");
+        btn = document.querySelector("#btn");
+
+        btn.addEventListener("click", function () {
+            let num = input.value;
+            input.value = "";
+            input.focus();
+            for (let i = 1; i <= num; i++) {
+                let sqRoot = Math.sqrt(i);
+                if (Math.floor(sqRoot) !== sqRoot) {
+                    continue;
+                }
+                para.textContent += i + " ";
+            }
+        })
+
+    </script>
+
+    <!--While and do..while-->
+    <script>
+        // refactoring using while loop
+        divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        info = "My cats are called : ";
+        para = document.createElement("p");
+        divEl.appendChild(para);
+        let i = 0;
+        while (i < cats.length) {
+            if (i === cats.length - 1) {
+                info += cats[i] + ".";
+            } else {
+                info += cats[i] + ", ";
+            }
+            i++;
+        }
+        para.textContent = info;
+
+        // refactoring using do..while loop
+        divEl = document.createElement("div");
+        document.body.appendChild(divEl);
+        info = "My cats are called : ";
+        para = document.createElement("p");
+        divEl.appendChild(para);
+        i = 0;
+        do {
+            if (i === cats.length - 1) {
+                info += cats[i] + ".";
+            } else {
+                info += cats[i] + ", ";
+            }
+            i++;
+        } while (i < cats.length)
+        para.textContent = info;
+
+    </script>
+
+    <div class="output"></div>
+
+    <!--Practice Task-->
+    <script>
+        // Launch countdown
+        i = 10;
+        divEl = document.querySelector(".output");
+        for (i; i >= 0; i--) {
+            let para = document.createElement('p');
+            divEl.appendChild(para);
+            // para.textContent = i;
+            if (i === 10) {
+                para.textContent = "Countdown 10";
+            } else if (i === 0) {
+                para.textContent = "Blast off!!";
+            } else {
+                para.textContent = i;
+            }
+        }
+
+    </script>
+
+    <script>
+        // Filling in a guest list
+        let guestList = ["loren", "nono", "claire", "nene"];
+        let refusedGuests = [];
+        let allowedGuests = [];
+        let refused = document.createElement("p");
+        refused.textContent = "Please avoid : ";
+        document.body.appendChild(refused);
+        let allowed = document.createElement("p");
+        allowed.textContent = "Welcome always : ";
+        document.body.appendChild(allowed);
+        for (let i = 0; i < guestList.length; i++) {
+            console.log(guestList[i] === "nono");
+            if (guestList[i] === "nono" || guestList[i] === "nene") {
+                refusedGuests.push(guestList[i]);
+                // refused.textContent += guestList[i]+"/ ";
+                // refusedGuests.concat(", ");
+                // continue;
+            } else {
+                allowedGuests.push(guestList[i]);
+                // allowed.textContent += guestList[i] + "* ";
+            }
+        }
+        for (let i = 0; i < refusedGuests.length; i++) {
+            if (i === refusedGuests.length - 1) {
+                refused.textContent += refusedGuests[i] + ".";
+            } else {
+                refused.textContent += refusedGuests[i] + ", ";
+            }
+        }
+
+        for (let i = 0; i < allowedGuests.length; i++) {
+            if (i === allowedGuests.length - 1) {
+                allowed.textContent += allowedGuests[i] + ".";
+            } else {
+                allowed.textContent += allowedGuests[i] + ", ";
+            }
+        }
+    </script>
+    <!--More tasks-->
+    <script>
+        // print li's
+        divEl = document.createElement("ul");
+        document.body.appendChild(divEl);
+        for (let i = 0; i < points.length; i++) {
+            let p = document.createElement("li");
+            p.textContent = points[i];
+            divEl.appendChild(p);
+        }
+
+        // search an name in contacts
+        i = 0;
+        contacts = ["loren:11112222", "claire:33334444"];
+        divEl = document.createElement("div");
+        while (i < contacts.length) {
+            let contactSplit = contacts[i].split(":");
+            // console.log(contactSplit[0], contactSplit[1]);
+            if (contactSplit[0].toLowerCase() === "loren") {
+                divEl.textContent = "Found contact : " + contactSplit[0] + " bearing number : " + contactSplit[1];
+                break;
+            }
+            i++;
+        }
+        document.body.appendChild(divEl);
+
+        // Prime number
+        // num = 50;
+        divEl = document.createElement("ul");
+        
+        function isPrime(num) {
+            for (let i = 2; i < num; i++) {
+                if (num % i === 0) {
+                    return false;
+                } else {
+                    // divEl = document.createElement("ul");
+                    divEl.innerHTML = "<li>" + num + " is a Prime Number"+"</li>";
+                    document.body.appendChild(divEl);
+                    return true;
+                }
+                // divEl.textContent += "<li>" + i + "</li>";
+            }
+            // divEl.textContent += "<li>" + i + "</li>";
+        }
+        // divEl.textContent += "<li>" + i + "</li>";
+        // document.body.appendChild(divEl);
+        console.log(isPrime(7));
+    </script>
+
+</body>
+
+</html>

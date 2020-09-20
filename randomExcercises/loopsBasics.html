@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Some more on Loops</title>
+</head>
+
+<body>
+    <script>
+        let paraEl = document.createElement("p");
+        document.body.appendChild(paraEl);
+
+        let cats = ["shimmy", "lizzy", "ellie", "felicia"];
+        let info = "Some cats are calld ";
+
+        for (let i = 0; i < cats.length; i++) {
+            if (i === cats.length - 1) {
+                info += "and " + cats[i] + ".";
+            } else {
+                info += cats[i] + ", ";
+            }
+        }
+        paraEl.textContent = info;
+
+        // is it a prime
+        paraEl = document.createElement("ul");
+        document.body.appendChild(paraEl);
+
+        function isPrime(num) {
+            for (let i = 2; i <= num; i++) {
+                if (num % i === 0) {
+                    paraEl.innerHTML = "<li>" + num + " is not a Prime number" + "</li>";
+                    // document.body.appendChild(paraEl);
+                    return false;
+                } else {
+                    paraEl.innerHTML += "<li>" + num + " is a Prime number" + "</li>";
+                    // document.body.appendChild(paraEl);
+                    return true;
+                }
+            }
+        }
+        isPrime(9);
+
+        // While Loop
+        let i = 0;
+        while (i < 3) {
+            console.log(i);
+            i++;
+        }
+
+        i = 3;
+        while (i) {
+            console.log(i);
+            i--;
+        }
+
+        i = 5;
+        while (i) console.log(i--);
+
+        // do while
+        i = 0;
+        do {
+            console.log(i);
+            i++;
+        } while (i < 3);
+
+        // For loop
+        // psuedocode structure
+        i = 0;
+        if (i < 3) console.log("*", i++);
+        if (i < 3) console.log("*", i++);
+        if (i < 3) console.log("*", i++);
+        // if(i < 3) console.log("*",i++);
+
+        for (i = 0; i < 3; i++) console.log(i);
+        i = 0;
+        for (; i < 3; i++) console.log(i);
+        i = 0;
+        for (; i < 3;) console.log(i++);
+        // for(;;) console.log("infinite loop");
+
+        // breaking loop
+        let sum = 0;
+        while (2 > 1) {
+            let val = +prompt("Enter Number");
+            if (!val) break;
+            sum += val;
+        }
+        console.log("Sum : ", sum);
+
+        // continue to next iteration
+        for (let i = 0; i < 10; i++) {
+            if (i % 2 === 0) continue;
+            console.log(i);
+        }
+
+        for (let i = 0; i < 10; i++) {
+            // if(i % 2) {
+            //     console.log(i);
+            // }
+            if (i % 2) console.log(i);
+        }
+
+        // syntax error
+        // if( i > 5) {
+        //     console.log(i);
+        // } else {
+        //     continue;
+        // }
+
+        // syntax error
+        // (i > 5) ? console.log(i) :continue;
+
+        // labels for break/continue
+        for (let i = 0; i < 1; i++) {
+            for (let j = 0; j < 1; j++) {
+                let inp = prompt(`provide coordinates (${i},${j})`, "");
+            }
+        }
+        // a call to break/continue is only possible from inside a loop
+        // and label must be somewhere above directive.
+        console.log("done");
+        outer: for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                let inp = +prompt(`provide coordinates (${i},${j})`, "");
+                if (!inp) break outer;
+            }
+        }
+    </script>
+    <!--Practice tasks-->
+    <script>
+        // task 01
+        i = 3;
+        while (i) console.log(i--);
+
+        // task 02
+        i = 0;
+        while (++i < 5) console.log("*", i); // prefix returns new value
+
+        i = 0;
+        while (i++ < 5) console.log(i, "*"); // postfix returns old value
+
+        // task 03
+        for (let i = 0; i < 5; i++) console.log(i, "**"); // pre/postfix same
+        for (let i = 0; i < 5; ++i) console.log("**", i); // pre/postfix indifferent
+
+        // task 04
+        for (let i = 2; i < 10; i++) {
+            if (i % 2 === 0) console.log(i);
+        }
+
+        // task 05
+        i = 0;
+        while (i < 3) console.log(i, i++);
+
+        // task 06
+        while (1 < 2) {
+            let inp = prompt("enter value greate than number 100");
+            if (inp > 100 || !inp) break;
+        };
+
+        let inp;
+        do {
+            inp = prompt("enter value greate than number 100");
+            // if( inp > 100 || !inp) break;
+        } while (inp < 100 && inp)
+
+        // task 07
+
+        // method 01
+        function listPrimes(n) {
+            let basePrimes = [2, 3];
+            for (let i = 3; i <= n; i++) {
+                if (basePrimes.every(p => i % p)) {
+                    basePrimes.push(i);
+                }
+            }
+            // console.log(basePrimes.join(", "));
+            return basePrimes.join(", ");
+        }
+        console.log(listPrimes(10));
+
+        // method 02
+        function findPrimes(n) {
+            let numArr = [], primesArr = [];
+
+            for (let i = 2; i <= n; i++) {
+                numArr.push(i);
+            }
+
+            while (numArr.length) {
+                primesArr.push(numArr.shift());
+                numArr = numArr.filter(nonPrimes => nonPrimes % primesArr[primesArr.length - 1] !== 0)
+            }
+            return primesArr.join(", ");
+            // console.log(primesArr);
+        }
+        console.log(findPrimes(10));
+
+        // method 03
+        function displayPrimes(n) {
+            function checkPrime(num) {
+                for (let i = 2; i < num; i++) {
+                    if (num % i === 0) return false;
+                }
+                return true;
+            }
+
+            function showPrimes(n) {
+                let primesArr = [2];
+                for (let i = 3; i < n; i++) {
+                    if (checkPrime(i)) primesArr.push(i);
+                }
+                console.log(primesArr.join(",  "));
+                // return primesArr.join(", ")
+            }
+            showPrimes(n);
+        }
+        displayPrimes(10);
+
+        // method 04
+        function listingPrimes(n) {
+            let primes = [];
+            for(let i = 2; i <= n; i++) {
+                let primeFlag = true;
+                for(let j = 2; j < i; j++) {
+                    if( i % j === 0) primeFlag = false;
+                }
+                if(primeFlag) {
+                    // console.log("**"+i);
+                    primes.push(i);
+                }
+            }
+            return primes.join("**");
+        }
+        console.log(listingPrimes(10));
+
+        // method 05
+        function showingPrimes(n) {
+            let primes = [];
+            nextPrime: for(let i = 2; i <= n; i++) {
+                for(let j = 2; j < i; j++) {
+                    if(i % j === 0) continue nextPrime;
+                }
+                primes.push(i);
+            }
+            return primes.join("<> ");
+        }
+        console.log(showingPrimes(10));
+
+    </script>
+</body>
+
+</html>
+
+<!--
+    // console.log(listPrimes(10));
+
+        // let list = "";
+        // function listPrimes(n) {
+        //     for (let i = 2; i < n; i++) {
+        //         if(i % 2 !== 0) {
+        //             list += i;
+        //             // continue;
+        //         } else {
+        //             // list += i;
+        //         }
+        //         // if (n === 1) {
+        //         //     list += n;
+        //         //     // return
+        //         // } else {
+        //         //     list += i;
+        //         //     // listPrimes(n - i)
+        //         // }
+        //     }
+        //     // for(let i = 2; i < n; i++) {
+        //     // if(n % i === 0) {
+        //     //     continue;
+        //     // }
+        //     // if(n % i) console.log(i);
+        //     return list;
+        // }
+        // return list;
+        // }
+        // console.log(listPrimes(10));
+-->

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Object Model Manipulation</title>
+</head>
+<body>
+    <!--
+        Document Object Model is a tree like rrepresentation of web page contents,
+        with different relationships depending on how they're arranged in HTML document.
+    -->
+    <div id="container">
+        <div class="display"></div>
+        <div class="controls"></div>
+    </div>
+    <!-- Targeting nodes with selectors -->
+    <script>
+        let container = document.querySelector("#container");
+        console.dir(container.firstElementChild);
+        console.dir(container.firstChild);
+        let controls = document.querySelector(".controls");
+        console.dir(controls.previousElementSibling);
+        console.dir(controls.previousSibling);
+    </script>
+    <!-- DOM methods are used to manipulate webpage-->
+    <script>
+        // querySelector return first match of selector
+        // querySelectorAll returns a nodelist containing reference to all matches.
+
+        // Even though nodelist looks and acts like an array, in fact they are not.
+        // Solution to that problem is to convert nodelist to an  array using Array.from() or spread operator
+
+         // Creating, Append, Remove, altering elements can be done using DOM methods
+         // createElement creates node in memory, appendChild or insertBefore appends node in dom and removeChild removes it from DOM
+         
+         // JavaScript does not alter HTML but only DOM
+         // HTML file stays same but JavaScript changes what browser renders.
+         let divEl = document.createElement("div");
+         divEl.style.color = "honeydew";
+         divEl.style.cssText = "color: aqua; background: green;";
+         divEl.setAttribute("style", "color: green; background: blue;");
+         document.body.appendChild(divEl);
+         console.log(divEl.style.color);
+         console.log(divEl.style.background);
+
+         // Editing attributes
+         divEl.setAttribute("id", "newID"); // updates existing id or creates a new one.
+         console.log(divEl.getAttribute("id"));
+         divEl.removeAttribute("id");
+         console.log(divEl.getAttribute("id"));
+         
+         // Working with classes methods
+         divEl.classList.add("newly_added");
+         divEl.classList.remove("newly_added");
+         divEl.classList.toggle("active");
+         console.log(divEl.className);
+
+         // Adding contents
+         divEl.textContent = "Hello, DOM!!";
+         divEl.innerHTML = "<h4>Hello DOM</h4>";
+
+         divEl = document.createElement("div");
+         divEl.classList.add("content");
+         divEl.textContent = "Some content";
+         container.appendChild(divEl);
+    </script>
+
+    <!--Some excercise-->
+    <script>
+        // Task #01: add a <p> tag with red text that says "It's Red"
+        let para = document.createElement("p");
+        // para.style.color = "honey dew";
+        para.setAttribute("style", "color:red;");
+        para.textContent = "It's Red!!";
+        document.body.appendChild(para);
+
+        // Task #02: add a <h3> tag with blue text that says "It's Blue"
+        para = document.createElement("p");
+        para.style.cssText = "color:blue; background: red; width: 89px";
+        para.textContent = "It's Blue!!";
+        document.body.appendChild(para);
+
+        // Task #03: add a div tag with black border and pink background with
+        // another h1 tag that says "It's in div element"
+        // a p tag that says "Me too";
+        divEl = document.createElement("div");
+        divEl.setAttribute("style", "border: black 2px solid; width: 92%; width: max-content;");
+        let h3El = document.createElement("h3");
+        h3El.textContent = "It's in div element!!";
+        divEl.appendChild(h3El);
+        para = document.createElement("p");
+        para.textContent = "Me Too!!";
+        divEl.appendChild(para);
+        document.body.appendChild(divEl);
+    </script>
+
+    <!--Events handling-->
+    <!--Method 01: on_event property, it's less than ideal cause it can only have one event-->
+    <button onclick="alert('Button Clicked')">Click Here</button>
+    <script>
+        // Method 02: on_event property call from JavaScript, still one per event is possible
+        let btnEl = document.querySelector("button");
+        btnEl.onclick = () => alert("Button Clicked!!");
+
+        // Method 03: use of event listeners, allows multiple event listeners to configure if that need be.
+        btnEl = document.createElement("button");
+        btnEl.textContent = "Click Here <> <>";
+        btnEl.style.display = "block";
+        document.body.appendChild(btnEl);
+        btnEl.addEventListener("click", ()=>{
+            // alert("Clicked Clicked!!");
+        });
+
+        // All of those methods can be used with named functions as well
+        // alertFunction(), and all of them uses it rather implementing separately.
+
+        // Callbacks arre just functions that are passed into another functtion
+        // as arguments.
+        btnEl.addEventListener("click", ev=>alert("Got Cllicked",ev.target.value));
+        btnEl.addEventListener("click", ev => {
+            ev.target.style.background = "honeydew";
+        });
+
+        // Attaching listeners to nodes
+         let btn01 = document.createElement("button");
+         btn01.setAttribute("id", "1");
+         btn01.textContent = "Click 1";
+         container.appendChild(btn01);
+
+         let btn02 = document.createElement("button");
+         btn02.setAttribute("id", "2");
+         btn02.textContent = "Click 2";
+         container.appendChild(btn02);
+
+         let btn03 = document.createElement("button");
+         btn03.setAttribute("id", "3");
+         btn03.textContent = "Click 3";
+         container.appendChild(btn03);
+
+         let buttons = container.querySelectorAll("button");
+         buttons.forEach(btn => {
+             btn.style.background = "honeydew";
+             btn.addEventListener("click", () => alert(btn.id))
+         })
+
+    </script>
+    <!-- Practice excercises -->
+    
+</body>
+</html>

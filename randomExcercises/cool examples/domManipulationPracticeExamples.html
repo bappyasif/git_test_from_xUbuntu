@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation Cool Excercises</title>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Height</th>
+            <th>Place</th>
+        </tr>
+        <tr>
+            <td>AAAA</td>
+            <td>BBBB</td>
+            <td>CCCC</td>
+        </tr>
+    </table>
+    <h2>Mountains</h2>
+    <div id="mountains"></div>
+    <script>
+        let mountains = [
+            { name: "Kilimanjaro", height: 5895, place: "Tanzania" },
+            { name: "Everest", height: 8848, place: "Nepal" },
+            { name: "Mount Fuji", height: 3376, place: "Japan" },
+            { name: "Vaalserberg", height: 323, place: "Netherlands" },
+            { name: "Denali", height: 6168, place: "United States" },
+            { name: "Popacatepetl", height: 5465, place: "Mexico" },
+            { name: "Mont Blanc", height: 4808, place: "Italy/France" },
+        ];
+        
+        let cells = document.getElementsByTagName("td");
+        for (let i = 0; i < mountains.length; i++) {
+            for (let j = i; j < cells.length; j++) {
+                let cell = cells[i,j];
+                cell.innerText = mountains[i].name;
+                cell.innerText = mountains[i].height;
+                cell.innerText = mountains[i].place;
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>
+
+<!--
+    let table = document.querySelector("table");
+        for(let i = 0; i < mountains.length; i++) {
+            table.insertRow(i).insertCell(i).innerHTML = mountains[i].name;
+            table.insertRow(i).insertCell(i).innerHTML = mountains[i].height;
+            table.insertRow(i).insertCell(i).innerHTML = mountains[i].place;
+        }
+-->
+
+<!--
+    let trEl = document.querySelectorAll("tr");
+        let table_content = "";
+            for(let i = 0; i < 2; i++) {
+                table_content += "<tr><td>" +mountains[i].name+"</td></tr>";
+            }
+            // table_content += "</tr>";
+            trEl[1].innerHTML += table_content;
+
+-->
+
+<!--
+    let trEl = document.querySelector("table").querySelectorAll("tr");
+        for(let i = 0; i < 2; i++) {
+            let trEl = document.querySelectorAll("tr");
+            let tdTr = document.createElement("td");
+            tdTr.innerText =  mountains[i].name;
+            trEl[1].appendChild(tdTr);
+            tdTr = document.createElement("td");
+            tdTr.innerText = mountains[i].height;
+            trEl[1].appendChild(tdTr)
+            tdTr = document.createElement("td");
+            tdTr.innerText = mountains[i].place;
+            trEl[1].appendChild(tdTr)
+        }
+-->

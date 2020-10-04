@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabbed Interface</title>
+</head>
+
+<body>
+    <tab-panel>
+        <div data-tab_name="one">Tab One</div>
+        <div data-tab_name="two">Tab Two</div>
+        <div data-tab_name="three">Tab Three</div>
+        <div data-tab_name="four">Tab Four</div>
+    </tab-panel>
+</body>
+<script>
+    function asTabs(node) {
+        console.log(node.children, node.childNodes);
+        let tabs = Array.from(node.children).map(node => {
+            // let btn = document.createElement("button");
+            let butn = document.createElement("button");
+            // btn.textContent = node.getAttribute("data-tab_name");
+            butn.textContent = node.getAttribute("data-tab_name");
+            // let tab = { node, btn };
+            let tab = { node, butn };
+            console.log(tab);
+            // btn.addEventListener("click", () => selectTab(tab));
+            butn.addEventListener("click", () => selectTab(tab));
+            return tab;
+        });
+
+        let tabList = document.createElement("div");
+        for (let {butn} of tabs) tabList.appendChild(butn);
+        node.insertBefore(tabList, node.firstChild);
+        // for(let {btn} of tabs) tabList.appendChild(btn);
+        // node.insertBefore(tabList, node.firstChild);
+
+        function selectTab(tabSelected) {
+            for(let tab of tabs) {
+                let selected = tab === tabSelected;
+                tab.node.style.display = selected ? "" : "none";
+                // tab.btn.style.color = selected ? "teal" : "honeydew";
+                tab.butn.style.color = selected ? "teal" : "honeydew";
+            }
+        }
+        selectTab(tabs[0]);
+    }
+
+    asTabs(document.querySelector("tab-panel"));
+</script>
+
+</html>

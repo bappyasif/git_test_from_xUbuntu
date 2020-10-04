@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Trail</title>
+    <style>
+        .trail {
+            position: absolute;
+            height: 11px;
+            width: 11px;
+            border-radius: 8px;
+            background: teal;
+        }
+
+        body {
+            height: 350px;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        let trails = [];
+        for (let i = 0; i < 12; i++) {
+            let node = document.createElement("div");
+            // node.textContent = "🎈";
+            node.className = "trail";
+            document.body.appendChild(node);
+            trails.push(node);
+
+            setTimeout(() => {
+                node.textContent = "";
+                // trails.shift();
+            }, 200);
+
+        }
+
+        let currentTrail = 0;
+
+        window.addEventListener("mousemove", ev => {
+            let trail = trails[currentTrail];
+            trail.style.left = (ev.pageX - 8) + "px";
+            trail.style.top = (ev.pageY - 8) + "px";
+
+            currentTrail = (currentTrail + 1) % trails.length;
+
+            // setTimeout(() => {
+            //     currentTrail = 1;
+            //     trail.style.left = "";
+            //     trail.style.top = "";
+            //     trail.style.display = "none";
+            // }, 400);
+
+            // if(currentTrail === 11) {
+            //     currentTrail = 0;
+            // } else {
+            //     currentTrail++;
+            // }
+        });
+    </script>
+</body>
+
+</html>
+
+<!--
+
+    let trails = [];
+        for (let i = 0; i < 12; i++) {
+            let node = document.createElement("div");
+            // node.textContent = "🎈";
+            node.className = "trail";
+            document.body.appendChild(node);
+            trails.push(node);
+
+            setTimeout(() => {
+                node.textContent = "";
+                // trails.shift();
+            }, 200);
+
+        }
+
+        let currentTrail = 0;
+
+        window.addEventListener("mousemove", ev => {
+            let trail = trails[currentTrail];
+            trail.style.left = (ev.pageX - 8) + "px";
+            trail.style.top = (ev.pageY - 8) + "px";
+            
+            currentTrail = (currentTrail + 1) % trails.length;
+
+            // if(currentTrail === 11) {
+            //     currentTrail = 0;
+            // } else {
+            //     currentTrail++;
+            // }
+
+            // setTimeout(() => {
+            //     for (let j = trails.length; j > 1; j--) {
+            //         trails.pop();
+            //         trails.unshift();
+            //         trail.style.display = "none";
+            //     }
+            // }, 8000);
+            
+            // trail.textContent = "🎈";
+
+        });
+
+        // setTimeout(() => {
+        //     for (let j = trails.length; j > 0; j--) {
+        //         trails.pop(j);
+        //     }
+        // }, 110);
+
+            let trails = [];
+        for (let i = 0; i < 12; i++) {
+            let node = document.createElement("div");
+            node.textContent = "🎈";
+            node.className = "trail";
+            document.body.appendChild(node);
+            trails.push(node);
+
+            // setTimeout(() => {
+            //     node.textContent = "";
+            // }, 200);
+
+            // setTimeout(() => {
+            //     for(let j = trails.length; j > 0; j--) {
+            //         trails.pop(j);
+            //     }
+            // },110);
+        }
+
+        let currentTrail = 0;
+
+        window.addEventListener("mousemove", ev => {
+            let trail = trails[currentTrail];
+            trail.style.left = (ev.pageX - 8) + "px";
+            trail.style.top = (ev.pageY - 8) + "px";
+            currentTrail = (currentTrail + 1) % trails.length;
+
+            setTimeout(() => {
+                // trail.style.left = "";
+                // trail.style.top = "";
+                // trail.textContent = "🎈";
+
+            }, 110);
+            // trail.textContent = "🎈";
+
+        });
+
+        // setTimeout(() => {
+        //     for (let j = trails.length; j > 0; j--) {
+        //         trails.pop(j);
+        //     }
+        // }, 110);
+        
+            let trails = [];
+        for (let i = 0; i < 12; i++) {
+            let node = document.createElement("div");
+            node.textContent = "🎈";
+            node.className = "trail";
+            document.body.appendChild(node);
+            trails.push(node);
+        }
+
+        // setTimeout(() => {
+        //     trails = "";
+        //     document.querySelector(".trail").textContent = "🎈";
+        // }, 110);
+
+        let currentTrail = 0;
+
+        window.addEventListener("mousemove", ev => {
+            let trail = trails[currentTrail];
+            trail.style.left = (ev.pageX - 8) + "px";
+            trail.style.top = (ev.pageY - 8) + "px";
+            currentTrail = (currentTrail + 1) % trails.length;
+
+            // setTimeout(() => {
+            //     for(let i = trails.length; i > 0; i--) {
+            //         trails.pop();
+            //     }
+            // });
+
+            // setTimeout(() => {
+            //     // trails = "";
+            //     // trail.textContent = "🎈";
+            // }, 110);
+        });
+
+        
+
+        // window.addEventListener("mousemove", ev => {
+        //     let trail = document.createElement("div");
+        //     trail.className = "trail";
+        //     trail.style.left = (ev.pageX - 4) + "px";
+        //     trail.style.top = (ev.pageY - 4) + "px";
+        //     document.body.appendChild(trail);
+        // });
+-->

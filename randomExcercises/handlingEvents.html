@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handling Events</title>
+    <style>
+        body {
+            min-height: 200px;
+            background-color: beige;
+        }
+
+        .dot {
+            height: 11px;
+            width: 11px;
+            border-radius: 4px;
+            background: burlywood;
+            position: absolute;
+        }
+
+        touch {
+            position: absolute;
+            display: block;
+            border: 4px solid lightcoral;
+            height: 110px;
+            width: 110px;
+        }
+
+        #progress {
+            border-bottom: 2px solid blueviolet;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <button>Act Once</button>
+    <button id="btn2">Click Anyway</button>
+    <script>
+        let btn = document.querySelector("button");
+        btn.addEventListener("click", actedOnce);
+        function actedOnce() {
+            console.log("done");
+            btn.removeEventListener("click", actedOnce);
+        }
+
+        // Event Object
+        let btn2 = document.querySelector("#btn2");
+        btn2.addEventListener("mousedown", event => {
+            if (event.btn2 == 0) {
+                console.log("left");
+            } else if (event.btn2 == 1) {
+                console.log("middle");
+            } else if (event.btn2 == 2) {
+                console.log("right");
+            }
+        })
+    </script>
+    <!--Event propagation-->
+    <p>A paragraph with a <button id="btn">button</button>.</p>
+    <a href="https://theodinproject.com">The Odin Project!</a>
+    <script>
+        let para = document.querySelector("p");
+        btn = document.querySelector("#btn");
+        para.addEventListener("mousedown", () => console.log("Paragraph event"));
+        btn.addEventListener("mousedown", ev => {
+            console.log("Button event", ev.target.textContent);
+            if (ev.button == 1) ev.stopPropagation();
+        });
+        let link = document.querySelector("a");
+        link.addEventListener("click", ev => {
+            console.log(" Awesome Project ");
+            ev.preventDefault();
+        })
+    </script>
+    <!--Key events-->
+    <p id="keyEvents">This page turns when you hold V key</p>
+    <input type="text" placeholder="type anything">
+    <textarea name="text_area" id="textarea" cols="30" rows="10"></textarea>
+    <script>
+        para = document.querySelector("#keyEvents");
+        window.addEventListener("keydown", ev => {
+            if (ev.key === "v") {
+                para.style.background = "honeydew";
+            }
+            if (ev.key === "v" && ev.ctrlKey) {
+                para.style.background = "aqua";
+            }
+        });
+        window.addEventListener("keyup", ev => {
+            if (ev.key === "v") {
+                para.style.background = "";
+            }
+        });
+        window.addEventListener("input", () => {
+            console.log("input event");
+        });
+        window.addEventListener("input", ev => {
+            // if(ev.target === "input") {
+            //     console.log("from input");
+            // }
+            document.querySelector("input");
+            console.log(document.activeElement.tagName);
+
+            // if(ev.type === "textarea") {
+            //     consoel.log("from textarea");
+            // }
+        });
+    </script>
+    <!--Mouse events-->
+    <script>
+        // drawing program
+        window.addEventListener("click", ev => {
+            let dot = document.createElement("div");
+            dot.className = "dot";
+            dot.style.left = (ev.pageX - 8) + "px";
+            dot.style.top = (ev.pageY - 11) + "px";
+            document.body.appendChild(dot);
+        });
+    </script>
+    <!--Mouse motion-->
+    <p>Drag this bar to change it's width</p>
+    <div id="drag" style="background: chocolate; width: 65px; height: 40px;"></div>
+    <script>
+        let lastX; // track last observed mouse X position
+        let bar = document.querySelector("#drag");
+        bar.addEventListener("mousedown", ev => {
+            if (ev.button == 0) { // left most button of mouse is held down
+                lastX = ev.clientX;
+                window.addEventListener("mousemove", mousedMoved);
+                ev.preventDefault();
+            }
+        });
+
+        function mousedMoved(ev) {
+            if (ev.buttons === 0) { // which buttons(1-left,2-right,4-middle) are held down
+                window.removeEventListener("mousemove", mousedMoved)
+            } else {
+                let dist = ev.clientX - lastX;
+                let netWidth = Math.max(20, bar.offsetWidth + dist);
+                bar.style.width = netWidth + "px";
+                lastX = ev.clientX;
+            }
+        }
+    </script>
+    <!--Touch Events-->
+    <p>Touch anywhere within page</p>
+    <script>
+        function updateTouch(ev) {
+            for (let touch; touch = document.querySelector("touch");) {
+                touch.remove();
+            }
+
+            for (let i = 0; i < ev.touches.length; i++) {
+                let { pageX, pageY } = ev.touches[i];
+                let touch = document.createElement("touch");
+                touch.style.left = (pageX - 51) + "px";
+                touch.style.top = (pageY - 51) + "px";
+                document.body.appendChild(touch);
+            }
+        }
+
+        window.addEventListener("touchstart", updateTouch);
+        window.addEventListener("touchmove", updateTouch);
+        window.addEventListener("touchend", updateTouch);
+    </script>
+    <!--Scroll event-->
+    <div id="progress">Show It</div>
+    <script>
+        // creating content
+        document.body.appendChild(document.createTextNode("supercalifragilisticexpialidocius ".repeat(110)));
+
+        bar = document.querySelector("#progress");
+        window.addEventListener("scroll", () => {
+            let max = document.body.scrollHeight - innerHeight;
+            bar.style.width = `${pageYOffset / max * 100}%`;
+        });
+    </script>
+    <!--Focus events-->
+    <div id="focus">
+        <p>Name: <input type="text" data-help="your full name please"></p>
+        <p>Age: <input type="text" data-help="your age in years"></p>
+    </div>
+    <p id="help">show what??</p>
+    <script>
+        let help = document.querySelector("#help");
+        let fields = document.querySelector("#focus").querySelectorAll("input");
+        for(let field of Array.from(fields)) {
+            field.addEventListener("focus", ev => {
+                let text = ev.target.getAttribute("data-help");
+                help.textContent = text;
+            });
+            field.addEventListener("blur", ev => help.textContent = "");
+        }
+    </script>
+    <!--Timers functions-->
+    <div id="debouncing">
+        <textarea name="text" id="area" cols="11" rows="4"></textarea>
+        <div id="div_mouse" style="height: fit-content; width: max-content; background-color: chocolate;"></div>
+    </div>
+    <script>
+        // Set/Clear timeout
+        let bombTimer = setTimeout(() => {
+            console.log("Kabooom!!")
+        }, 560);
+
+        if(Math.random() < .5) {
+            console.log("Bomb Defused");
+            clearTimeout(bombTimer);
+        }
+
+        // Set/Clear interval
+        let ticks = 0;
+        let clock = setInterval(() => {
+            console.log("Tick Tock", ticks++);
+            if(ticks === 11) {
+                clearInterval(clock);
+                console.log("Timers stopped");
+            }
+        }, 400);
+
+        // Debouncing event
+        let text_area = document.querySelector("#debouncing").querySelector("textarea");
+        let timeout;
+        text_area.addEventListener("input", () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => console.log("Already typed!!"), 560);
+        });
+
+        // Slightly different
+        let scheduled = null;
+        window.addEventListener("mousemove", ev => {
+            if(!scheduled) {
+                setTimeout(() => {
+                    document.querySelector("#div_mouse").textContent = `Mouse at ${scheduled.pageX}, ${scheduled.pageY}`;
+                    scheduled = null;
+                }, 220);
+            }
+            scheduled = ev;
+        });
+    </script>
+</body>
+
+</html>

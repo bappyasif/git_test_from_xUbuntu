@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation Cool Excercises, Cat Animation Entended</title>
+</head>
+<style>
+    body {
+        min-height: 200px;
+    }
+</style>
+<body>
+    <img src="anotherKitty.png" alt="cat picture" id="cat" style="position: absolute;">
+    <img src="hatPics.png" alt="cat picture" id="hat" style="position: absolute;">
+
+    <script>
+        let cat = document.querySelector("#cat");
+        let hat = document.querySelector("#hat");
+
+        let angle = 0;
+        let endTime = null;
+
+        function animate(time) {
+            if (endTime !== null) {
+                angle += (time - endTime) * .001;
+            }
+            endTime = time;
+            cat.style.top = (Math.sin(angle) * 40 + 40) + "px";
+            cat.style.left = (Math.cos(angle) * 200 + 230) + "px";
+            // requestAnimationFrame(newTime => animate(newTime));
+
+            hat.style.bottom = (Math.cos(angle) * 200 + 230) + "px";
+            hat.style.right = (Math.sin(angle) * 40 + 40) + "px";
+            requestAnimationFrame(newTime => animate(newTime));
+        }
+        requestAnimationFrame(animate);
+    </script>
+</body>
+
+</html>

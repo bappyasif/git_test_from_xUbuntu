@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inflatable Balloon Until Kabooom</title>
+</head>
+
+<body>
+    <div id="container">
+        <p id="balloon">🎈</p>
+        <p id="burst"></p>
+        <!-- <p id="balloon" style="display: none;">🎈</p>
+        <p id="burst" style="display: none;">💥</p> -->
+    </div>
+
+    <script>
+        let container = document.querySelector("#container");
+        let balloon = container.querySelector("#balloon");
+        let burst = container.querySelector("#burst");
+        let size;
+        function setSize(newSize) {
+            size = newSize;
+            balloon.style.fontSize = size + "px";
+        }
+        setSize(20);
+
+        function handleArrow(event) {
+            if (event.key === "ArrowUp" || event.keyCode === 38) {
+                if (size > 100) {
+                    balloon.textContent = "";
+                    burst.textContent = "💥";
+
+                    setTimeout(() => {
+                        balloon.textContent = "🎈";
+                        burst.textContent = "";
+                    }, 2200);
+
+                } else {
+                    balloon.textContent = "🎈";
+                    setSize(size * 1.5);
+                }
+
+            } else if (event.key === "ArrowDown" || event.keyCode === 40) {
+                if (size < 30) {
+                    balloon.textContent = "🎈";
+                    
+                    setTimeout(() => {
+                        burst.textContent = "";
+                        balloon.style.fontSize = 22 + "px";
+                    }, 2200);
+
+                } else {
+                    burst.textContent = "";
+                    balloon.textContent = "🎈";
+                    setSize(size * .8);
+                }
+            }
+        }
+        window.addEventListener("keydown", handleArrow);
+    </script>
+</body>
+
+</html>
+
+<!--
+    let scaleCounter;
+        window.addEventListener("keydown", ev => {
+            if(ev.keyCode === 38) {
+                console.log("Up", scaleCounter);
+                scaleCounter = setTimeout(() => {
+                    balloon.style.display = "";
+                    scaleCounter++;
+                    balloon.style.fontSize = "20px";
+                    if(scaleCounter >= 6) {
+                        // balloon.style.fontSize = "11px";
+                        burst.style.display = "";
+                        clearTimeout(scaleCounter);
+                    }
+                });
+            }
+
+            if(ev.keyCode === 40) {
+                console.log("Down", scaleCounter);
+                scaleCounter =  setTimeout(() => {
+                    while(!scaleCounter) {
+                        balloon.style.fontSize = scaleCounter+"px";
+                        scaleCounter--;
+                        burst.style.display = "none";
+                    }
+                    // clearTimeout(scaleCounter);
+                });
+                clearTimeout(scaleCounter);
+            }
+        });
+
+    let emoji_size;
+        let max = 8;
+        let min = 0;
+        let emoji_shrink;
+        window.addEventListener("keydown", ev => {
+            if (ev.keyCode === 38) {
+                console.log("Arrow Up");
+                balloon.style.display = "";
+                
+                emoji_size = setTimeout(() => {
+                    // balloon.style.display = "";
+                    emoji_size++;
+                    console.log(emoji_size);
+                    balloon.style.fontSize = `${emoji_size / 2 * 100}%`;
+                    // balloon.style.fontSize = `${20/scaleUp*100}%`;
+                    if (emoji_size >= max) {
+                        clearTimeout(emoji_size);
+                        // balloon.style.display = "none";
+                        burst.style.display = "";
+                    }
+                    // burst.style.display = "none";
+                }, 110);
+                // burst.style.display = "none";
+            }
+        });
+
+        window.addEventListener("keydown", ev => {
+            if (ev.keyCode === 40) {
+                console.log("Arrow Down");
+
+                emoji_shrink = setTimeout(() => {
+                    emoji_shrink = emoji_size || max;
+                    emoji_shrink--;
+                    console.log(emoji_shrink);
+                    balloon.style.fontSize = `${20 / emoji_shrink * 100}%`;
+                    if (emoji_shrink === min) {
+                        // burst.style.display = "none";
+                        balloon.style.display = "";
+                        clearTimeout(emoji_shrink);
+                    }
+                }, 110)
+                // balloon.style.display = "";
+            }
+        });
+
+    let scaleUp;
+        let max = 8;
+        let min = 0;
+        let scaleDown;
+        window.addEventListener("keydown", ev => {
+            if (ev.keyCode === 38) {
+                console.log("Arrow Up");
+                balloon.style.display = "";
+                // let scaleUp;
+                scaleUp = setTimeout(() => {
+                    // balloon.style.display = "";
+                    scaleUp++;
+                    console.log(scaleUp);
+                    balloon.style.fontSize = `${scaleUp / 2 * 100}%`;
+                    // balloon.style.fontSize = `${20/scaleUp*100}%`;
+                    if (scaleUp >= max) {
+                        clearTimeout(scaleUp);
+                        balloon.style.display = "none";
+                        burst.style.display = "";
+                    }
+                    // burst.style.display = "none";
+                }, 110);
+                // burst.style.display = "none";
+            }
+        });
+
+        window.addEventListener("keydown", ev => {
+            if (ev.keyCode === 40) {
+                console.log("Arrow Down");
+                scaleDown = scaleUp;
+                scaleDown--;
+                scaleDown = setTimeout(() => {
+                    balloon.style.fontSize = `${20 / scaleDown * 100}%`;
+                    if (scaleDown === min) {
+                        burst.style.display = "none";
+                        balloon.style.display = "none";
+                        clearTimeout(scaleDown);
+                    }
+                }, 110)
+                // balloon.style.display = "";
+            }
+        });
+
+     // if(scaleUp === 4) {
+                //         clearTimeout(scaleUp);
+                //         balloon.style.display = "none";
+                //         burst.style.display = "";
+                //     }
+                // balloon.style.fontSize = `${pageYOffset/20 * 100}%`;
+                // setTimeout(() => balloon.style.fontSize = `${pageYOffset/2 *100}%`, 0);
+
+
+            let time_count = 0;
+                let scaleUp = setTimeout(() => {
+                    // balloon.style.display = "";
+                    time_count++;
+                    console.log(time_count);
+                    balloon.style.fontSize = `${time_count/2*100}%`;
+                    // balloon.style.fontSize = `${20/scaleUp*100}%`;
+                    if(time_count === 4) {
+                        clearTimeout(scaleUp);
+                        balloon.style.display = "none";
+                        burst.style.display = "";
+                    }
+                    burst.style.display = "none";
+                },110);
+-->

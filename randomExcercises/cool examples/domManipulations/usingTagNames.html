@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation Cool Excercises, Using Tag Names</title>
+</head>
+
+<body>
+    <h1>Heading with a <span>span</span> element.</h1>
+    <p>A paragraph with <span>one</span>, <span>two</span> spans.</p>
+</body>
+<script>
+    function byTagName(node, tagName) {
+        if(node.nodeType === Node.ELEMENT_NODE) {
+            return node.getElementsByTagName(tagName);
+        } else {
+            return false;
+        }
+        // return node.getElementsByTagName(tagName);
+    }
+    console.log(byTagName(document.body, "h1").length);
+    console.log(byTagName(document.body, "span").length);
+    let para = document.querySelector("p");
+    console.log(byTagName(para, "span").length);
+</script>
+</html>

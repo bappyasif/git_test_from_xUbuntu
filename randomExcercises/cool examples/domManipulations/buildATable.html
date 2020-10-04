@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation Cool Excercises, Building A Table</title>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Height</th>
+            <th>Place</th>
+        </tr>
+        <tr>
+            <td>AAAA</td>
+            <td>BBBB</td>
+            <td>CCCC</td>
+        </tr>
+    </table>
+    <h2>Mountains</h2>
+    <div id="mountains"></div>
+    <script>
+        let mountains = [
+            { name: "Kilimanjaro", height: 5895, place: "Tanzania" },
+            { name: "Everest", height: 8848, place: "Nepal" },
+            { name: "Mount Fuji", height: 3376, place: "Japan" },
+            { name: "Vaalserberg", height: 323, place: "Netherlands" },
+            { name: "Denali", height: 6168, place: "United States" },
+            { name: "Popacatepetl", height: 5465, place: "Mexico" },
+            { name: "Mont Blanc", height: 4808, place: "Italy/France" },
+        ];
+
+        let table = document.createElement("table");
+        document.body.appendChild(table);
+        table.style.border = "2px dashed";
+
+        let table_header_name = document.createElement("th");
+        table_header_name.innerHTML = `</th>Name</th>`;
+        table_header_name.style.width = "200px";
+        table_header_name.style.border = "2px solid";
+        
+        let table_header_height = document.createElement("th");
+        table_header_height.innerHTML += `</th>Height</th>`;
+        table_header_height.style.width = "200px";
+        table_header_height.style.border = "2px solid";
+
+        let table_header_place = document.createElement("th");
+        table_header_place.innerHTML += `</th>Place</th>`;
+        table_header_place.style.width = "200px";
+        table_header_place.style.border = "2px solid";
+
+        table.appendChild(table_header_name);
+        table.appendChild(table_header_height);
+        table.appendChild(table_header_place);
+        
+        for (let i = 0; i < mountains.length; i++) {
+            let table_row = document.createElement("tr");
+
+            let cell_name = document.createElement("td");
+            cell_name.textContent = mountains[i].name;
+            cell_name.style.textAlign = "right";
+            cell_name.style.border="dotted 2px";
+            table_row.appendChild(cell_name);
+
+            let cell_height = document.createElement("td");
+            cell_height.textContent = mountains[i].height;
+            cell_height.style.textAlign = "right";
+            cell_height.style.border="dotted 2px";
+            table_row.appendChild(cell_height);
+
+            let cell_place = document.createElement("td");
+            cell_place.textContent = mountains[i].place;
+            cell_place.style.textAlign = "right";
+            cell_place.style.border="dotted 2px";
+            table_row.appendChild(cell_place);
+
+            table.appendChild(table_row);
+        }
+
+    </script>
+</body>
+
+</html>
+
+<!--
+
+            let table = document.createElement("table");
+        document.body.appendChild(table);
+
+        let table_header_name = document.createElement("th");
+        table_header_name.innerHTML = `</th>Name</th>`;
+        
+        let table_header_height = document.createElement("th");
+        table_header_height.innerHTML += `</th>Height</th>`;
+
+        let table_header_place = document.createElement("th");
+        table_header_place.innerHTML += `</th>Place</th>`;
+        // table_header.style.fontSize = "40px";
+        // table_header.style.width = "200px";
+
+
+        table.appendChild(table_header_name);
+        table.appendChild(table_header_height);
+        table.appendChild(table_header_place);
+        for (let i = 0; i < mountains.length; i++) {
+            let table_row = document.createElement("tr");
+            let cell = document.createElement("td");
+
+            cell.style.textAlign = "right";
+            // table_row.style.fontSize = "20px";
+
+            cell.innerHTML += `${mountains[i].name}`
+
+            cell.innerHTML += `${mountains[i].height}`
+
+            cell.innerHTML += `${mountains[i].place}`;
+
+            table_row.appendChild(cell);
+            document.body.appendChild(table_row);
+            table.appendChild(table_row);
+            // table_header.appendChild(table_row);
+        }
+
+            let cells = document.getElementsByTagName("td");
+        let table_row1 = document.getElementsByTagName("tr")[1];
+
+        // another approach
+        // let table_header = document.createElement("th");
+        let table = document.createElement("table");
+        // table.style.display="grid";
+        // table.style.display="flex";
+        // table.style.flexDirection="Column";
+        
+        document.body.appendChild(table);
+
+        let table_header = document.createElement("th");
+        // table_header.style.width = "200px";
+        table_header.innerHTML += `</th>Name</th>`;
+        table_header.innerHTML += `</th>Height</th>`;
+        table_header.innerHTML += `</th>Place</th>`;
+        table.appendChild(table_header);
+
+        for (let i = 0; i < mountains.length; i++) {
+            let table_row = document.createElement("tr");
+            let cell = document.createElement("td");
+            // cell.style.columnWidth = "200px";
+
+            // let table_header = document.createElement("th");
+            // table_header.innerHTML += `</th>Name</th>`;
+
+            // let table_header = document.createElement("th");
+            // table_header.innerHTML += `</th>Name</th>`;
+            // table_header.innerHTML += `</th>Height</th>`;
+            // table_header.innerHTML += `</th>Place</th>`;
+
+            cell.innerHTML += `<td>${mountains[i].name}</td>`
+            cell.style.marginRight="20px";
+            // table_header.innerHTML += `</th>Height</th>`;
+            cell.innerHTML += `<td>${mountains[i].height}</td>`
+            // table_header.innerHTML += `</th>Place</th>`;
+            cell.innerHTML += `<td>${mountains[i].place}</td>`;
+
+            // cell.appendChild(table_header);
+            table_row.appendChild(cell);
+            // table_row.style.display = "flex";
+            // table_row.style.flexDirection = "row";
+            document.body.appendChild(table_row);
+            // table.appendChild(table_header);
+            table.appendChild(table_row);
+        }
+
+            // for(let i = 0; i < mountains.length; i++) {
+        //     table_row.innerHTML = `
+        //         <td>${mountains[i].name}</td>
+        //         <td>${mountains[i].height}</td>
+        //         <td>${mountains[i].place}</td>
+        //     `;
+        //     // table_row.appendChild(table_row);
+        // }
+
+            for (let i = 0; i < mountains.length; i++) {
+            for (let j = i; j < cells.length; j++) {
+                let cell = cells[i,j];
+                cell.innerText = mountains[i].name;
+                cell.innerText = mountains[i].height;
+                cell.innerText = mountains[i].place;
+            }
+        }
+
+    let table = document.querySelector("table");
+        for(let i = 0; i < mountains.length; i++) {
+            table.insertRow(i).insertCell(i).innerHTML = mountains[i].name;
+            table.insertRow(i).insertCell(i).innerHTML = mountains[i].height;
+            table.insertRow(i).insertCell(i).innerHTML = mountains[i].place;
+        }
+-->
+
+<!--
+    let trEl = document.querySelectorAll("tr");
+        let table_content = "";
+            for(let i = 0; i < 2; i++) {
+                table_content += "<tr><td>" +mountains[i].name+"</td></tr>";
+            }
+            // table_content += "</tr>";
+            trEl[1].innerHTML += table_content;
+
+-->
+
+<!--
+    let trEl = document.querySelector("table").querySelectorAll("tr");
+        for(let i = 0; i < 2; i++) {
+            let trEl = document.querySelectorAll("tr");
+            let tdTr = document.createElement("td");
+            tdTr.innerText =  mountains[i].name;
+            trEl[1].appendChild(tdTr);
+            tdTr = document.createElement("td");
+            tdTr.innerText = mountains[i].height;
+            trEl[1].appendChild(tdTr)
+            tdTr = document.createElement("td");
+            tdTr.innerText = mountains[i].place;
+            trEl[1].appendChild(tdTr)
+        }
+-->

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Capture, Propagation and Bubbling</title>
+    <style>
+        html {
+            box-sizing: border-box;
+        }
+
+        div {
+            width: 100%;
+            padding: 100px;
+        }
+
+        .one {
+            background: cornflowerblue;
+        }
+
+        .two {
+            background: darkcyan;
+        }
+
+        .three {
+            background: darkred;
+        }
+    </style>
+</head>
+<body class="body">
+    <div class="one">
+        <div class="two">
+            <div class="three">
+                Click Here And Observe
+            </div>
+        </div>
+    </div>
+    <button>Click</button>
+    
+    <script>
+        let divEls = document.querySelectorAll("div");
+        let btn = document.querySelector("button");
+        function classTxt(ev) {
+            // divEls.forEach(div => console.log(div.classList.value));
+            // console.log(ev.classList.value);
+            console.log(this.classList.value);
+            // ev.stopPropagation();
+        }
+        divEls.forEach(div => div.addEventListener("click", classTxt));
+        // document.body.addEventListener("click", classTxt);
+        
+        // divEls.forEach(div => div.addEventListener("click", classTxt, {capture: false}));
+
+        divEls.forEach(div => div.addEventListener("click", classTxt, {capture: false, once: true}));
+
+        // divEls.forEach(div => div.addEventListener("click", classTxt, {capture: true}));
+
+        btn.addEventListener("click", () => {
+            console.log("clicked");
+            btn.textContent = "Clicked!!"
+        }, {
+            once: true
+        });
+    </script>
+</body>
+</html>

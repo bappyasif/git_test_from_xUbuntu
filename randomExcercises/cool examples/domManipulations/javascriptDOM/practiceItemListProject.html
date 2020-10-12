@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>Practicec Item Lister Project</title>
+</head>
+
+<body>
+    <header id="main-header" class="bg-success text-white p-4 mb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 id="header-title">Item Lister</h2>
+                </div>
+                <div class="col-md-6 align-self-center">
+                    <input type="text" class="from-control" id="filter" placeholder="Search items">
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div id="main" class="card card-body">
+            <h4 class="title">Add Items</h4>
+            <form id="add-form" action="" class="form-inline mb-3">
+                <input type="text" class="form-control mr-2" id="item">
+                <select class="form-control mr-2">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <input type="submit" value="Submit" class="btn btn-dark">
+            </form>
+            <h4 class="title">Items List</h4>
+            <ul id="items" class="list-group">
+                <li class="list-group-item">Item 01 <button class="btn btn-danger btn-sm float-right delete">X</button>
+                </li>
+                <li class="list-group-item">Item 02 <button class="btn btn-danger btn-sm float-right delete">X</button>
+                </li>
+                <li class="list-group-item">Item 03 <button class="btn btn-danger btn-sm float-right delete">X</button>
+                </li>
+                <li class="list-group-item">Item 04 <button class="btn btn-danger btn-sm float-right delete">X</button>
+                </li>
+            </ul>
+        </div>
+
+        <script>
+            let form = document.getElementById("add-form");
+            let item_list = document.getElementById("items");
+            let filter = document.getElementById("filter");
+
+            // filter keyup event handler
+            filter.addEventListener("keyup", filterItems);
+
+            // form submit event handler
+            form.addEventListener("submit", addItem);
+
+            function addItem(ev) {
+                ev.preventDefault();
+
+                // get input value from form field
+                let new_item = document.getElementById("item").value;
+
+                // create new li element
+                let li_elem = document.createElement("li");
+
+                // Adding class
+                li_elem.className = "list-group-item";
+
+                li_elem.appendChild(document.createTextNode(new_item));
+                // create delete button element
+                let del_btn = document.createElement("button");
+
+                // adding classes to del_btn
+                del_btn.className = "btnn btn-danger btn-sm float-right delete"
+                // Delete button text node
+                // del_btn.appendChild(document.createTextNode("X"));
+                del_btn.textContent = "X";
+
+                // Append button to li
+                li_elem.appendChild(del_btn);
+                // Append li to list
+                item_list.appendChild(li_elem);
+            }
+
+            // delete event
+            item_list.addEventListener("click", removeItem);
+
+            function removeItem(ev) {
+                if (ev.target.classList.contains("delete")) {
+                    console.log("yeah");
+                    if (confirm("Are you sure ?")) {
+                        // li element from list
+                        let li = ev.target.parentNode;
+                        // removing li from ul
+                        item_list.removeChild(li);
+                    }
+                }
+            }
+
+            // filter items
+            function filterItems(ev) {
+                // using regex
+                let regExp =  new RegExp(`[${ev.target.value}]`, 'i');
+                // get ul li elemnts
+                let items = item_list.getElementsByTagName("li");
+                // Convert it to an array
+                Array.from(items).forEach(item => {
+                    let item_name = item.firstChild.textContent;
+                    if(regExp.test(item_name) || !ev.target.value) {
+                        item.style.display = "block-inline";
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+            }
+        </script>
+</body>
+
+</html>
+
+<!--
+     // optimised search
+            function doesFilterMatchTarget(ev, filter) {
+                filter = filter.toLowerCase();
+                if(filter.length === -1) return false;
+                let curentTarget = ev.target.value;
+                for (let i = 0; i < filter.length; i++) {
+                    curentTarget = this.updateSearchPhrase(curentTarget, filter[i]);
+                    if (curentTarget === null) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function updateSearchPhrase(curentTarget, letterToSearchFor) {
+                let index = curentTarget.search(letterToSearchFor);
+                if (index === -1) return null
+                return curentTarget.substring(index + 1, curentTarget.length);
+            }
+
+            // filter items
+            function filterItems(ev) {
+                // converting text to lowerCase
+                let text = ev.target.value.toLowerCase();
+                // get ul li elemnts
+                let items = item_list.getElementsByTagName("li");
+                // Convert it to an array
+                Array.from(items).forEach(item => {
+                    let item_name = item.firstChild.textContent;
+                    // // console.log(item_name);
+                    // doesFilterMatchTarget(item);
+
+                    if(doesFilterMatchTarget(ev, item_name)) {
+                        item.style.display = "block-inline";
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+            }
+
+    // filter items
+            function filterItems(ev) {
+                // converting text to lowerCase
+                let text = ev.target.value.toLowerCase();
+                // get ul li elemnts
+                let items = item_list.getElementsByTagName("li");
+                // Convert it to an array
+                Array.from(items).forEach(item => {
+                    let item_name = item.firstChild.textContent;
+                    // // console.log(item_name);
+                    // if(item_name.toLowerCase().indexOf(text) !== -1) {
+                    //     item.style.display = "block-inline";
+                    // } else {
+                    //     item.style.display = "none";
+                    // }
+                    let curentTarget = ev.target;
+                    for (let i = 0; i < item.length; i++) {
+                        curentTarget = ev.updateSearchPhrase(curentTarget, item[i]);
+                        if (curentTarget === null) {
+                            return false;
+                        }
+                        return true;
+                    }
+                    // return true;
+                    function updateSearchPhrase(curentTarget, letterToSearchFor) {
+                        let index = curentTarget.search(letterToSearchFor);
+                        if (index === -1) return null
+                        return curentTarget.substring(index + 1, curentTarget.length);
+                    }
+                });
+
+                // function updateSearchPhrase(curentTarget, letterToSearchFor) {
+                //     let index = curentTarget.search(letterToSearchFor);
+                //     if(index === -1) return null
+                //     return curentTarget.substring(index+1, curentTarget.length);
+                // }
+            }
+
+
+    let form = document.getElementById("add-form");
+            let item_list = document.getElementById("items");
+            let filter = document.getElementById("filter");
+
+            // filter keyup event handler
+            filter.addEventListener("keyup", filterItems);
+
+            // form submit event handler
+            form.addEventListener("submit", addItem);
+
+            function addItem(ev) {
+                console.log(ev.target);
+                ev.preventDefault();
+
+                // get input value from form field
+                let new_item = document.getElementById("item").value;
+                // create new li element
+                let li_elem = document.createElement("li");
+                // Adding class
+                li_elem.className = "list-group-item";
+                console.log(li_elem);
+                li_elem.appendChild(document.createTextNode(new_item));
+                // item_list.appendChild(li_elem);
+                // create delete button element
+                let del_btn = document.createElement("button");
+                // adding classes to del_btn
+                del_btn.className = "btnn btn-danger btn-sm float-right delete"
+                // Delete button text node
+                // del_btn.appendChild(document.createTextNode("X"));
+                del_btn.textContent = "X";
+                // Append button to li
+                li_elem.appendChild(del_btn);
+                // Append li to list
+                item_list.appendChild(li_elem);
+            }
+
+            // delete event
+            item_list.addEventListener("click", removeItem);
+
+            function removeItem(ev) {
+                if (ev.target.classList.contains("delete")) {
+                    console.log("yeah");
+                    if (confirm("Are you sure ?")) {
+                        // li element from list
+                        let li = ev.target.parentNode;
+                        // removing li from ul
+                        item_list.removeChild(li);
+                    }
+                }
+            }
+
+            // filter items
+            function filterItems(ev) {
+                // converting text to lowerCase
+                let text = ev.target.value.toLowerCase();
+                // console.log(text);
+                // get ul li elemnts
+                let items = item_list.getElementsByTagName("li");
+                // Convert it to an array
+                Array.from(items).forEach(item => {
+                    let item_name = item.firstChild.textContent;
+                    // console.log(item_name);
+                    if(item_name.toLowerCase().indexOf(text) !== -1) {
+                        item.style.display = "block-inline";
+                    } else {
+                        item.style.display = "none";
+                    }
+
+                    // if (item_name.toLowerCase().contains(item_name.toLowerCase().split("").filter(ch => ch.indexOf(text) !== -1))) {
+                    //     item.style.display = "block-inline";
+                    // } else {
+                    //     item.style.display = "none";
+                    // }
+
+                    // if(item_name.toLowerCase().split("").filter(ch => ch.indexOf(text))) {
+                    //     item.style.display = "block";
+                    // } else {
+                    //     item.style.display = "none";
+                    // }
+                });
+            }
+-->

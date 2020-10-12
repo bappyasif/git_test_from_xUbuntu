@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objects Basics</title>
+</head>
+<body>
+    <script>
+        let user = new Object(); // object constructor
+        user = {}; // object literal
+        user = {  // user object with name and age properties in it.
+            name: "Jane",  // identifier : value
+            age: 29  // identifier : value
+        }
+        console.log(user.name, user.age); // values are accessible using dot notation
+        user.isAdmin =  true; // values can be of any type
+        console.log(user);
+        delete user.isAdmin;  // to remove a property use delte keyword infront
+        console.log(user);
+        user["like birds"] = true;  // for multi words identifier square bracket notation is used
+        console.log(user);
+        delete user["like birds"];
+        console.log(user);
+        let key = "like birds";
+        // user.key = true;
+        user[key] = true;
+        console.log(user);
+        key = prompt("something about user object : ", "gender");
+        user[key] = true; // key can be calculated at runtimes
+        // user[key] = prompt("something about user object : ", "gender");
+        console.log(user);
+        key = prompt("something about user object : ", "gender");
+        console.log(user[key], user.key); // square bracket notation works this was but not dot notation
+
+        // computed properties
+        let fruit = prompt("Which fruit to buy?", "pears");
+        let bag = {
+            [fruit]: 5  // property name should be taken from fruit prompt
+        }
+        console.log(bag.pears) // 5 if fruit="pears"
+        bag = {
+            [fruit+"Basket"]: 5 // square brackets re much more powerful than dot notation
+        }
+        console.log(bag, bag["pears"],bag["pearsBasket"]);
+
+        //property key:value shorthand
+        function makeUser(name, age) { // when properties has same names as variables
+            return {
+                name,
+                age
+            }
+        }
+        user = makeUser("Jane", 22);
+        console.log(user);
+        function anotherUser(name) { // we can also use combination of both properties
+            return {
+                name,
+                age: 29
+            }
+        }
+        user = anotherUser("Joan");
+        console.log(user);
+
+        // property names limitation
+        let obj = { // object property has no such reserved word restrictions
+            for: 1,
+            let: 2,
+            else: 3,
+            return: 4,
+            1: "test",  // 1 becomes a string "1" when used as a property key
+            __proto__: 6  // except for __proto__, no non object value can be set, there are ways to fix these as well
+        };
+        console.log(obj, obj.let+obj.else, obj[1], obj["1"], obj.__proto__);
+
+        // objects using "in" operator
+        console.log("name" in user, "what now" in user); // property name must be infront of "in" usually a quoted string 
+        key = "age";
+        console.log(key in user, user.age in user);
+
+        // using for..in loop
+        for(let key in user) console.log(key, user.key, user[key]);
+
+        // ordered like an object
+        let codes = {
+            "44": "Great Britain",
+            "41": "Switzerland" ,
+            "1": "USA",
+            "49": "Germany",
+            "region": "west",
+            planet: "Earth",
+            "+44": "Great Britain",
+            "+41": "Switzerland" ,
+            "+1": "USA",
+            "+49": "Germany",
+        };
+        for(let code in codes) console.log(code); // integer properties are sorted others appears as creation order
+    </script>
+
+    <script>
+        // task 01
+        user = {};
+        user.name = "jane";
+        user.surname = "Doe";
+        user["name"] = "Amanda";
+        delete user.name;
+        console.log(user);
+
+        // task 02
+        let schedule = {};
+        console.log(isEmpty(schedule)); // true
+        schedule["08:30"] = "Do Stuff";
+        console.log(isEmpty(schedule)); // false
+
+        function isEmpty(obj) {
+            // for(let key in obj) console.log(key);
+            for(let key in obj) return false
+            return true;
+        }
+
+        // task 03
+        let salaries = {
+            jane: 110,
+            doe: 160,
+        }
+        let sum = 0;
+        for(let key in salaries) sum += salaries[key];
+        console.log(sum);
+        // function sumSalaries(obj) {
+        //     for(let key in obj) {
+        //         sum = obj.jane + obj.jane;
+        //         console.log(sum);
+        //     }
+        //     console.log(sum)
+        // }
+        // sumSalaries(salaries);
+
+        // task 04
+        let menu = {
+            width: 200,
+            height: 300,
+            title: "Some Menu"
+        };
+        console.log(multiplyNumeric(menu));
+
+        function multiplyNumeric(obj) {
+            for(let key in obj) {
+                console.log(typeof(obj[key]))
+                if(typeof(obj[key]) == "number") {
+                    // obj[key] *= 2;
+                    obj[key] = obj[key] * 2;
+                    // obj[key] = obj[key] * 2;
+                }
+            }
+            // return obj;
+        }
+        console.log(menu.width, menu.height, menu);
+    </script>
+</body>
+</html>

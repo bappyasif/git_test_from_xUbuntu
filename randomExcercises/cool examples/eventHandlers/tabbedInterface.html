@@ -19,6 +19,39 @@
     function asTabs(node) {
         console.log(node.children, node.childNodes);
         let tabs = Array.from(node.children).map(node => {
+            let btn = document.createElement("button");
+            btn.textContent = node.getAttribute("data-tab_name");
+            let tab = {node, btn};
+            console.log(tab);
+            btn.addEventListener("click", () => selectedTab(tab));
+            return tab;
+        });
+
+        function selectedTab(tabSelected) {
+            for(let tab of tabs) {
+                let selected = tab === tabSelected;
+                tab.node.style.display = selected ? "" : "none";
+                tab.btn.style.color = selected ? "teal" : "honeydew";
+                tab.btn.style.background = selected ? "silver" : "black";
+            }
+        }
+        selectedTab(tabs[0]);
+        
+        let tabList = document.createElement("div");
+        for(let {btn} of tabs) tabList.appendChild(btn);
+
+        node.insertBefore(tabList, node.firstChild);
+    }
+
+    asTabs(document.querySelector("tab-panel"));
+</script>
+
+</html>
+
+<!--
+    function asTabs(node) {
+        console.log(node.children, node.childNodes);
+        let tabs = Array.from(node.children).map(node => {
             // let btn = document.createElement("button");
             let butn = document.createElement("button");
             // btn.textContent = node.getAttribute("data-tab_name");
@@ -49,6 +82,4 @@
     }
 
     asTabs(document.querySelector("tab-panel"));
-</script>
-
-</html>
+-->

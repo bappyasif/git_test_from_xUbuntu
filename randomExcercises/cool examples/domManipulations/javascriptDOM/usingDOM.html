@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>JavaScript DOM Example Item Lister</title>
+</head>
+
+<body>
+    <header id="main-header" class="bg-success text-white p-4 mb-3">
+        <div class="container">
+            <div id="header-title">
+                <h4>Item Lister <span style="display: none;">123</span></h4>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div id="main" class="card card-body">
+            <h4 class="title">Add Items</h4>
+            <form action="" class="form-inline mb-3">
+                <input type="text" class="form-control mr-2">
+                <select class="form-control mr-2">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <input type="submit" value="Submit" class="btn btn-dark">
+            </form>
+            <h4 class="title">Items List</h4>
+            <ul id="items" class="list-group">
+                <li class="list-group-item">Item 01</li>
+                <li class="list-group-item">Item 02</li>
+                <li class="list-group-item">Item 03</li>
+                <li class="list-group-item">Item 04</li>
+            </ul>
+            <span></span>
+            <div id="output"></div>
+            <button id="btn" class="btn btn-dark btn-block" onclick="clickFunction()">Click Here</button>
+            <button id="button" class="btn btn-dark">Click Again</button>
+        </div>
+        <hr>
+        <div id="box" style="width: 440px; height: 440px; background: #f4f4f4;">
+            <h4>Move Mouse</h4>
+        </div>
+    </div>
+
+    <script>
+        // console.dir(document);
+        // Examine DOCUMENT OBJECT MODEL
+        console.log(document.domain);
+        console.log(document.URL);
+        console.log(document.title);
+        // document.title = "what what";
+        console.log(document.doctype);
+        console.log(document.head);
+        console.log(document.body);
+        console.log(document.all);
+        console.log(document.all[11]);
+        // document.all[11].textContent = "nope nope"; // not suitable for calling
+        console.log(document.forms);
+        console.log(document.links);
+        console.log(document.forms[0]);
+    </script>
+
+    <script>
+        // Selectors Methods
+        // console.log(document.getElementById("header-title"));
+        let header_title = document.getElementById("header-title");
+        let header_elem = document.getElementById("main-header");
+
+        console.log(header_title);
+        // header_title.textContent = "Changed Header";
+        console.log(header_title.textContent);
+        console.log(header_title.innerText);
+
+        header_title.innerHTML = "<h2>Changed Header</h2>"
+        header_title.style.borderTop = "2px solid white";
+        header_elem.style.borderBottom = "2px solid black";
+    </script>
+
+    <script>
+        // ClassName Selector
+        let items = document.getElementsByClassName("list-group-item");
+        console.log(items);
+        console.log(items[1]);
+        items[2].textContent = "Text Changed";
+        items[2].style.fontWeight = "bold";
+        items[2].style.background = "honeydew";
+
+        // items.style.background = "red";
+        Array.from(items).forEach(item => item.style.background = "honeydew");
+
+        // TagName Selector
+        let liEl = document.getElementsByTagName("li");
+        console.log(liEl);
+        console.log(liEl[2]);
+        liEl[3].textContent = "Li Changed";
+        liEl[3].style.fontWeight = "bold";
+        liEl[3].style.background = "yellow";
+
+        // items.style.background = "red";
+        Array.from(liEl).forEach(item => item.style.background = "honeydew");
+
+        // querySelector querySelectorAll
+        let header = document.querySelector("#main-header");
+        header.style.borderTop = "dashed 4px yellow";
+
+        let input = document.querySelector("input");
+        input.value = "Enter List Item Text";
+
+        let submit = document.querySelector("input[type='submit']");
+        submit.value = "Add To Item List";
+
+        let list_group = document.querySelector(".list-group-item");
+        list_group.style.color = "aqua";
+
+        let last_item = document.querySelector(".list-group-item:last-child");
+        last_item.style.color = "aqua";
+
+        let second_item = document.querySelector(".list-group-item:nth-child(2)");
+        second_item.style.color = "cyan";
+
+        let titles = document.querySelectorAll(".title");
+        console.log(titles[0].textContent, titles[1].textContent);
+
+        let odd_nodes = document.querySelectorAll("li:nth-child(odd)");
+        Array.from(odd_nodes).forEach(item => item.style.border = "2px solid yellow");
+
+        let even_nodes = document.querySelectorAll("li:nth-child(even)");
+        Array.from(even_nodes).forEach(item => item.style.border = "2px solid green");
+    </script>
+
+    <script>
+        // Traversing Nodes
+        let item_list = document.querySelector("#items");
+        console.log(item_list.parentNode);
+        item_list.parentNode.style.background = "#f4f4f4";
+        console.log(item_list.parentNode.parentNode.parentElement);
+
+        console.log(item_list.childNodes, item_list.children);
+        console.log(item_list.children[1].textContent);
+        // item_list.firstChild.style.color = "White";
+        item_list.firstElementChild.style.color = "Yellow";
+        item_list.lastElementChild.style.color = "Green";
+
+        console.log(item_list.nextSibling, item_list.nextElementSibling);
+        console.log(item_list.previousSibling, item_list.previousElementSibling);
+        item_list.previousElementSibling.style.fontSize = "44px";
+    </script>
+
+    <script>
+        // Creating elelments
+        let new_div = document.createElement("div");
+        console.log(new_div);
+        new_div.classList.add = "hello";
+        new_div.className = "howdy";
+        console.log(new_div.className);
+        new_div.id = "id01";
+        console.log(new_div.id);
+        new_div.setAttribute("class", "hello");
+        console.log(new_div);
+        let new_div_txt = document.createTextNode("Added Text");
+        new_div.appendChild(new_div_txt);
+        console.log(new_div);
+        let container = document.querySelector("header .container");
+        let h1 = document.querySelector("header h4");
+        container.insertBefore(new_div, h1);
+    </script>
+
+    <script>
+        // Handling events
+        function clickFunction() {
+            // alert("clicked!!");
+            // header_title.textContent = "Event Text";
+            header_title.style.color = "coral"
+        }
+
+        function anotherClickFunction(ev) {
+            console.log(ev.target);
+            console.log(ev.target.id, ev.target.className, ev.target.classList);
+            let output = document.getElementById("output");
+            let span = document.querySelectorAll("span")[0];
+            output.innerHTML = "<h4>Event Text</h4>";
+            output.innerHTML = ev.clientX + "+" + ev.clientY
+            output.innerHTML += ">>" + ev.offsetX + " : : " + ev.offsetY
+            span.textContent = ev.altKey;
+            span.textContent = ev.ctrlKey;
+        }
+
+        let btn = document.querySelector("#button");
+        btn.addEventListener("click", anotherClickFunction);
+
+        btn.addEventListener("lclick", runEvent);
+        btn.addEventListener("dblclick", runEvent);
+        btn.addEventListener("mousedown", runEvent);
+        btn.addEventListener("moouseup", runEvent);
+
+        let box = document.getElementById("box");
+        box.addEventListener("mouseenter", runEvent);
+        box.addEventListener("mouseleave", runEvent);
+        box.addEventListener("mouseover", runEvent);
+        box.addEventListener("mouseout", runEvent);
+        box.addEventListener("mousemove", runEvent);
+
+        input = document.querySelector("input[type='text']");
+        let form = document.querySelector("form");
+        input.addEventListener("keydown", runEvent);
+        input.addEventListener("keyup", runEvent);
+        input.addEventListener("keypress", runEvent);
+        input.addEventListener("focus", runEvent);
+        input.addEventListener("blur", runEvent);
+        input.addEventListener("cut", runEvent);
+        input.addEventListener("paste", runEvent);
+        input.addEventListener("input", runEvent);
+
+        function runEvent(ev) {
+            ev.preventDefault();
+            console.log("Event Type: ", ev.type);
+            output.innerHTML = "<h4>Mouse X: "+ev.offsetX + "</h4><h4>Mouse Y: "+ev.offsetY+"</h4>";
+            box.style.background = `rgb(${ev.offsetX}, ${ev.offsetY}, 40)`;
+            console.log(ev.target.value);
+            let span = document.querySelector("span");
+            span.textContent += ev.target.value;
+            // ev.preventDefault();
+        }
+
+        let select = document.querySelector("select");
+        select.addEventListener("change", runEvent);
+        select.addEventListener("input", runEvent);
+
+        form = document.querySelector("form");
+        form.addEventListener("submit", runEvent);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Animation</title>
+    <style>
+        #container {
+            width: 440px;
+            height: 440px;
+            position: relative;
+            background-color: darkslateblue;
+        }
+        #animate {
+            width: 56px;
+            height: 56px;
+            position: absolute;
+            background: dodgerblue;
+        }
+    </style>
+</head>
+<body>
+    <p><button onclick="squareMove()">Click Here</button></p>
+    <div id="container"> What now
+        <div id="animate"></div>
+    </div>
+
+    <script>
+        function squareMove() {
+            let elem = document.getElementById("animate");
+            let pos = 0;
+            let id = setInterval(animationFrame,5);
+            function animationFrame() {
+                if(pos === 382) {
+                    clearInterval(id);
+                } else {
+                    pos++;
+                    elem.style.top = pos+"px";
+                    elem.style.left = pos+"px";
+                    elem.innerHTML = pos+"px";
+                }
+            }
+
+            // let cont = document.getElementById("animate").firstChild.nodeValue;
+            // document.getElementById("container").innerHTML = cont;
+        }
+    </script>
+</body>
+</html>

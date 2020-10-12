@@ -8,10 +8,15 @@
     <style>
         .trail {
             position: absolute;
+            /* position: relative; */
             height: 11px;
             width: 11px;
             border-radius: 8px;
             background: teal;
+        }
+
+        .inv {
+            background: transparent;
         }
 
         body {
@@ -23,6 +28,48 @@
 <body>
     <script>
         let trails = [];
+        for (let i = 0; i < 12; i++) {
+            let node = document.createElement("div");
+            // node.textContent = "🎈";
+            // node.textContent = "";
+            node.className = "trail";
+            // node.textContent = "";
+            document.body.appendChild(node);
+            // node.style.display = "none";
+            // node.className = "inv";
+            trails.push(node);
+
+            setTimeout(() => node.style.background = "white",2200);
+        }
+
+        let currentTrail = 0;
+
+        window.addEventListener("mousemove", ev => {
+            let trail = trails[currentTrail];
+            trail.style.left = (ev.pageX) + "px";
+            trail.style.top = (ev.pageY) + "px";
+
+            currentTrail = (currentTrail + 1) % trails.length;
+            // currentTrail = (currentTrail+2) % trails.length;
+
+            setTimeout(() => {
+                // trail.style.left = "";
+                // trail.style.top = "";
+                
+                trail.style = "";
+                // trail.textContent = "";
+                
+                ev.textContent = "";
+            },2000);
+        });
+    </script>
+</body>
+
+</html>
+
+<!--
+
+    let trails = [];
         for (let i = 0; i < 12; i++) {
             let node = document.createElement("div");
             // node.textContent = "🎈";
@@ -59,12 +106,6 @@
             //     currentTrail++;
             // }
         });
-    </script>
-</body>
-
-</html>
-
-<!--
 
     let trails = [];
         for (let i = 0; i < 12; i++) {

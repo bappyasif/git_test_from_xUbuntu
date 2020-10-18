@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objects Basics Part 2</title>
+</head>
+
+<body>
+    <p>This example requires you ton enter commands in your browser's JavaScript console(see <a
+            href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_are_browser_developer_tools"
+            target="blank">What are browser developer tools</a> for more information)</p>
+    <script>
+        let person = {};
+        person = {
+            name: ["Jane", "cyndee"],
+            age: 29,
+            gender: "female",
+            interests: ["music", "outdoors"],
+            bio: function () {
+                console.log(this.name[0] + this.name[1] + " is " + this.age + " years old. He likes : " + this.interests[0] + " and " + this.interests[1] + ".")
+            },
+            greeting: function () {
+                console.log("Hello, this is : " + this.name[0] + ".");
+            }
+        }
+        // Dot notation
+        console.log(person.name, person.name[0], person.age, person.interests[1]);
+        person.bio();
+        person.greeting();
+        person.name = {
+            first: "Jane",
+            last: "Doe",
+        }
+        console.log(person.name.first, person.name.last);
+        console.log(person);
+        // Bracket notation
+        console.log(person["age"], person["name"]["first"]);
+        person.age = 20;
+        person["name"]["last"] = "Cratchit";
+        console.log(person["age"], person["name"]["last"]);
+        person["eyes"] = "hazel";
+        person["farewell"] = function () {
+            console.log("Bye everybody!!");
+        }
+        console.log(person["eyes"]);
+        person["farewell"]();
+        let dataName = "height";
+        let dataValue = "1.55m";
+        person[dataName] = dataValue;
+        console.log(person["height"]);
+        dataName = "millenial";
+        person.dataName = dataValue;
+        console.log(person.millenial, person.height);
+        let notif = new Notification("Hello!!");
+        console.log(notif);
+    </script>
+    <!--Testing skills-->
+    <script>
+        // Task 01
+        let cat = {
+            name: "Bertie",
+            breed: "Cymric",
+            color: "white",
+            greeting: function () {
+                console.log("Meow!!");
+            }
+        }
+        // Storing name property inside catName ysing bracket notation
+        let catName = cat["name"];
+        // Running greeting() using dot notation
+        cat.greeting();
+        // updating color property value to black
+        cat.color = "black";
+
+        // Task 02
+        let favBand = {
+            name: "Metallica",
+            nationality: "American",
+            genere: "Heavy Metal",
+            members: 5,
+            formed: 1981,
+            split: false,
+            albums: [
+                {
+                    name: "Kill'Em All",
+                    released: 1983
+                },
+                {
+                    name: "Ride The Lightning",
+                    released: 1984
+                },
+                {
+                    name: "Master of Puppets",
+                    released: 1986
+                },
+                {
+                    name: "And Justice for All",
+                    released: 1988
+                },
+                {
+                    name: "Metallica",
+                    released: 1991
+                },
+                {
+                    name: "Load",
+                    released: 1996
+                },
+                {
+                    name: "Reload",
+                    released: 1997
+                },
+                {
+                    name: "St Anger",
+                    released: 2003
+                },
+                {
+                    name: "Death Magnetic",
+                    released: 2008
+                },
+                {
+                    name: "Hardwired to Self Destruct",
+                    released: 2016
+                }
+            ]
+        }
+        // create variable bandInfo which will contain a small biography
+        // with their name, nationality, years active and style andd title and realease of their first album
+        let bandInfo = "My Favorite band name is : " + favBand.name + " from " + favBand.nationality + " years active for " + `${new Date().getFullYear() - favBand.formed}` + " years since " + favBand.formed + " they are a : " + favBand.genere + " kind of band. And their first album title is : " + favBand.albums[0].name + " and it was released in : " + favBand.albums[0].released;
+        let para1 = document.createElement("p");
+        para1.textContent = bandInfo;
+        document.body.appendChild(para1);
+
+        // Task 03
+        cat = {
+            name: "Bertie",
+            breed: "Cymric",
+            color: "white",
+            greeting: function () {
+                console.log("Meow!! This is " + this.name + " the " + this.breed);
+            }
+        };
+        let cat2 = {
+            name: "Bertie",
+            breed: "Cymric",
+            color: "white",
+            greeting: function () {
+                console.log("Meow!! This is " + this.name + " the " + this.breed);
+            }
+        }
+        cat.greeting();
+        cat2.greeting();
+
+        // cat2 = new cat();
+        // cat2.greeting();
+    </script>
+
+    <script>
+        // Constructors and Object instances
+
+        // creating person with a normal function
+        function createNewPerson(name) {
+            let obj = {};
+            obj.name = name;
+            obj.greeting = function () {
+                console.log("Heyo!! " + obj.name + ".");
+            };
+            return obj;
+        }
+        let salva = createNewPerson("Salva");
+        console.log(salva.name);
+        salva.greeting();
+
+        // creating person with a constructor function
+        function Person(name) {
+            this.name = name;
+            this.greeting = function () {
+                console.log("Howdy!! " + this.name);
+            };
+        }
+        let person1 = new Person("Sarati");
+        let person2 = new Person("Olivia");
+        console.log(person1.name, person2.name);
+        person1.greeting();
+        person2.greeting();
+
+        function PersonMod(first, last, age, gender, interests) {
+            this.name = {
+                first: first,
+                last
+            };
+            this.age = age;
+            this.gender = gender;
+            this.interests = interests;
+            let self = this;
+            this.bio = function () {
+                let pronoun = "";
+                // if(this.gender === "m" || this.gender === "male" || this.gender === "Male" || this.gender === "M") {
+                //     pronoun = "he";
+                // } else if(this.gender === "f" || this.gender === "female" || this.gender === "Female" || this.gender === "F") {
+                //     pronoun = "she";
+                // } else {
+                //     pronoun = "xhe";
+                // }
+                if (["m", "M", "Male", "male"].includes(this.gender)) {
+                    pronoun = "he";
+                } else if (["f", "F", "female", "Female"].includes(this.gender)) {
+                    pronoun = "she";
+                } else {
+                    pronoun = "xhe";
+                }
+
+                let content = this.name.first + " " + this.name.last + " is " + this.age + " years old and biologically " + this.gender + " and " + pronoun + " interested in " + chooseSeparators(this.interests);
+                // let content = this.name.first + " " + this.name.last + " is " + this.age + " years old and biologically " + this.gender + " and "+`${this.gender === "male" ? "he" : "she"}`+" is interested in " + chooseSeparators(this.interests);
+
+                function chooseSeparators(ints) {
+                    let sp = "";
+                    ints.forEach((it, idx) => {
+                        if (idx === interests.length - 1) {
+                            sp += " and " + it;
+                        } else {
+                            sp += it + ", ";
+                        }
+                    });
+                    return sp;
+                }
+                console.log(content);
+            };
+            this.greeting = function () {
+                console.log("Howdy!!" + this.name.first + ".");
+            };
+            this.bioMod = function () {
+                let pronoun = "";
+                let msg;
+                if (this.gender === "male") {
+                    pronoun = "He ";
+                } else {
+                    pronoun = "She ";
+                }
+                msg = this.interests.map(item => pronoun + item)
+                console.log(msg);
+                // return msg;
+            }
+        }
+        person1 = new PersonMod("Leia", "ponder", 20, "female", ["music", "wellness"]);
+        console.log(person1["age"], person1.interests[1]);
+        person1.bio();
+        person1.greeting();
+        person1.bioMod();
+
+        // Creating Object instances with Object constructor
+        person1 = new Object();
+        person1.name = "Leia";
+        person1["age"] = 20;
+        person1.greeting = function () {
+            console.log("Heyo all this is " + this.name);
+        };
+        console.log(person1["name"], person1.age);
+        person1.greeting();
+
+        person1 = new Object({
+            name: "Leia",
+            age: 20,
+            greeting: function () {
+                console.log("Heyo all this is " + this.name + ".");
+            }
+        });
+        console.log(person1["name"], person1.age);
+        person1.greeting();
+
+        person2 = Object.create(person1);
+        console.log(person2.name, person2.age);
+        person2.greeting();
+    </script>
+
+    <!--OOJS Tasks-->
+    <script>
+        // task 01
+        function Shape(name, sides, sideLength) {
+            this.name = name;
+            this.sides = sides;
+            this.sideLength = sideLength;
+        }
+        // creating method name calcPerimeter
+        Shape.prototype.calcPerimeter = function () {
+            if (!["circle", "Circle", "triangle", "Triangle"].includes(this.name)) {
+                console.log(this.sides.reduce((val, accum) => val + accum));
+            } else {
+                console.log(2 * Math.PI * this.sideLength);
+            }
+        }
+        // creating instance of Shape name square of sideLength 5
+        let square = new Shape("square", [5, 5, 5, 5], 5);
+        square.calcPerimeter();
+        // creating instance of Shape name triangle of sideLength 3
+        let triangle = new Shape("triangle", 1, 3);
+        triangle.calcPerimeter();
+
+        // task 02
+        // recreating Shape class using ES class syntax
+        class ShapeNew {
+            constructor(name, sides, sideLength) {
+                this.name = name;
+                this.sides = sides;
+                this.sideLength = sideLength;
+                // this.sidesArray;
+            }
+            calcPerimeter() {
+                if (!["circle", "Circle", "triangle", "Triangle"].includes(this.name)) {
+                    console.log(this.tryArray().reduce((val, accum) => val + accum));
+                } else {
+                    console.log(2 * Math.PI * this.sideLength);
+                }
+            }
+            tryArray() {
+                let sides_array = [];
+                for (let i = 0; i < this.sides; i++) {
+                    // sides_array = sides_array.push(this.sideLength);
+                    sides_array.push(this.sideLength);
+                }
+                return sides_array;
+            }
+            newPerimeter() {
+                let peri = this.tryArray();
+                console.log(peri.reduce((sum, accum) => sum + accum));
+            }
+        }
+        let squareNew = new ShapeNew("square", 4, 5);
+        let circleNew = new ShapeNew("triangle", 1, 3);
+        squareNew.calcPerimeter();
+        circleNew.calcPerimeter();
+
+        // task 03
+        // creating a class name Square that inherits from Shape
+        class Square extends ShapeNew {
+            constructor(name, sides, sideLength) {
+                super(name, sides);
+                this.sideLength = sideLength;
+            }
+            // adding method name calcArea
+            calcArea() {
+                console.log(this.sideLength * this.sideLength);
+            }
+        }
+        // let new_square = new Square();
+        let new_square = new Square("square", 4, 4);
+        // let new_square = new Square("square", [4, 4, 4, 4], 4);
+        new_square.calcPerimeter();
+        new_square.calcArea();
+
+        // task 03 improved upon
+        class SquareImproved {
+            constructor(name, sides, sideLength) {
+                this.name = name;
+                this.sides = sides;
+                this.sideLength = sideLength;
+            }
+            // adding method name calcArea
+            calcArea() {
+                console.log(this.sideLength * this.sideLength);
+            }
+            
+            tryArray() {
+                return new Array(this.sides).fill(this.sideLength);
+            }
+            
+            newPerimeter() {
+                let peri = this.tryArray();
+                console.log(peri.reduce((sum, accum) => sum + accum));
+            }
+        }
+        let square_new = new SquareImproved("square", 4, 5);
+        square_new.newPerimeter();
+    </script>
+</body>
+
+</html>
+
+<!--
+
+            // task 03
+        // creating a class name Square that inherits from Shape
+        class Square extends ShapeNew {
+            constructor(name, sides, sideLength) {
+                // super("square", 4);
+                // super(4);
+                super(name, sides);
+                this.sideLength = sideLength;
+            }
+            // adding method name calcArea
+            calcArea() {
+                console.log(this.sideLength * this.sideLength);
+            }
+            // tryArray() {
+            //     let sides_array = [];
+            //     for (let i = 0; i < this.sides; i++) {
+            //         // sides_array = sides_array.push(this.sideLength);
+            //         sides_array.push(this.sideLength);
+            //     }
+            //     return sides_array;
+            // }
+            // newPerimeter() {
+            //     let peri = this.tryArray();
+            //     console.log(peri.reduce((sum, accum) => sum + accum));
+            // }
+        }
+        // let new_square = new Square();
+        let new_square = new Square("square", 4, 4);
+        // let new_square = new Square("square", [4, 4, 4, 4], 4);
+        new_square.calcPerimeter();
+        new_square.calcArea();
+        // new_square.newPerimeter();
+        // console.log(new_square.tryArray());
+
+        // task 03 improved upon
+        class SquareImproved {
+            constructor(name, sides, sideLength) {
+                this.name = name;
+                this.sides = sides;
+                this.sideLength = sideLength;
+            }
+            // adding method name calcArea
+            calcArea() {
+                console.log(this.sideLength * this.sideLength);
+            }
+            
+            tryArray() {
+                let sides_array = [];
+                for (let i = 0; i < this.sides; i++) {
+                    // sides_array = sides_array.push(this.sideLength);
+                    sides_array.push(this.sideLength);
+                }
+                return sides_array;
+            }
+            
+            newPerimeter() {
+                let peri = this.tryArray();
+                console.log(peri.reduce((sum, accum) => sum + accum));
+            }
+        }
+        let square_new = new SquareImproved("square", 4, 5);
+        square_new.newPerimeter();
+
+        <script>
+        // task 01
+        function Shape(name, sides, sideLength) {
+            this.name = name;
+            this.sides = sides;
+            this.sideLength = sideLength;
+        }
+        // creating method name calcPerimeter
+        // Shape.prototype.calcPerimeter = function (sides) {
+        //     if (!["circle", "Circle", "triangle", "Triangle"].includes(this.name)) {
+        //         console.log(sides.reduce((val, accum) => val + accum));
+        //     } else {
+        //         console.log(2 * Math.PI * this.sideLength);
+        //     }
+        // }
+
+        Shape.prototype.calcPerimeter = function () {
+            if (!["circle", "Circle", "triangle", "Triangle"].includes(this.name)) {
+                console.log(this.sides.reduce((val, accum) => val + accum));
+            } else {
+                console.log(2 * Math.PI * this.sideLength);
+            }
+        }
+
+        // creating instance of Shape name square of sideLength 5
+        let square = new Shape("square", [5, 5, 5, 5], 5);
+        // let square = new Shape("square", 4, 5);
+        // square.calcPerimeter([5, 5, 5, 5]);
+        square.calcPerimeter();
+        // creating instance of Shape name triangle of sideLength 3
+        let triangle = new Shape("triangle", 1, 3);
+        triangle.calcPerimeter();
+    </script>
+
+            let self = this;
+            this.bio = function () {
+                let pronoun = "";
+                if(this.gender === "m" || "male" || "Male" || "M") {
+                    pronoun = "he";
+                } else if(this.gender === "f" || "female" || "Female" || "F") {
+                    pronoun = "she";
+                } else {
+                    pronoun = "xhe";
+                }
+                
+                // let string;
+                // string += pronoun;
+
+                // let msg = self.interests.forEach((it, idx) => {
+                //     if (idx === interests.length - 1) {
+                //         console.log(" and " + it);
+                //     } else {
+                //         console.log(", " + it);
+                //     }
+                // });
+
+                // let content = this.name.first + " " + this.name.last + " is " + this.age + " years old and biologically " + this.gender + " and "+pronoun+ `${this.gender === "male" ? "he" : "she"}`+"interested in " + chooseSeparators(this.interests);
+                let content = this.name.first + " " + this.name.last + " is " + this.age + " years old and biologically " + this.gender + " and "+`${this.gender === "male" ? "he" : "she"}`+" is interested in " + chooseSeparators(this.interests);
+
+                function chooseSeparators(ints) {
+                    let sp = "";
+                    ints.forEach((it, idx) => {
+                        if (idx === interests.length - 1) {
+                            // console.log(" and " + it);
+                            sp += " and "+it; 
+                        } else {
+                            // console.log(", " + it);
+                            sp += it+", ";
+                        }
+                    });
+                    return sp;
+                }
+                console.log(content);
+            };
+
+            function PersonMod(first, last, age, gender, interests) {
+            this.name = {
+                first: first,
+                last
+            };
+            this.age = age;
+            this.gender = gender;
+            this.interests = interests;
+            let self = this;
+            this.bio = function () {
+                // let self = this;
+                // console.log(this.name.first+" "+this.name.last+" is "+this.age+" years old and biologically "+this.gender+" and interested in "+this.interests);
+                // let content = this.name.first+" "+this.name.last+" is "+this.age+" years old and biologically "+this.gender+" and interested in ";
+                // console.log(content+`${this.interests.forEach((item, idx) => {
+                //     if(idx === 1) {
+                //         content += ", ";
+                //     } else {
+                //         content += " and ";
+                //     }
+                // })}`);
+                // console.log(content+`${this.interests.forEach(item => {
+                //     console.log(item);
+                // })}`);
+                // console.log(content+`${this["interests"].forEach(item => console.log(item))}`);
+                // content += self.interests.forEach(item => console.log(item));
+                // console.log(content);
+                // console.log(self.interests.forEach(i=>i));
+                // console.log(self.interests.map(i=>i));
+                // console.log(self.interests.map((it, idx)=>{
+                //     if(idx === 1) {
+                //         console.log("done "+ it);
+                //     } else {
+                //         console.log(" more "+ it);
+                //     }
+                // }));
+
+                // let content = this.name.first+" "+this.name.last+" is "+this.age+" years old and biologically "+this.gender+" and interested in ";
+                // self.interests.forEach((it, idx)=>{
+                //     if(idx === interests.length - 1) {
+                //         console.log(" and "+ it);
+                //     } else {
+                //         console.log(", "+ it);
+                //     }
+                // })
+
+                // let content = this.name.first + " " + this.name.last + " is " + this.age + " years old and biologically " + this.gender + " and interested in " + this.interests.forEach((it, idx) => { if (idx === interests.length - 1) { " and " + it } else { ", " + it } });
+
+                let msg = self.interests.forEach((it, idx) => {
+                    if (idx === interests.length - 1) {
+                        console.log(" and " + it);
+                    } else {
+                        console.log(", " + it);
+                    }
+                });
+                let content = this.name.first + " " + this.name.last + " is " + this.age + " years old and biologically " + this.gender + " and interested in " + chooseSeparators(this.interests);
+
+                function chooseSeparators(ints) {
+                    ints.forEach((it, idx) => {
+                        if (idx === interests.length - 1) {
+                            console.log(" and " + it);
+                        } else {
+                            console.log(", " + it);
+                        }
+                    });
+                }
+                // return content;
+                console.log(content);
+            };
+            this.greeting = function () {
+                console.log("Howdy!!" + this.name.first + ".");
+            };
+            this.bioMod = function () {
+                let pronoun = "";
+                let msg;
+                if (this.gender === "male") {
+                    pronoun = "He ";
+                } else {
+                    pronoun = "She ";
+                }
+                msg = this.interests.map(item => pronoun + item)
+                console.log(msg);
+                // return msg;
+            }
+        }
+        person1 = new PersonMod("Leia", "ponder", 20, "female", ["music", "wellness"]);
+        console.log(person1["age"], person1.interests[1]);
+        person1.bio();
+        // console.log(person1.bio());
+        person1.greeting();
+        person1.bioMod();
+-->

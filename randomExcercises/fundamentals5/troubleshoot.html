@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshoot Workouts</title>
+</head>
+
+<body>
+    <script>
+        function caesar(str, shift) {
+            let result = "";
+            if (str.includes("")) {
+                str.split("").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperChars(ch);
+                    } else {
+                        lowerChars(ch);
+                    }
+                    function lowerChars(ch) {
+                        if (ch.charCodeAt() > 122 || ch.charCodeAt() < 97) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 97) % 26 + 97);
+                        }
+                    }
+                    function upperChars(ch) {
+                        if (ch.charCodeAt() > 90 || ch.charCodeAt() < 65) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 65) % 26 + 65);
+                        }
+                    }
+                });
+            }
+            return result;
+        }
+
+        function add() {
+            return arguments[0] + arguments[1];
+        }
+
+        function subtract() {
+            return arguments[0] - arguments[1];
+        }
+
+        function sum() {
+            return [...arguments].reduce((a, b) => a + b);
+        }
+
+        function multiply() {
+            // return arguments[0] * arguments[1];
+            return Array.from(arguments).reduce((a, b) => a * b, 1)
+        }
+
+        function power() {
+            return Math.pow(arguments[0], arguments[1]);
+        }
+
+        function factorial(n) {
+            if (n === 0) {
+                return 1
+            } else {
+                return n * factorial(n - 1)
+            }
+            // if (arguments[n] === 1) {
+            //     return 1
+            // } else {
+            //     return arguments[n] * factorial(arguments[n-1])
+            // }
+        }
+
+        function fibonacciValue(n) {
+            if (n === 0) {
+                return 0;
+            }
+            if (n === 1) {
+                return 1;
+            } else {
+                return fibonacciValue(n - 1) + fibonacciValue(n - 2);
+            }
+        }
+
+        function fibonacciSequence(n) {
+            let seq;
+            if (n === 0) {
+                // seq = 0;
+                return [0];
+            }
+            if (n === 1) {
+                // seq = 1;
+                return [0, 1];
+            } else {
+                seq = fibonacciSequence(n - 1);
+                seq.push(seq[seq.length - 1] + seq[seq.length - 2])
+                // return seq;
+            }
+            return seq;
+        }
+
+        function findTheOldest(array /*obj=null*/) {
+            // return obj.sort((a, b) => (a.yearOfBirth - a.yearOfDeath) > (b.yearOfBirth - b.yearOfDeath) ? 1 : -1)
+
+            // let arr = Object.values(obj.sort((a, b) => (a.yearOfBirth - a.yearOfDeath) > (b.yearOfBirth - b.yearOfDeath) ? 1 : -1));
+            // return arr.find(ob => ob.name === "Ray");
+
+            // return obj.sort((a, b) => (a.yearOfBirth - a.yearOfDeath) > (b.yearOfBirth - b.yearOfDeath) ? 1 : -1).find(ob=>ob.name==="Ray");
+
+            return array.sort((oldest, nextPerson) => {
+                let oldestAge = getAge(oldest.yearOfBirth, oldest.yearOfDeath);
+                // console.log(oldest, oldestAge);
+                let nextPersonAge = getAge(nextPerson.yearOfBirth - nextPerson.yearOfDeath);
+                // console.log(nextPerson, nextPersonAge);
+                // return oldestAge < nextPersonAge ? nextPerson.name : oldest.name;
+                // return oldestAge < nextPersonAge ? "nextPerson.age" : "Ray";
+                return oldestAge < nextPersonAge ? nextPerson.name : oldest.name;
+                // console.log(oldestAge < nextPersonAge ? nextPerson.name : oldest.name);
+            });
+            // function getAge(birthYear, deathYear) {
+            //     if (!deathYear) {
+            //         deathYear = new Date().getFullYear();
+            //     }
+            //     return deathYear - birthYear;
+            // }
+        }
+
+        function getAge(birthYear, deathYear) {
+            if (!deathYear) {
+                deathYear = new Date().getFullYear();
+            }
+            return deathYear - birthYear;
+        }
+
+        const people = [
+            {
+                name: 'Carly',
+                yearOfBirth: 1942,
+                yearOfDeath: 1970,
+            },
+            {
+                name: 'Ray',
+                yearOfBirth: 1962,
+                yearOfDeath: 2011
+            },
+            {
+                name: 'Jane',
+                yearOfBirth: 1912,
+                yearOfDeath: 1941
+            },
+        ];
+        console.log(findTheOldest(people));
+        // findTheOldest(people);
+
+        function findOldest(arr) {
+            arr = arr.sort((oldest, next) => {
+                if (!oldest.yearOfDeath) {
+                    oldest.yearOfDeath = new Date().getFullYear();
+                } else if (!next.yearOfDeath) {
+                    next.yearOfDeath = new Date().getFullYear();
+                }
+                return (oldest.yearOfDeath - oldest.yearOfBirth) < (next.yearOfDeath - next.yearOfBirth) ? 1 : -1;
+            })
+            return arr[0].name;
+        }
+
+        console.log(findOldest(people));
+
+        const books = [
+            {
+                title: 'Book',
+                author: 'Name'
+            },
+            {
+                title: 'Book2',
+                author: 'Name2'
+            }
+        ];
+        function getTheTitles(array) {
+
+            return array.map(book => book.title);
+
+            // let titles = [];
+            // array.find(ob => {
+            //     if(ob["title"]) {
+            //         titles.push(ob["title"]);
+            //     }
+            // })
+            // for(let key in array) {
+            //     // titles.push(array[key]);
+            //     if(key !== "author") {
+            //         console.log(array[key], key);
+            //         titles.push(array[key]);
+            //     }
+            //     // console.log(array[key]);
+            // }
+
+            // for (let idx in array) {
+            //     for(let key in array) {
+            //         console.log(key[idx], array[idx][key]);
+            //     }
+            // }
+
+            // array.forEach(ob => {
+            //     for(let key in array) {
+            //         console.log(array[key]);
+            //     }
+            // })
+            // return titles;
+        }
+        console.log(getTheTitles(books));
+    </script>
+</body>
+
+</html>
+
+<!--
+
+    let result = "";
+            if (str.includes(",")) {
+                str.split(",").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperChars(ch);
+                    } else {
+                        lowerChars(ch);
+                    }
+                    function lowerChars(ch) {
+                        if (ch.charCodeAt() > 122 || ch.charCodeAt() < 97) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 97) % 26 + 97)
+                        }
+                    }
+                    function upperChars(ch) {
+                        if (ch.charCodeAt() > 90 || ch.charCodeAt() < 65) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 65) % 26 + 65);
+                        }
+                    }
+                });
+            } else if(str.includes(" ")) {
+                str.split(" ").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperChars(ch);
+                    } else {
+                        lowerChars(ch);
+                    }
+                    function lowerChars(ch) {
+                        if (ch.charCodeAt() > 122 || ch.charCodeAt() < 97) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 97) % 26 + 97)
+                        }
+                    }
+
+                    function upperChars(ch) {
+                        if (ch.charCodeAt() > 90 || ch.charCodeAt() < 65) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 65) % 26 + 65);
+                        }
+                    }
+                });
+            } else {
+                str.split("").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperChars(ch);
+                    } else {
+                        lowerChars(ch);
+                    }
+                    function lowerChars(ch) {
+                        if (ch.charCodeAt() > 122 || ch.charCodeAt() < 97) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 97) % 26 + 97)
+                        }
+                    }
+
+                    function upperChars(ch) {
+                        if (ch.charCodeAt() > 90 || ch.charCodeAt() < 65) {
+                            result += ch;
+                        } else {
+                            result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 65) % 26 + 65);
+                        }
+                    }
+                });
+            }
+            return result;
+
+
+                let result = "";
+            if (str.includes(",")) {
+                str.split(",").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperCheck(ch);
+                    } else {
+                        lowerCheck(ch);
+                    }
+                });
+            } else if (str.includes(" ")) {
+                str.split(" ").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperCheck(ch);
+                    } else {
+                        lowerCheck(ch);
+                    }
+                });
+            } else {
+                str.split("").forEach(ch => {
+                    if (ch === ch.toUpperCase()) {
+                        upperCheck(ch);
+                    } else {
+                        lowerCheck(ch);
+                    }
+                });
+
+                function lowerCheck(ch) {
+                    if (ch.charCodeAt() > 122 || ch.charCodeAt() < 97) {
+                        result += ch;
+                    } else {
+                        result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 97) % 26 + 97)
+                    }
+                }
+
+                function upperCheck(ch) {
+                    if (ch.charCodeAt() > 90 || ch.charCodeAt() < 65) {
+                        result += ch;
+                    } else {
+                        result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 65) % 26 + 65);
+                    }
+                }
+            }
+            return result;
+
+    // let result = "";
+            // if (str.includes("")) {
+            //     str.split("").forEach(ch => {
+            //         if (ch === ch.toUpperCase()) {
+            //             if (ch.charCodeAt() > 90 || ch.charCodeAt() < 65) {
+            //                 // result += " ";
+            //                 result += ch;
+            //             } else {
+            //                 result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 65) % 26 + 65);
+            //             }
+            //         } else {
+            //             if (ch.charCode > 122 || ch.charCode < 97) {
+            //                 // result += " ";
+            //                 result += ch;
+            //             } else {
+            //                 result += String.fromCharCode((ch.charCodeAt() + Math.abs(shift) - 97) % 26 + 97);
+            //             }
+            //             // result += String.fromCharCode((ch.charCodeAt() + shift - 97) % 26 + 97)
+            //         }
+            //     })
+            // }
+            // return result;
+
+
+    // if (str.includes(",")) {
+            //     // return str.split(",").forEach(ch => (ch.charCode || ch.keyCode)+Math.abs(shift));
+            //     // return String.fromCharCode(str.split(",").forEach(ch => ch.charCodeAt() + Math.abs(shift)));
+            //     // return str.split(",").map(ch => (ch.charCode || ch.keyCode)+Math.abs(shift));
+            //     // return String.fromCharCode(str.split(",").map(ch => (ch.charCode || ch.keyCode)+Math.abs(shift)));
+            //     return String.fromCharCode(str.split(",").map(ch => ch.charCodeAt() + Math.abs(shift)));
+            // } else if (str.includes(" ")) {
+            //     // return str.split(" ").forEach(ch => (ch.charCode || ch.keyCode)+Math.abs(shift));
+            //     return String.fromCharCode(str.split(" ").forEach(ch => ch.charCodeAt() + Math.abs(shift)));
+            //     // return str.split(" ").map(ch => (ch.charCode || ch.keyCode)+Math.abs(shift));
+            //     // return String.fromCharCode(str.split(" ").map(ch => (ch.charCode || ch.keyCode)+Math.abs(shift)));
+            // } else {
+            //     // return str.split("").forEach(ch => (ch.charCode || ch.keyCode)+Math.abs(shift));
+            //     return String.fromCharCode(str.split("").forEach(ch => ch.charCodeAt() + Math.abs(shift)));
+            //     // return str.split("").map(ch => (ch.charCode || ch.keyCode)+Math.abs(shift));
+            //     // return String.fromCharCode(str.split("").map(ch => (ch.charCode || ch.keyCode)+Math.abs(shift)));
+            // }
+-->

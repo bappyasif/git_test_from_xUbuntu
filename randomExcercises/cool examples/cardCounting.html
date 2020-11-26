@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Counting</title>
+</head>
+
+<body>
+    <script>
+        let count = 0;
+        function countingCard(card) {
+            let gamble = "";
+            switch (card) {
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    // gamble = "Bet";
+                    count++;
+                    break;
+                case 7:
+                case 8:
+                case 9:
+                    // gamble = "Hold";
+                    count += 0;
+                    break;
+                case 10:
+                case "J":
+                case "Q":
+                case "K":
+                case "A":
+                    // gamble = "Hold";
+                    count--;
+                    break;
+            }
+            // return count+", "+gamble;
+            count > 0 ? gamble = "Bet" : gamble = "Hold";
+            return count+" "+gamble;
+            
+        }
+        console.log(count);
+        // console.log(countingCard(2), countingCard(3));
+        countingCard(2);
+        // console.log(count);
+        countingCard("J");
+        countingCard(9);
+        countingCard(2);
+        // countingCard(6);
+        console.log(countingCard(7));
+        // console.log(countingCard([2,3,4,5,6]));
+        console.log(count);
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Collection</title>
+</head>
+<body>
+    <script>
+        let collection = {
+            2548: {
+                albumTitle: "Slippery When Wet",
+                artist: "Bon Jovi",
+                tracks: [
+                    "Let It Rock",
+                    "You Give Love A Bad Name"
+                ]
+            },
+            2468: {
+                albumTitle: "1999",
+                artist: "Prince",
+                tracks: [
+                    "1999",
+                    "Little Red Corvette"
+                ]
+            },
+            1245: {
+                artist: "Robert Palmer",
+                tracks: []
+            },
+            5439: {
+                albumTitle: "ABBA Gold"
+            }
+        }
+
+        function updateRecords(object, id, prop, value) {            
+            if(!value) {
+                // console.log("here!!!");
+                delete object[id][prop];
+            } else if(prop === "tracks" && !object[id].hasOwnProperty(prop)) {
+                object[id][prop] = [];
+                object[id][prop].push(value);
+                // console.log("here!");
+            } else if(prop === "tracks" && value) {
+                // console.log("here!!");
+                object[id][prop].push(value);
+            } else if(prop !== "tracks" && value) {
+                object[id][prop] = value;
+                // console.log("here");
+            } 
+            return object;
+        }
+
+        updateRecords(collection, 5439, "artist", "ABBA");
+        updateRecords(collection, 5439, "tracks", "Take a Chance on Me");
+        updateRecords(collection, 2548, "artist", "");
+        updateRecords(collection, 2548, "tracks", "");
+        updateRecords(collection, 1245, "tracks", "Addictd to Love");
+    </script>
+</body>
+</html>

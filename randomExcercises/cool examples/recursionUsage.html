@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using Recursion</title>
+</head>
+<body>
+    <script>
+          function countdown(n) {
+            if( n < 1) {
+                return [];
+            } else {
+                let result = countdown(n-1);
+                result.unshift(n);
+                return result; // does
+                // return countdown(n-1).unshift(n); // doesn't
+                // return result.unshift(n); // doesn't
+            }
+            // return n < 1 ? [] : [n].concat(countdown(n-1)); // does
+
+        }
+        console.log(countdown(5));
+
+        function rangeOfNumbers(startNum, endNum) {
+            // if(startNum - endNum === 1) {
+            //     return [];
+            // } else {
+            //     return [startNum].concat(rangeOfNumbers(startNum+1,endNum));
+            // }
+
+            if(startNum - endNum === 1) {
+                return [];
+            } else {
+                return [endNum].concat(rangeOfNumbers(startNum,endNum - 1));
+            }
+
+            // return startNum === endNum
+            // ? [startNum]
+            // : rangeOfNumbers(startNum, endNum-1).concat(endNum);
+
+            // return startNum === endNum
+            // ? [startNum]
+            // : [...rangeOfNumbers(startNum + 1, endNum), startNum];
+        }
+        console.log(rangeOfNumbers(1,5));
+    </script>
+</body>
+</html>
+
+<!--
+
+            function rangeOfNumbers(startNum, endNum) {
+            if(startNum < endNum && endNum < 1) {
+                return [];
+            } else {
+                return [endNum].concat(rangeOfNumbers(startNum,endNum - 1));
+            }
+        }
+                function countdown(n) {
+            if( n < 1) return [];
+            if(n === 1) {
+                // console.log("empty");
+                return [1];
+            } else {
+                // console.log(n);
+                let result = [n];
+                result.concat(countdown(n-1));
+                return result;
+                // let result = countdown(n - 1);
+                // result.push(n);
+                // return result;
+                // return [].push(countdown(n-1));
+            }
+        }
+-->

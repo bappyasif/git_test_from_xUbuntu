@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"this" Making Sense Now</title>
+</head>
+<body>
+    <script>
+        // Call-site, location where a function is called not where it's declared
+        // go locate where a function is called from, and also from call-stack
+        
+        // demonstrating Call-stack and Call-site
+        function baz() {
+            // call-stack is: "baz"
+            // call-site is : "global scope"
+            console.log("baz");
+            bar(); // call-site for "bar"
+        }
+        function bar() {
+            // call-stack is: "baz" -> "bar"
+            // call-site is : "baz"
+            console.log("bar");
+            foo(); // call-site for foo
+        }
+        function foo() {
+            // call-stack is: "baz" -> "bar" -> "foo"
+            // call-site is : "bar"
+            
+            // debugger // very useful to find out call-stack and scopes
+            
+            console.log("foo");
+        }
+        baz(); // call-site for baz;
+
+        // Default Binding
+        // first of 4 rules
+        function fooDefaultBinding() {
+            // debugger;
+            console.log(this.a); // "this" points to global object "a"
+        }
+        // let a = 2;
+        var a = 2; // global scope
+        fooDefaultBinding(); // displays value of "a"
+        // exception of this rule is when used "use strict"
+        function fooBinding() {
+            'use strict';
+            // console.log(this.a); // now "this" is set to undefined due to "use strict"
+        }
+        a = 2;
+        fooBinding();
+        // stric mode state of call-site is irrelevant to "this" binding
+        function fooDefault() {
+            console.log(this.a); // "this" is not running from strict mode
+        }
+        a = 2;
+        (function() {
+            "use strict"
+            fooDefault(); // still accessing value of global "a"
+        })();
+
+        // Implicit Binding
+        // does call-site has a context object to it "this"
+        function fooWithImplicitBinding() {
+            console.log(this.a);
+        }
+        let obj = {
+            a: 2,
+            foo: fooWithImplicitBinding
+        };
+        // obj context for "this", in foo property, which owns or contains function reference and "this" binding
+        obj.foo();
+        // only last/top level of an object property reference chain matters to call-site for "this"
+        let obj2 = {
+            a: 42,
+            foo: fooWithImplicitBinding
+        }
+        let obj1 = {
+            a: 2,
+            obj2: obj2
+        }
+        // let obj2 = {
+        //     a: 42,
+        //     foo: fooWithImplicitBinding
+        // }
+        obj1.obj2.foo()
+    </script>
+</body>
+</html>

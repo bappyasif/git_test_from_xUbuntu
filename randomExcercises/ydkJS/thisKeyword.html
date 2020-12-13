@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>this & Object Prototypes</title>
+</head>
+
+<body>
+    <script>
+        // different use of "this"
+        function identify() { return this.name.toUpperCase(); }
+        function speak() {
+            let greet = "Hello, I'm " + identify.call(this);
+            console.log(greet);
+        }
+        let me = {
+            name: "aBappy"
+        };
+        let you = {
+            name: "sk"
+        };
+        console.log(identify.call(me));
+        console.log(identify.call(you));
+        speak.call(me);
+        speak.call(you);
+        // Alternative to call "this"
+        function identifyWithContextObject(ctx) { return ctx.name.toUpperCase() + " using Context"; }
+        function speakContext(ctx) {
+            let greet = "Hello, I'm " + identifyWithContextObject(ctx);
+            console.log(greet);
+        }
+        console.log(identifyWithContextObject(me));
+        console.log(identifyWithContextObject(you));
+        speakContext(me);
+        speakContext(you);
+        
+        // "this" doesn't self referenced to itself
+        function foo(n) {
+            console.log(n);
+            this.count++; // different this.count than foo.count
+        }
+        foo.count = 0;
+        for (let i = 0; i < 10; i++) {
+            if (i > 5) foo(i);
+        }
+        console.log(foo.count); // still 0
+        
+        // usage of an intermittent Object to workaround this discrepancies
+        function fooWithObjectData(n) {
+            console.log(n);
+            data.count++; // keeping track of counts been called
+        }
+        let data = { count: 0 }
+        for (let i = 0; i < 10; i++) {
+            if (i > 5) fooWithObjectData(i);
+        }
+        console.log(data.count); // now shows how many times it's been called
+        
+        // to properly using foo.count instead of this.count in foo function
+        function fooProper(n) {
+            console.log(n);
+            foo.count++;
+        }
+        foo.count = 0;
+        for (let i = 0; i < 10; i++) {
+            if (i > 5) fooProper(i);
+        }
+        console.log(foo.count); // now this will show actual number of times it's been called
+        
+        // but to actually refer to foo.count without using lexical scoping of foo.count
+        function fooCalled(n) {
+            console.log(n);
+            this.count++;
+        }
+        foo.count = 0;
+        for (let i = 0; i < 10; i++) {
+            if (i > 5) fooCalled.call(foo, i); // you're using call to point to foo itself
+        }
+        console.log(foo.count); // it'lll show accurate values for foo.count;
+        
+        // "this" scope is not, it's function's lexical scope or function itself
+        // "this" actually a binding, what it references depends entirely on call-site where function is called
+        function fooScope() {
+            let a = 2;
+            this.barScope(); // No such bridge (linking barScope from fooScope) is possible using "this"
+        }
+        function barScope() {
+            console.log(this.a); // "this" is not an Author-Time binding but a Runtime binding
+        }
+        fooScope(); // consoles undefnined, due to "this" scope misuse in fooScope
+
+
+    </script>
+</body>
+
+</html>

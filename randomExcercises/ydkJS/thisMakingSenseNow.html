@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>"this" Making Sense Now</title>
 </head>
+
 <body>
     <script>
         // Call-site, location where a function is called not where it's declared
         // go locate where a function is called from, and also from call-stack
-        
+
         // demonstrating Call-stack and Call-site
         function baz() {
             // call-stack is: "baz"
@@ -26,9 +28,9 @@
         function foo() {
             // call-stack is: "baz" -> "bar" -> "foo"
             // call-site is : "bar"
-            
+
             // debugger // very useful to find out call-stack and scopes
-            
+
             console.log("foo");
         }
         baz(); // call-site for baz;
@@ -54,7 +56,7 @@
             console.log(this.a); // "this" is not running from strict mode
         }
         a = 2;
-        (function() {
+        (function () {
             "use strict"
             fooDefault(); // still accessing value of global "a"
         })();
@@ -83,7 +85,247 @@
         //     a: 42,
         //     foo: fooWithImplicitBinding
         // }
-        obj1.obj2.foo()
+        obj1.obj2.foo();
+
+        // Implicitly Lost, "this" falls back to Default Biniding not Implicit Binding 
+        function fooAgain() {
+            console.log(this.a);
+        }
+        obj = {
+            a: 2,
+            foo: fooAgain
+        };
+        bar = obj.foo
+        a = "Opps, Global";
+        bar(); // due to this plain call-site, global value of "a" is accessed instead
+        // it can also happens when we pass in a calback function
+        function doFoo(fn) {
+            fn(); // call-site
+        }
+        doFoo(obj.foo); // same as previous snippet, on call-site there is no Implicit Binding
+        // same goes for any built-in callback functions as well
+        setTimeout(obj.foo, 110);
+
+        // Explicit Binding
+        obj = {
+            a: 2
+        };
+        fooAgain.call(obj); // explicit binding by function.call(..), "this" is forced to reference passed in object
+        // it still doesn't offer any solution to issue of a function losing it's "this" binding!!
+
+        // Hard Binding, "this" binding, actually does it for a function instead
+        let hardBar = function () {
+            // we are internally setting "this" binding, so however we might invoke this function "this" binding stays intact
+            fooAgain.call(obj);
+        }
+        hardBar();
+        setTimeout(hardBar, 110);
+        hardBar.call(window);
+        // when we wrap a function with Hard Binding, passes through any argumeents and returns value recieve from it
+        function fooHard(args) {
+            console.log(this.a, args);
+            return this.a + args;
+        }
+        let hardVariation = function () {
+            return fooHard.apply(obj, arguments)
+        }
+        let b = hardVariation(3); // 2, 3
+        console.log(b) // 5
+        // Another way to express this pattern is to create and use a re-usable helper or utility function
+        function bindHard(fn, obj) {
+            return function () {
+                return fn.apply(obj, arguments);
+            }
+        }
+        let hardVar = bindHard(fooHard, obj);
+        b = hardVar(3); // 2,3
+        console.log(b); // 5
+        // due to it's frequent use, there is a builtt-in utility for it, named fn.prototype.bind
+        hardVar = fooHard.bind(obj);
+        b = hardVar(3); // 2,3
+        console.log(b); // 5
+        console.log(hardVar.name); // shows bound of function call name
+
+        // API Call "Contexts", an workaround for not having to use bind(..) explicitly to ensure "this" binding
+        function apiFoo(el) {
+            console.log(el, this.id);
+        }
+        obj = {
+            id: "awesome"
+        };
+        [1, 2, 3].forEach(apiFoo, obj); // use obj for "this" binding on function apiFoo
+
+        // "new" Binding, when we use "new" it's a constructor call, also 
+        // there is no such thing as constructor fuctions in JS like others
+        // generally these things are done internally when we use "new" for any function invocations:
+        // - new Object is created
+        // - newly constructed object prototype is linked
+        // - newly constructed object is set as "this" binding for that fuction call
+        // - unless function returns it's own alternate Object, then "new" returns this newly constructed Object by default
+        function fooForNew(a) {
+            this.a = a;
+        }
+        let barNew = new fooForNew(2); // constructed a new Object, that sets "this" for this call of fooForNew function
+        console.log(barNew.a) // 2
+
+
+        // Binding, everytrhing in Order or Precedence
+        // which is more precedent, Implicit or Explicit Binding?
+        function fooBindingPrecedentComperator() {
+            console.log(this.a);
+        }
+        obj1 = {
+            a: 2,
+            foo: fooBindingPrecedentComperator
+        };
+        obj2 = {
+            a: 3,
+            foo: fooBindingPrecedentComperator
+        };
+        obj1.foo(); // 2
+        obj2.foo(); // 3
+        // Explicit Binding takes precedence
+        obj1.foo.call(obj2); // 3 
+        obj2.foo.call(obj1) // 2
+        // let's figure out where "new" binding fits in precedence comparison
+        function fooNewBindingPrecedence(el) {
+            this.a = el;
+        }
+        obj1 = {
+            foo: fooNewBindingPrecedence
+        };
+        obj2 = {};
+        obj1.foo(2);
+        console.log(obj1.a); // 2
+        obj1.foo.call(obj2, 3);
+        console.log(obj2.a); // 3
+        // "new" binding is more precedent over Implicit Binding
+        let barUsingNew = new obj1.foo(4); // "new" and "call"/"apply" cannot be used together
+        console.log(obj1.a) // 2??!!
+        console.log(barUsingNew.a); // 4
+        // lets check if "new" is preceent over Explicit and Hard Binding
+        // as we know Hard binding is another form of Explicit Binding.
+        obj1 = {};
+        bar = fooNewBindingPrecedence.bind(obj1); // hard bind
+        bar(2);
+        console.log(bar.a, obj1.a); // undefined, 2
+        baz = new bar(3); // "new" bind
+        // "new" call didnt overwritten obj1.a value, which means Hard Binding took precedence
+        console.log(baz.a, obj1.a) // 3, 2
+        // bind(..) by default takes first argument as "this" binding and rest as normal arguments
+        function fooBindWithCurrying(p1, p2) {
+            this.val = p1 + p2;
+        }
+        bar = fooBindWithCurrying.bind(null, "el01"); // we are not hard binding "this" here
+        baz = new bar("el02"); // we are binding "this" with "new" instead
+        console.log(baz.val); // as bar already has p1, we used p2 with "new" constructor call and with "this" binding
+
+
+        // Determinig "this"
+        // - is function called with "new"? if so, "this" is newly constructed or created Object.
+        // - is function called with "call" or "apply" (e.g. Explicit Binding, Hard Binding) ? if so, "this" is explicitly binded Object.
+        // - is function called with a context(e.g. Implicit Binding, Owning or Containing Object)? if so, "this" is that context.
+        // - otherwise, default for "this"(e.g. Default Binding) if in strict mode, pick "undefined" otherwise pick "global object".
+
+
+        // Binding Exception, there are some exception to those binding rules!! But it's advised to not use frequently!!
+        // Ignored "this", if you pass null or undefined as a "this" parameter to "call" or "apply" or "bind"
+        function fooIgnored() {
+            console.log(this.a);
+        }
+        a = 2;
+        fooIgnored.call(null); // "this" is binded with global Object instead
+        function fooIgnoredMore(a, b) {
+            console.log("a: " + a + ", b: " + b);
+        }
+        // using array spread operator
+        fooIgnoredMore.apply(null, [2, 3]); // a:2, b:3
+        // using currying
+        bar = fooIgnoredMore.bind(null, 2);
+        bar(3); // a:2, b:3
+        // Safer "this", binding with an empty object to insulate "global object" side effects
+        let emptyObj = Object.create(null);
+        fooIgnoredMore.apply(emptyObj, [2, 3]); // a:2, b:3
+        bar = fooIgnoredMore.bind(emptyObj, 2);
+        bar(3); // a:2, b:3
+        // Indirection, coommonly occurs from an assignment
+        a = 2;
+        let o = { a: 3, foo: fooIgnored };
+        let p = { a: 4 };
+        o.foo(); // 3
+        // p.foo = o.foo;
+        // p.foo(); // 4, call-site p.foo()
+        (p.foo = o.foo)(); // 2, call-site is foo() not p.foo()
+        // Softening Binding, "this" binding not global or undefined, while still Implicitly or Explicitly bounded "this"
+        if (!Function.prototype.softBind) {
+            Function.prototype.softBind = function (obj) {
+                var fn = this,
+                    curried = [].slice.call(arguments, 1),
+                    bound = function bound() {
+                        return fn.apply(
+                            (!this ||
+                                (typeof window !== "undefined" &&
+                                    this === window) ||
+                                (typeof global !== "undefined" &&
+                                    this === global)
+                            ) ? obj : this,
+                            curried.concat.apply(curried, arguments)
+                        );
+                    };
+                bound.prototype = Object.create(fn.prototype);
+                return bound;
+            };
+        }
+        function fooSoftenThisBind() {
+            console.log("name: " + this.name);
+        }
+        obj = { name: "Obj" };
+        obj2 = { name: "Obj2" };
+        let Obj3 = { name: "Obj3" };
+        let fooOBJ = fooSoftenThisBind.softBind(obj);
+        fooOBJ(); // name: Obj
+        obj2.foo = fooSoftenThisBind.softBind(obj);
+        obj2.foo(); // name: Obj2 ??!! took precedence of Explicit Binding"this"
+        fooOBJ.call(Obj3); // name: Obj3 ??!! took Hard Binding of "this"
+        setTimeout(obj2.foo, 11) // namee: Obj ??!! falls back to Soft Biniding
+        // Lexical "this", normal functions abide by 4 rules as above, except Arrow-Function
+        // it uses function or global scope for "this" binding
+        function fooWithArrowFunction() {
+            return a => {
+                console.log(this.a) // "this" is lexically adopted from function declaration enclosed
+            };
+        }
+        obj1 = {
+            a: 2
+        };
+        obj2 = {
+            a: 3
+        };
+        bar = fooWithArrowFunction.call(obj1);
+        // console.log(bar.a, obj1.a)
+        bar.call(obj2); // 2 not 3, since, bar was already referenced to Obj1, so is lexical binding of "this" as well, cannot be overridden with "new"!!
+        // most common case will likey be use of callbacks, such as event handlers or timers
+        function fooCallbacks() {
+            setTimeout(() => {
+                console.log(this.a);
+            }, 11);
+        }
+        obj = {
+            a: 2
+        };
+        fooCallbacks.call(obj); // 2
+        // Another alternative to this lexical "this" that is self = "this" use in an function
+        function fooCallBacksWithSelf() {
+            let self = this;
+            setTimeout(() => {
+                console.log(self.a);
+            });
+        }
+        obj = {
+            a:2
+        };
+        fooCallBacksWithSelf.call(obj); // 2, its making lexically capture "this" from function declaration
     </script>
 </body>
+
 </html>

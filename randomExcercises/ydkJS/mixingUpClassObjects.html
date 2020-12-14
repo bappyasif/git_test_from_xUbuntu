@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixing Up Class Objects</title>
+</head>
+<body>
+    <script>
+        // psuedo code, class constructor
+        class CoolGuy {
+            specialTrick = nothing
+            CoolGuy(trick) {
+                specialTrick =  trick
+            }
+            showOff() {
+                console.log("here's trick: ", specialTrick);
+            }
+        }
+        Joe = new CoolGuy("Jumping Jacks & Burpees");
+        Joe.showOff(); // will show "Here's trick: Jumping Jacks & Burpees"
+    </script>
+</body>
+</html>

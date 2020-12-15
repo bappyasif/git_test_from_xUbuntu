@@ -17,8 +17,122 @@
                 console.log("here's trick: ", specialTrick);
             }
         }
-        Joe = new CoolGuy("Jumping Jacks & Burpees");
-        Joe.showOff(); // will show "Here's trick: Jumping Jacks & Burpees"
+        // Joe = new CoolGuy("Jumping Jacks & Burpees");
+        // Joe.showOff(); // will show "Here's trick: Jumping Jacks & Burpees"
+
+        // psuedocode Inheritence And Polymorphism
+        class Vehical {
+            engines = 1;
+            ignition() {
+                console.log("Turning on my engine");
+            }
+            drive() {
+                ignition();
+                console.log("Steering and mving forward");
+            }
+        }
+        class Carr extends Vehical {
+            wheels =  4;
+            // polymorphed drive
+            drive() {
+                inherited: drive();
+                console.log("Rolling on all ",wheels,  " wheels!!");
+            }
+        }
+        class SpeedBoat extends Vehical {
+            // polymorphed engines
+            engines = 2;
+            // polymorphed ignition
+            ignition() {
+                console.log("Turining on my ", engines,  " engines");
+            }
+            pilot() {
+                inherited: drive();
+                console.log("Speeeding through water easily");
+            }
+        }
+
+        //JavaScript: Mixins
+        // Explicit Mixins
+        function mixin(sourceObj, targetObj) {
+            for(let key in sourceObj) {
+                // only copy if "key" is not already present
+                if(!(key in targetObj)) {
+                    targetObj[key] = sourceObj[key];
+                }
+            }
+            return targetObj;
+        }
+        let Vehicle = {
+            engines: 1,
+            ignition: function() {
+                console.log("Turning on my engine");
+            },
+            drive: function() {
+                this.ignition();
+                console.log("Steering and moving forward");
+            }
+        };
+        let Car = mixin(Vehicle, {
+            wheels: 4,
+            drive: function() {
+                Vehicle.drive.call(this); /// explicit psuedo-polymorphism
+                console.log("Rolling on all "+this.wheels+" wheels");
+            }
+        });
+        // Parasitic Inheritence, in someways both explicit and implicit mixins
+        // Traditional JS Calss Vehicle
+        function vehicle() {
+            this.engines = 1;
+        }
+        vehicle.prototype.ignition = function() {
+            console.log("Turning on my engine");
+        };
+        vehicle.prototype.drive = function() {
+            this.ignition();
+            console.log("Steering and moving forward");
+        };
+        // Parasitic Class "Car"
+        function CarClass() {
+            // first, "car" is a vehicle
+            let car =  new vehicle();
+            // modifying car to specialize
+            car.wheels = 4;
+            // saving reference to Vehicle:drive()
+            // let vehicleDrive = car.drive();
+            let vehicleDrive = car.drive;
+            // override Vehicle:drive()
+            car.drive =  function() {
+                vehicleDrive.call(this);
+                console.log("Rolling on all "+this.wheels+" wheeels");
+            };
+            return car;
+        }
+        let someCar = new CarClass();
+        someCar.drive();
+        // console.log(CarClass());
+
+        // Implicit Mixins, related to explicit psuedo-morphism
+        let something = {
+            cool: function() {
+                this.greeting = "Hello World";
+                this.count =  this.count ? this.count++ : 2;
+            }
+        };
+        // something.cool();
+        something.cool();
+        console.log(something.greeting);
+        console.log(something.count);
+        let another = {
+            // count: 4,
+            cool: function() {
+                // Implicit mixins of "something" to "another"
+                something.cool.call(this);
+            }
+        };
+        another.cool();
+        console.log(another.greeting);
+        console.log(another.count);
     </script>
 </body>
 </html>

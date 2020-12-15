@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Prototypes</title>
+</head>
+
+<body>
+    <script>
+        // Objects in JavaScript have an internal property "Prototype", a reference to another Object
+        // All Objects are given a non null value for this property, at time of their creation
+        // even though it's somewaht less common to see, but it's possible for object to have an empty Prototype
+        let someObj = {
+            a: 2
+        };
+        console.log(someObj.a);
+        let anotherObj = {
+            // a: 4
+            a: 4
+        };
+        // create an object linked to "anotherObj"
+        let anObject = Object.create(anotherObj);
+        console.log(anObject.a); // if "a" weren't found anywhere in Prototype chain then returns "undefined"
+        // Prototype lookup chain process emulation with a for..in loop
+        for (let k in anObject) {
+            console.log("found: ", k);
+        }
+        console.log("a" in anObject); // lookup stops once found on Prototype chain or chain ends
+        // all object in JS, has in their prototype chain Object.prototype at top of chain
+        
+        // Setting and Shadowing Properties
+        anObject.foo = "bar"; // if "foo" is not present in "anObject", it'll create otherwise change existing value of it
+        // If Property name "foo" ends up both on "anObject" and "Prototype"chain, it's known as "Shadowing"
+        // few Prototype Chain Scenarios:
+        // - "foo" found anywhere higher on Prototype chain and not marked as Read-Only then a Shadowed Property is created
+        // - "foo" found higher on Prototype chain but marked as Read-Only then Shadowed and Creation is DisAllowed
+        // - "foo" found hgher on chain, and it's a setter(writable: true) then setter will be called and "foo" will be added in "anObject" as shadowed on
+        // for scenario 2 and 3, assignment operators are not allowed to use, rather Object.defineProperty(..) is used to add "foo" to "anObject"
+        anotherObj = {
+            a: 2
+        };
+        anObject = Object.create(anotherObj);
+        console.log(anotherObj.a, anObject.a);
+        console.log(anotherObj.hasOwnProperty("a"), anObject.hasOwnProperty("a"));
+        anObject.a++; // implicit shadowing
+        // though it appears that anObject.a++ should increment anotherObj.a property but ++ operation corresponds to anObject.a = anObject.a+1
+        console.log(anotherObj.a, anObject.a);
+        console.log(anotherObj.hasOwnProperty("a"), anObject.hasOwnProperty("a"));
+        // if you wanted to increment "a" propety of anotherObj then proper way would be anotherObj.a++ instead
+
+        // Class, can't describe what an object can do, object defines it's own behavior directly
+        // Class Functions, all functions by default get a non-enumerable property called Prototype on an otherwise arbitary Object
+        function Foo() {
+            //
+        }
+        console.log(Foo.prototype);
+        let a = new Foo(); // a new objct linked with another object, rather instantiating a class
+        console.log(Object.getPrototypeOf(a) === Foo.prototype); // Objects can be linked to a a common Object, "a" is lnked internally to "Foo.prototype" object
+        console.log(typeof(a));
+        
+        // Constructors, a function which gets used to create an Object
+        console.log(Foo.prototype.constructor === Foo); // Foo.prototype by default also gets a "constructor" property
+        console.log(a.constructor === Foo); // a.constructor does resolve to Foo function "constructor"
+        // using "new" in front makes a normal function call to Constructor Call, and constructs and Object
+        function NothingSpecial() {
+            console.log("Don't bother");
+        }
+        a = new NothingSpecial(); // NothingSpecial is in no way a constructor, except for use of "new" makes it as such
+        console.log(a);
+    </script>
+</body>
+
+</html>

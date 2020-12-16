@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavior Delegation</title>
+</head>
+<body>
+    <script>
+        // Behavior Delegation or Prototype Chaining is all about objects being linked to other objects
+        // Towards Delegation-Oriented Design, lets dive into it gradually
+
+        // Class Theory, which encourages to get most of inheritence, method overriding(and polymorphism) and perhaps making use of 
+        // "super" call to "base" class while adding more behavior to it. After instatntiation you're most likely to be intercating with them rather than Classes they were created from(coipes of those behaviors).
+
+        // Delagation Theory, you define an Object to hold that data/behavior, you can also lonk your task specefic object to that utility Object, allowing them to deligate when need to 
+        // rather than class copies, keep them in their seperate Object entities and we can allow object to Deligate to Other Objects as it needed be without copying them altogether as Class architechture would do.
+        let Task = {
+            setID: function(ID) {
+                this.id = ID;
+            },
+            outputID:function() {
+                console.log(this.id);
+            }
+        };
+        // making "xyz" and delegating to "Task"
+        let xyz = Object.create(Task); // not class oriented but let's call it OLOO(Object Link to Other Objects)
+        // creating object specefic behavior
+        xyz.prepareTask = function(ID, label) {
+            this.setID(ID);
+            this.label = label;
+        }
+        xyz.outputDetails =  function() {
+            this.outputID();
+            console.log(this.label);
+        }
+        xyz.prepareTask(2, "label"); // prototype mechanisms links Objects to other Objects there si no abstract Class like mechanisms
+        xyz.outputDetails();
+        // some other differrences to note with OLOO style coding:
+        // - in general, with "prototype" delagation inivolved, you want state to be on Dlegators (e.g. xyz) not on Delegate (e.g. Task)
+        // - we avoid if possible naming things same at different level of "prototype" chains called Shadowing, unlike method overriding(polymorphism) in class architecture
+        // - as general utility methods that exists in Deligate (e.g. Task) and are aailble to us whilee intercating with Deligators (e.g. xyz), which can be found through "prototype" chain of this "xyz" object
+        /// Delegation is more properly used as an internal implementation detail ratyher than exposed to API design directly to call xyz.setID(..), though we can but we don't want to and delegate this internally xyz.prepareTask(..)
+        
+        // Mutual Delegation, is disallowed in OLOO, which means bi-directional delegation is not allowed (a -> B and B -> A will get an error)
+        // it's as such if proeprty/behavior never found on either obbjects then an infite loop recursion would occur, and it's more performant to check(and reject) circular reference oncce than to check everytime  you look-up on an object.
+
+        // Mental Models Compared, between "class" and "delegation" designs patterns
+        // - classical prototypal OO style:
+        function Foo(who) {
+            this.me = who;
+        }
+        Foo.prototype.identify = function() {
+            return "I'm "+this.me;
+        };
+        function Bar(who) {
+            Foo.call(this, who);
+        }
+        Bar.prototype = Object.create(Foo.prototype); // Bar.prototype delegates to Foo.prototype
+        Bar.prototype.speak = function() {
+            console.log("Hello "+this.identify());
+        };
+        let b1 = new Bar("b1");
+        let b2 = new Bar("b2");
+        b1.speak();
+        b2.speak();
+        // - lets implement this exact same functionality with OLOO/BehaviorDelegation style coding
+        Foo = {
+            init: function(who) {
+                this.me = who;
+            },
+            identify: function() {
+                return "I'm "+this.me;
+            }
+        };
+        Bar = Object.create(Foo);
+        Bar.speak = function() {
+            console.log("Hello "+this.identify());
+        }
+        b1 = Object.create(Bar);
+        b1.init("b1");
+        b2 = Object.create(Bar);
+        b2.init("b2");
+        b1.speak();
+        b2.speak();
+        // with behavior delegation style coding we've greatly simplified all our codes from using "class","constructors","prototypes","new" calls altogether
+        // comparing them it's quite obviuous that OLOO style coding has vastly less stuff to worry about, because it's all about linkning Objects to other Objects, you can achieve same functionality witout using them in your code entirely!!
+        
+    </script>
+</body>
+</html>

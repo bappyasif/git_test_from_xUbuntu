@@ -69,6 +69,154 @@
         }
         a = new NothingSpecial(); // NothingSpecial is in no way a constructor, except for use of "new" makes it as such
         console.log(a);
+
+        // Class Mechanics in JS
+        function Foo(name) {
+            this.name = name; // adds .name onto each each object created from this function
+        }
+        Foo.prototype.someName = function() {
+            return this.name;
+        };
+        a = new Foo("a");
+        let b = new Foo("b");
+        console.log(a.someName(), b.someName()); // someName() is not found directly in a or b but through delegation found on Foo.prototype
+
+        // Constructor Redux
+        function Foo() {}
+        // Foo.prototype = {} // a new prototype object
+        Foo.prototype = {} // a new prototype object
+        let a1 =  new Foo();
+        console.log(a1.constructor === Foo); // false, Foo.prototype doesn't have a "constructor" as it's been redefined with an empty object
+        console.log(a1.constructor === Object); // true, as it's been updated with an Object, and Object.prototype has a constructor in it
+        // we can add constructor back to Foo.prototype manually
+        Object.defineProperty(Foo.prototype, "constructor", {
+            enumerable: false,
+            writable: true,
+            configurable: true,
+            value: Foo // point to .constructor at Foo
+        });
+        console.log(a1.constructor === Foo); // true, as Foo.prototype has constructor back in to it and a1 is and Foo both pointing to it by default
+
+        // Prototypal Inheritance
+        function Foo(name) {
+            this.name = name;
+        }
+        Foo.prototype.someName = function() {
+            return this.name;
+        }
+        function Bar(name, label) {
+            Foo.call(this, name);
+            this.label = label;
+        }
+        // making a new Bar.prototype which points to Foo.prototype
+        Bar.prototype =  Object.create(Foo.prototype); // now it's own Bar.prototype.constructor is gone as it's been updated with Foo.prototype
+        Bar.prototype.someLabel = function() {
+            return this.label;
+        }
+        a = new Bar("a", "Obj a"); // as Bar.prototype is now pointing to Foo.prototype, it'll have access to "someName"
+        // b = new Foo("b");
+        // Foo.prototype =  Object.create(Bar.prototype);
+        // b = new Foo("b");
+        // console.log(a.someName(), a.someLabel(), b.someLabel(), b.someName());
+        console.log(a.someName(), a.someLabel()); // after creating a new object and pointing it's prototype to our our intended prototype and throwing away oroginally prototype incorrect link to meet our purpose
+        Bar.prototype = Foo.prototype // it's not creating a new object rather pointing to Foo.prptotype, which means they both share same object itself, not something you might want, if so then stick to either and keep it simpler
+        Bar.prototype = new Foo(); // this creates a new object with duely link to Foo.prototype but with it's side effects as well and most likealy against wrong object not just Bar() descendants as we'd expect
+        // That's why Object.create(..) is properly linked without any side effects of calling Foo(), with only downside is it throw away old one and modifying existing to default object that we provide.
+        Bar.prototype =  Object.create(Foo.prototype); // pre ES6
+        Object.setPrototypeOf(Bar.prototype, Foo.prototype) // post ES6+
+
+        // Class Relationships, inspecting an instance inheritence incestry often known as, introspection or reflection
+        a = new Foo();
+        console.log(a instanceof Foo); //truye, in this entire Prototype chain of a,  does object arbitarily ponited to by Foo.prototype ever appear
+        // isinstanceof property can only be effective when it's tested agains a funtion attached to it, not any tow individual objects ancestry can be found with this alone
+        b = Object.create(a);
+        console.log(Foo.prototype.isPrototypeOf(a)); //much cleaner approcah to reflection for object inheritence ancestry
+        console.log(b.isPrototypeOf(a), a.isPrototypeOf(b)); // does b/a appear anywhere in a/b's prototype chain?
+        console.log(Foo.prototype.isPrototypeOf(b));
+        // console.log(Object.getPrototypeOf(a));
+        Object.getPrototypeOf(a); // ES5 way
+        console.log(Object.getPrototypeOf(a) === Foo.prototype); // they both are pointing to same Foo.prototype object
+        console.log(a.__proto__ === Foo.prototype); // ES6+ an alternate way of accessing internal prototype
+        // roughly we can envision __proto__ implemention like this:
+        Object.defineProperty(Object.prototype, "__proto__", {
+            get: function() {
+                return Object.getPrototypeOf(this);
+            },
+            set: function(obj) {
+                Object.setPrototypeOf(this, obj);
+                return obj;
+            }
+        });
+        console.log(a.__proto__ === Foo.prototype); // __proto__ is also pronouncd as "dunder proto"
+
+        // Object Links, when a property/method reference is made aginst first object and no such prop/method exists then it tells engines to look for into linked-to object and so on throughout prototype chain.
+        // Creating Links
+        let foo = {
+            something: function() {
+                console.log("Tell me something good");
+            }
+        };
+        bar = Object.create(foo); // creates a new "bar" object linked to "foo" as we specified, without any need to use "new", "prototype" or "constructor" references
+        bar.something();
+        // Object.create() Polyfilled, fore pre ES5 old browsers like IE's
+        if(!Object.create) {
+            Object.create = function(obj) {
+                function F() {}
+                F.prototype = obj; // pointing to "obj" we want to link to instead
+                return new F(); // returning a new Object that will be linked as we specified.
+            };
+        }
+        // more functionality of Object.create() polyfills
+        anotherObj = {
+            a: 2
+        };
+        anObject =  Object.create(anotherObj, {
+            b: {
+                enumerable: false,
+                writable: true,
+                configurable: true,
+                value: 3
+            },
+            c: {
+                enumerable: false,
+                writable: false,
+                configurable: false,
+                value: 4
+            }
+        });
+        console.log(anObject.hasOwnProperty("a"));
+        console.log(anObject.hasOwnProperty("b"), anObject.hasOwnProperty("c"));
+        console.log(anObject.a, anObject.b, anObject.c);
+        anObject.b = 4;
+        anObject.c = 8; // not writable
+        console.log(anObject.a, anObject.b, anObject.c); // object wasn't writable hence no change was made even though it was updated with a different value
+        // it's safer to createe your own utility function rather than using Object.create entirely for polyfills
+        function createAndLinkObject(obj) {
+            function F() {}
+            F.prototype =  obj;
+            return new F();
+        }
+        anotherObj = {
+            a: 2
+        };
+        anObject =  createAndLinkObject(anotherObj);
+        console.log(anObject.a); /// even though partial polyfill is also alright, it deppends on individual choice of deciding which one to use.
+
+        // Links as Fallbacks, not a very common pattern, rather reconsiider better design before doing so.
+        anotherObj = {
+            cool: function() {
+                console.log("Cool");
+            }
+        };
+        anObject =  Object.create(anotherObj);
+        anObject.cool(); //  it's effective due to prototype chaining acting upon it.
+        // internal delegation, less surprising for to understand how it's getting access of it instead
+        anObject.doCool = function() {
+            // this.cool1(); 
+            this.cool(); // internal delegation to cool()
+        };
+        anObject.doCool(); // as cool() already exists hence it's accesible
+        
     </script>
 </body>
 

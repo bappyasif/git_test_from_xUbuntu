@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES6 Class</title>
+</head>
+<body>
+    <script>
+        // classes are optional design pattern and furthermore they are quite awkward to implement
+        // in a prototype delegation language like JavaScript, class notation produce a copy to instantiated object rather than a delegation link
+
+        // class style
+        class Widget {
+            constructor(width, height) {
+                this.width = width;
+                this.height = height;
+                this.elem = null;
+            }
+            render(where) {
+                if(this.elem) {
+                    this.elem.css({
+                        width: this.width+"px",
+                        height: this.height+"px"
+                    }).appendTo(where);
+                }
+            }
+        }
+        class Button extends Widget {
+            constructor(width, height, label) {
+                super(width, height);
+                this.label = label || "Default";
+                this.elem = $("<button>").text(this.label);
+            }
+            render(where) {
+                super.render(where);
+                this.elem.click(this.onClick.bind(this));
+            }
+            onClick(evt) {
+                console.log("Button "+this.elem+" clicked");
+            }
+        }
+
+        // some benefits
+        // no more prototype cluttering in code (even though under hood its delegating it through prototype)
+        // without using Object.create(..) we are inheriting through exteends
+        // super now gives very helpful replatiuve polymorphism capability.
+        // class literal syntax doesn't allow any properties to show up in it, might sound limiting but thats expected (property or state exist within instances)
+        // extends lets you extend even built in Objbect (sub)types like Array or RegExp in a very natural way.
+
+    </script>
+</body>
+</html>

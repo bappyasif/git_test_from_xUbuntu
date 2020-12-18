@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ES6 Class</title>
 </head>
+
 <body>
     <script>
         // classes are optional design pattern and furthermore they are quite awkward to implement
@@ -18,10 +20,10 @@
                 this.elem = null;
             }
             render(where) {
-                if(this.elem) {
+                if (this.elem) {
                     this.elem.css({
-                        width: this.width+"px",
-                        height: this.height+"px"
+                        width: this.width + "px",
+                        height: this.height + "px"
                     }).appendTo(where);
                 }
             }
@@ -37,7 +39,7 @@
                 this.elem.click(this.onClick.bind(this));
             }
             onClick(evt) {
-                console.log("Button "+this.elem+" clicked");
+                console.log("Button " + this.elem + " clicked");
             }
         }
 
@@ -48,6 +50,101 @@
         // class literal syntax doesn't allow any properties to show up in it, might sound limiting but thats expected (property or state exist within instances)
         // extends lets you extend even built in Objbect (sub)types like Array or RegExp in a very natural way.
 
+        // class gotchas, class is not usual Class Mechanism(copying definition) rather syntactic sugar coating on top of Prototype delegation mechanism
+        class C {
+            constructor() {
+                this.num = Math.random();
+            }
+            rand() {
+                console.log("Random : " + this.num);
+            }
+        }
+        let c1 = new C();
+        c1.rand();
+        C.prototype.rand = function () {
+            console.log("Random: " + Math.round(this.num * 1000));
+        }
+        let c2 = new C;
+        c2.rand();
+        c1.rand(); // due to delegation mechanism c1 also using overriden method of rand
+        // class syntax doesn't provide a way to declare memeber properties, methods only, if you need to use member properties then you'll have to use .prototype syntax instead
+        class D {
+            constructor() {
+                // maing sure to modify shared state
+                // not to set a shadowed property on instances
+                D.prototype.count++;
+                // here count works as expected via delegation
+                console.log("Hello : ", this.count);
+            }
+        }
+        // add a property for shared state directly to prototype object
+        D.prototype.count = 0;
+        let d1 = new D();
+        let d2 = new D();
+        console.log(d1.count === 2, d1.count === d2.count); // memeber properties shared among state instances
+        // also class syntax exposing .prototype as an implementation detail
+        //  to implicitly create a shadowed .count property on both instances, it lacks syntactic support, that it shouldn't be done at all
+        class A {
+            constructor(id) {
+                // we're shadowing id() method with property value on instance
+                this.id = id;
+                // console.log("ID: ", this.id);
+                // this.id1();
+            }
+            // id() {
+            //     console.log("ID: ", this.id);
+            // }
+            id1() {
+                console.log("ID: ", this.id);
+            }
+        }
+        let a1 = new A("a1");
+        // a1.id(); 
+        a1.id1();
+        // binding of super can be like of bind declaration, and it's sort of statically bounded not dynamically as declaration time.
+        class B {
+            foo() {
+                console.log("B.foo");
+            }
+        }
+        class F extends B {
+            foo() {
+                // super();
+                super.foo();
+            }
+        }
+        let f1 = new F();
+        f1.foo();
+        let E = {
+            foo: function () {
+                console.log("E.foo");
+            }
+        };
+        let G = {
+            foo: F.prototype.foo
+        }
+        // Linking G to E for delegation
+        // Object.setPrototypeOf(G,E);
+        Object.setPrototypeOf(G, E);
+        G.foo(); // super is not dynamically bound rather statically bounded at creation time that's why still pointinig to B not E.
+        // there are probable ways to manually address such super gothcas using toMethod(..) to bind/rebind a method to HomeObject
+        let H = {
+            foo: function() {
+                console.log("H.foo");
+            }
+        }
+        // linking I to H for delegation
+        let I = Object.create(H);
+        // manually binding "foo"'s HomeObject to be I, and I.prototype is H, so thus super() is H.foo();
+        // I.foo = H.prototype.foo.bind(I, "foo");
+        // I.foo = F.prototype.foo.toMethod(I, "foo");
+        // I.foo = F.prototype.foo.bind(I, "foo");
+        // I.foo = F.prototype.foo.bind(this, "foo");
+        // I.foo();
+        I.foo();
+        // JavaScript is dynamic and definition of any objects is mutable unless you make it otherwise.
+        // class syntax seems to be forcing to use .prototype or super gotchas, es6 class is masquuerading as a nice solution to syntactic headaches, which is not necessarily making it clear for concise understanding of JS
     </script>
 </body>
+
 </html>

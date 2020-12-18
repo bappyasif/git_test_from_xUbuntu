@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asynchrony Now and Later</title>
+</head>
+
+<body>
+    <script>
+        // most common unit of chunks in a program is usually a function.
+        // asynchronous functions will have some task at hand first and await for a response untill it can have response or results
+
+        // ajax psuedocode
+        // let data = ajax("https://some.url.1/get");
+        // console.log(data) // data generally won't have Ajax results immediately
+
+        // asynchronous Ajax request psuedocode
+        // ajax("https://some.url.1/getIt", function(data) {
+        //     console.log(data); // yay, gots some  data
+        // });
+
+        // even though synchronous ajax call can be made but it's highly discouraged because it'll stop any kind of UI enteraction until request is complete
+        function now() {
+            return 21;
+        }
+        function later() {
+            answer = answer * 2;
+            console.log("Meaning of life: ", answer);
+        }
+        let answer = now(); // runs rightaway
+        setTimeout(later, 110); // runs after a await
+        // whenever you're creating a later chunk of your code that should be executed in response to some event(timer, mouse click, Ajax response, and so on) and thus introducing Asynchrony to your program
+
+        // Async Console
+        let a = {
+            index: 1
+        };
+        // should show {index:1} but in some browser due to next statement it might show {index:2}, when you do run into this kind of scenario it's beest to use breakpoint in your JS debugger instead of relying your console output
+        console.log(a);
+        a.index++;
+
+        // Event Loop
+        // JS engines itself has never done anything more than execute a singl chunk of you program at any givn time, when asked to, but by whom you should ask, that's important
+        // JS engine doesn't run in isolation, it runs inside a hosting environment, usually for most developers it's web browser, though JS has expanded beyond browser into other environment such as servers via like Node.js and gets embedded into other devices from robots to lightbulbs
+        // each environment has one thing in common for executing multiple chunks of your program over a time, invoking JS engine at each moment, called Event Loop
+        // JS has an on demand execution environment for any arbitary snippet of JS, it has always scheduled "Events" or JS code instructions
+        // for example when you make an Ajax call yo setup your response code in a callback function and JS engine tells environment, susupend execution until you finish that network request and you have some data or not please call this callback function right after immediately
+        // browser then is setup and ready to listen for any response from network and when it has anything to give to you, it schedules callvback function to be executed by inserting into Event Loop
+        // Event Loop Psuedo Code
+        let eventLoop = []; // first in first out
+        let event;
+        while (1 === 0) {
+            if (eventLoop.length > 0) {
+                // get next event in queue
+                event = eventLoop.shift();
+                // now, execute next event
+                try {
+                    event(); // function callbacks
+                } catch (err) {
+                    reportError(err)
+                }
+            }
+        }
+        // it's important to note setTimeout doesn't put your callback into event loop queue rather it sets upa  time and once expires environment pushes it back to event loop.
+        // if you've multiple setTimeout items in event loop, it gets in line and awit for it's timer to expire and that's why it might sometime not accurately begin at expiration time but rather depend on state of event queue and execute between that time and after
+        // due to ES6 Promises, JS engines now specifies how Event Loop works rather previously it was just Hosting Environment purrpose
+
+        // Parallel Threading, async is about gap between now and then, but parallel is to occur simultaneously
+        // most common tools for parallel computing are processes and threads, and may execute simultaneously on seperate processors or computers, but multiple threads can share memory of a single process.
+        // an event loop in contrast breaks it's works into chunks and executes them in serial, thus disallowing parallel access and changes to shared memory
+        // paralleelism and serialism can coexist in form of cooperating event loops in separate threads, this interleaving between these two occur at very different level of granularity
+        function later() {
+            answer = answer * 2;
+            console.log("Meaning of life: ", answer);
+        }
+        // in a single threaded environment, it really doesn't mater that items in it are low level operations because nothing can interrupt this thread, whereas in a parallel system two or mutiple threads are operating in same program could likely have unpredictable behavior
+        a = 20;
+        function foo() {
+            a = a + 1;
+        }
+        function bar() {
+            a = a * 2;
+        }
+        // ajax("https://soome.url", foo);
+        // ajax("https://soome.url", bar);
+        // in a single threaded behavior foo runs first and hence results 42 but if bar ran first then result would be 41 instead
+        // when JS events sharing sam data in parallel unpredictability would be much more subtle
+        // it's a good thing that JS never shares dat across threads, which means level of nondeterminism isn't a concern to worry about
+        // not all nondeterminism is bad sometimes it can be intentional!!
+
+        // Run-to-Completion, due to JS's single-threading, code inside of foo() gets runs first at its entirety before running bar or vice versa, this is called run-to-completion behavior
+        a = 1;
+        let b = 2;
+        function foo() {
+            a++;
+            b = b * a;
+            a = b + 3;
+        }
+        function bar() {
+            b--;
+            a = 8 + b;
+            b = a * 2;
+        }
+        // ajax("https://soome.url", foo);
+        // ajax("https://soome.url", bar);
+        foo();
+        bar();
+        console.log(a, b); // outcome of scenario 1
+        bar();
+        foo();
+        console.log(a, b); // outcome of scenario 2
+        // two outcomes from same code means we still have nondetermnism but it's at function(event) ordering level rather theen statement ordering level as it is with threads, it's mroe deterministic than threads would have been
+        // function ordring nondeterminism is also known as "race condition", as they are raacing against each other and determing what final value of a and b will be due to that
+
+        // Concurrency, when two or more processes (or tasks) are running simulataneously over same period of time, regardless whether their individual constituent operations happens in parallel or not
+        // you can think of concurrency as process level(taskk level) parallelism as opposed to operation level parallelism (separate-processor threads)
+        // it's possible to think that sometimes request and response can occur at same moment which will then move onto Even loop through run-to-completion one by one
+        // single threaded event loop is one expression of concurrency(task-level parallel) along with some others.
+
+        // Noninteracting, when two or more processes are interleaving concurrently and they dont interact with each other then nondeterminism is perfectly acceptable
+        // foo and bar are two concurrent prossess and nondeterminate which order they will be fired in, if they act independently then it doesn't matter because they act independently and need not ot interact
+
+        // Interaction, more commonly when concurrent processes will by necessity interact through scope or dom, and to prevent race conditions we'll have to coordinate these interactions.
+        let res = [];
+        function response(data) {
+            res.push(data);
+        }
+        // ajax("https://some.url/1", response);
+        // ajax("https://some.url/2", response);
+        // res[] will have different results dpending on which request finishes first, you can say nondeterminism is a race conditions bug
+        // sometimes one task can always takes much longer than that other depending on nature of their task, to address such race condition you can co ordinate interaction in certain order
+        res = [];
+        function response(data) {
+            if (data.url === "https://some.url/1") {
+                res[0] = data;
+            } else if (data.url === "https://some.url/2") {
+                res[1] = data;
+            }
+        }
+        // ajax("https://some.url/1", response);
+        // ajax("https://some.url/2", response);
+        // regardless of which response comes back first res[0] (e.g. content of a div tag) and res[1] (e.g style of a div attributes)will always hold results for respective requests and thus eliminates race conditions nondeterminism, one shouldn't happen without other being present or available
+        // some concurrencies scenarios are always broken without coordianted interaction
+        a,b;
+        function foo(x) {
+            a = x * 2;
+            baz();
+        }
+        function bar(y) {
+            b = y * 2;
+            baz();
+        }
+        function baz() {
+            console.log(a+b);
+        }
+        // ajax("https://some.url/1", response);
+        // ajax("https://some.url/2", response);
+        // no matter what order resquest call finishes either one of them will always be undefined
+        // to address such condition we can always bring in a logic gate which will ensure we wait for both variables to be available before we call function (e.g. baz())
+        a,b;
+        function foo(x) {
+            a = x * 2;
+            if(a&&b) {
+                baz();
+            }
+        }
+        function bar(y) {
+            b = y * 2;
+            if(a&&b) {
+                baz();
+            }
+        }
+        function baz() {
+            console.log(a+b);
+        }
+        // ajax("https://some.url/1", foo);
+        // ajax("https://some.url/2", bar);
+        
+    </script>
+</body>
+
+</html>

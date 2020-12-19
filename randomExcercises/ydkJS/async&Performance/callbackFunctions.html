@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callback Functions</title>
+</head>
+
+<body>
+    <script>
+        // Continuations, the callback function wraps or encapsulates continuation of program
+        // as soon as we introduce single continuation in form of callback function, we've allowed a divergence to form between our Brains work and way our code will work, which becomes hardder to understand, reason, debug and maintain
+
+        // Sequential Brain, when we fake multitasking, such as typing and talking to a friend or family what we're actually most likely doing is acting as fast context switchers, we switch back and forthbetween two or more tasks in rapid succession
+        // simulatneous progress in each task in tiny , fast little chunks, we do it so fast that to outside workd it seems to be parallel, its(e.g. Our Brain) work kind of Event Loop queue
+
+        // Doing Versus Planning, there's a big observable difference between how we Plan various Tasks and how our brain actually operates those Tasks
+        // even though at operational level our Brains are async evented, we seem to plan out task in a sequential, synchronous way (e.g. A then B then C), we assume to exteent temporal blocking(e.g. blocking B to wait on A and C to wait on B)
+
+        // Nested or Chained Callbacks
+        listen("click", function handler(evt) {
+            setTimeout(function request() {
+                ajax("https://some.url", function response(data) {
+                    if (data === "hello") {
+                        handler();
+                    } else if (data === "world") {
+                        request();
+                    }
+                })
+            }, 200)
+        });
+        // this kind of chain of mutiple functions together often called as callback hell or pyramid of doom
+        // "callback hell" has nothing to do with nesting/indentation, it's much deeper problem than taht which we'll come to understand shortly
+        listen("click", handler);
+        function handler() {
+            setTimeout(request, 200);
+        }
+        function request() {
+            ajax("https://some.url", response);
+        }
+        function response(data) {
+            if (data === "hello") {
+                handler();
+            } else if (data === "world") {
+                request();
+            }
+        }
+        // even though it's much cleaner and hardly any nesting/indentation but still a "callback hell"
+        // as we go linearly reason about this code, we've to skip from one function to next andd to next and bounce all around tp keep track sequence of code
+        // for example if step 2 fails, step 3 never gets reacched nor does step 2 retry or move on to an alternative error handling flow and so on
+        // with hardcoded callbacks even with error handling is often far less optimized, once specifying all eventualities, code becomes convoluted tat it's hard to ever maintain or update it, and thats "callback hell" is alll about
+
+        // Tale of Five Callbacks, to illustrate hazards of trust at play, with an exaggerated scenerio
+        //  consider you have a callback function through a third arty vendor utility function that you pass in your purchaseData and then charges customer CC and displays Thank you page
+        analytics.trackPurchase(purchaseData, function () {
+            chargeCreditCard();
+            displayThankYouPage();
+        });
+        // but situation might arrive that due to Third Part utility function your code behaving unexppectedly and to stop it from happening again you bring adjustments in your code like this
+        let tracked = false;
+        analytics.trackPurchase(purchaseData, function () {
+            if (!tracked) {
+                tracked = true;
+                chargeCreditCard();
+                displayThankYouPage();
+            }
+        });
+        // we're essentially creating a "latch" to handle if there might happen to be multiple occurent of our callback function
+        // but still due to using third party utility function and they could bring in many different changes in their code base causing many ad hoc situatin upfront which is not always easy and affordable thing to do at all times, hence "callback hell" can be very cumbersome to handle
+
+        // overly trusting of inputs
+        function addNumbers(x, y) {
+            // + s overloaded with coercion t be string concatenation
+            return x + y;
+        }
+        addNumbers(21, 21); // 42
+        addNumbers(21, "21") // "2121"
+        // defensive against untrusted input
+        function addNumbers(x, y) {
+            // ensure numerical
+            if (typeof x !== "number" || typeof y !== "number") {
+                throw Error("Bad Parameters");
+            }
+            return x + y;
+        }
+        addNumbers(21, 21); // 42
+        addNumbers(21, "21") // Error: "Bad Parameters"
+
+        // or perhaps even safer
+        function addNumbers(x, y) {
+            return Number(x) + Number(y);
+        }
+        addNumbers(21, 21); // 42
+        addNumbers(21, "21") // 42
+        // these sorts of checks/normalizations are fairly common on function inputs, can be coined with term Trust But Verify
+        // doesn't it stand to reason that we should do this same for our async composition as well
+        // callbacks usually dont really offers us anything to assist us with as such, we've to construct all that machinery for ourselves and it often ends up being repeated boilerplate code for every single async function call
+        // also known as "Inversion of Control" along those trust trust lines for any kind of eternal utility functions usage and defense against any kind of pitfalls there might be
+
+        // Saving Callbacks, there are several variations of callback designs that have attempted to address some of those trust issues
+        // regarding more better error handling, some API designs provides splits function for each of them
+        function success(data) {
+            console.log(data);
+        }
+        function failure(err) {
+            console.log(err);
+        }
+        // ajax("https://some.url", success, failure);
+        // this split-callback is what JS Promises uses in ES6 Promise API
+        // another common pattern is called error-first-style used nearly across all Node.JS API's, where first argument is reserved for an error if here is any, If success then this argument will be empty/falsy
+        function response(err, data) {
+            // check error
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(data);
+            }
+        }
+        // ajax("https://some.url", response);
+        // these scenerios havent really prevented or filtered any unwanted repeated invocations, so you need to code around it to make those adjustments
+        // to avoid of never beeing callled, you are likely to be setup a timeout that cancels that event
+        function timeoutify(fn, delay) {
+            let intv = setTimeout(() => {
+                intv = null;
+                fn(new Error("Timeout!"));
+            }, delay);
+            return function () {
+                // timeout hasn't happened yet
+                if (intv) {
+                    clearTimeout(intv);
+                    fn.apply(this, [null].concat([].slice.call(arguments)));
+                }
+            }
+        }
+        function foo(err, data) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log(data)
+            }
+        }
+        // ajax("https://some.url", timeoutify(foo, 200));
+        // to avoid any risk of being called too early before  any critical task is completes, always invoke callbacks asynchronously even if it's right away so that all callbacks are predictably async
+        function result(data) {
+            console.log(a);
+        }
+        let a  = 0;
+        ajax("..pre-cahed-url..", result);
+        a++;
+        // would it print 0 or 1 this unpredictability can threatens any JS program, so always be asyncing
+        // if you dont know if API in question will always execute async, then you could invent an utility like this
+        function asyncify(fn) {
+            let orig_fn = fn,
+            invt = setTimeout(() => {
+                invt = null;
+                if(fn) fn();
+            }, 2);
+            fn = null;
+            return function() {
+                // firing too quickly, before "invt" timer has fired to indicate async turn has passed
+                if(invt) {
+                    fn = orig_fn.bind.apply(
+                        orig_fn, 
+                        // add wraper's this to bind(..) and call parameters as well as currying any parameters being passed in
+                        [this].concat([].slice.call(arguments)))
+                }
+                // already async 
+                else {
+                    // invoke original function
+                    orig_fn.apply(this, arguments);
+                }
+            };
+        }
+        function result(data) {
+            console.log(a);
+        }
+        a = 0;
+        ajax("..pre-cached-url..", asyncify(result));
+        a++;
+        // a++ has a chance to run before result(..) does making value of a is always 1 instead of 0
+        // to address issues like those in ES6 has some functionality to handle them on theeir own from built in API's
+    </script>
+</body>
+
+</html>

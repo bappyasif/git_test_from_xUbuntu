@@ -143,7 +143,7 @@
         // ajax("https://some.url/2", response);
         // regardless of which response comes back first res[0] (e.g. content of a div tag) and res[1] (e.g style of a div attributes)will always hold results for respective requests and thus eliminates race conditions nondeterminism, one shouldn't happen without other being present or available
         // some concurrencies scenarios are always broken without coordianted interaction
-        a,b;
+        a, b;
         function foo(x) {
             a = x * 2;
             baz();
@@ -153,30 +153,116 @@
             baz();
         }
         function baz() {
-            console.log(a+b);
+            console.log(a + b);
         }
         // ajax("https://some.url/1", response);
         // ajax("https://some.url/2", response);
         // no matter what order resquest call finishes either one of them will always be undefined
         // to address such condition we can always bring in a logic gate which will ensure we wait for both variables to be available before we call function (e.g. baz())
-        a,b;
+        a, b;
         function foo(x) {
             a = x * 2;
-            if(a&&b) {
+            if (a && b) {
                 baz();
             }
         }
         function bar(y) {
             b = y * 2;
-            if(a&&b) {
+            if (a && b) {
                 baz();
             }
         }
         function baz() {
-            console.log(a+b);
+            console.log(a + b);
         }
         // ajax("https://some.url/1", foo);
         // ajax("https://some.url/2", bar);
+        // another concurreny issue known as "race" or "latch" can occur when nondeterminism is acceptable for "only if first one wins" behavior.
+        // whichever one foo or bar fires last will not only overwrite assigned value of a but will also duplicate call to baz(likely undesired)
+        a;
+        function foo(x) {
+            a = x * 2;
+            baz();
+        }
+        function bar(x) {
+            a = x / 2;
+            baz();
+        }
+        function baz() {
+            console.log(a)
+        }
+        // ajax("https://some.url/1", foo);
+        // ajax("https://some.url/2", bar);
+        //  we can coordinate interaction with a simple "latch" (e.g. conditional check if undefined) to let only first one through
+        a;
+        function foo(x) {
+            if (a === undefined) {
+                a = x * 2;
+                baz();
+            }
+        }
+        function bar(x) {
+            if (a === undefined) {
+                a = x / 2;
+                baz();
+            }
+        }
+        function baz() {
+            console.log(a)
+        }
+        // ajax("https://some.url/1", foo);
+        // ajax("https://some.url/2", bar);
+
+        // Cooperation, or also known as cooperative concurrency, is to break up a long runnig process into smaller chunks so that other concurrent "processes" can have a chance to interleaved their operation into Event Loop queue
+        // consider an Ajax response that needs to run through a long list of results to transform values
+        res = [];
+        // receives array of results from that Ajax Call
+        function response(data) {
+            // add into existing array
+            res = res.concat(
+                // transformed array with all values doubled
+                data.map(val=>val*2)
+            );
+        }
+        // ajax("https://some.url/1", foo);
+        // ajax("https://some.url/2", bar);
+        // if either of these call request goes through at first, and have millions of records to gor through then it'll take a while to run and meanwhile nothing else can run on this page including no other response(..) call not even user evnts like scrolling, typing, which should be avoidable
+        // to make it more cooperatively concurrent system, one that's friendlier and doesn't hog event loop queue, process these results in Asynchronous Batches, after each "yielding" back to event loop to let other waiting process to run
+        res = [];
+        // receives array of results from that Ajax Call
+        function response(data) {
+            // lets makee it a chunk of 1000 records at a time
+            let chunk = data.splice(0,1000);
+            // add onto existing array
+            res = res.concat(chunk.map(val=>val*2));
+
+            // anything left to proccess
+            if(data.length > 0) {
+                // async schedule next batch
+                setTimeout(()=>response(data), 0);
+            }
+        }
+        // ajax("https://some.url/1", foo);
+        // ajax("https://some.url/2", bar);
+        // by processing in chunks it'll ensure a short running "process" even if itmeans many subsequent processes as interleaving onto event loop queue, this will give us more responsive site/app
+        // setTimeout(..) is a hack for Asynch Scheduling, which means just place it for next opportunity at event loop queue to run this process
+
+        // Jobs, a new consept on top of event loop queue is Job Queue and it's used mostly for Asynch Behavior with Promises
+        // it's best to think that Jobs Queue is a queue hanging at end of every tick in event loop queue and it's telling "here is this other thing I need to do, but make sure this runs right away before anything else can happen"
+        // another metaphor can be used to understand Jobs Queue, event loop is like a park ride when finished you go back to end of line to ride again, where as Jobs Queue is like finishing its ride then cutting in line and getting right back on for next ride
+        // A Job can cause more Jobs to be added to same queue, and could spin indefinitely thus starving program of ability to move on to next event loop tick, same as runing a long or even an infinite loop in your code
+        // let's imagine an API for scheduling Jobs directly and call it schedule(..)
+        console.log("A");
+        setTimeout(() => console.log("B"),0);
+        // theoretical "Job API"
+        schedule(() => {
+            console.log("C");
+            schedule(() => console.log("D"))
+        });
+        // you might expect to display ABCD but it'll print ACDB, because Jobs happens at the end of current event loop tick and timer fires to schedule next, if available, event loop tick
+
+        // Statement Reordering, while JS semantics thankfully protect us from this observable discrepancies that Compiler Statement Reordering would seem to be in danger of but it's important understand how tenuous link there is 
+        // between sourced is authored from top down fashion and way it runs after compilation, Compiler Statement Reordering can be a metaphor for concurrency and interaction, awareness of it can help you understand async JS code flow issues better
         
     </script>
 </body>

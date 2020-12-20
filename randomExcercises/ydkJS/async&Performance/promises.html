@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Promises</title>
+</head>
+
+<body>
+    <script>
+        // Promise, expects something to be returned from a request after it's made, either indicating a success or failure as a response
+        // after a request is made through Promise, a future value holds present as a placeholder for response outcome to be resolved in either success or failure
+        // Values Now and Later, lets understand this with help of callbacks
+        function add(getX, getY, cb) {
+            let x, y;
+            getX(function (val) {
+                x = val;
+                // both ready
+                // cb(x+y);
+                // cb = x + y
+                if (y !== undefined) {
+                    cb(x + y);
+                    cb = x + y
+                    // return cb(x+y); 
+                }
+            });
+            getY(val => {
+                y = val;
+                // cb(x+y);
+                // cb = x + y;
+                // both ready
+                if (x !== undefined) cb(x + y);
+            });
+            // return cb;
+            // console.log(cb);
+            // console.log(x+y);
+        }
+        // fetchX, fetchY are sync or async functions
+        // add(fetchX, fetchY, function(sum) {
+        //     console.log(sum);
+        // });
+        // function getchX() {
+        //     let x = 4;
+        //     return x;
+        // }
+        // function getchY() {
+        //     let y = 4;
+        //     return y;
+        // }
+        // function getchX(x) {
+        //     // x = 4;
+        //     return x;
+        // }
+        // function getchY(y) {
+        //     // y = 4;
+        //     return y;
+        // }
+        // add(getchX, getchY, function(sum) {
+        //     // console.log(sum);
+        //     console.log(getchX+getchY);
+        // });
+        // add(function getX(x) {return 4}, function getY(y) {return 4}, sum => console.log(sum = getX(4) + getY(4)))
+        // function test(x, cb) {
+        //     let y = x + 22;
+        //     cb(y);
+        // }
+        // test(100, val => console.log(val));        
+        // add(x => 4, y => 4, function(sum) {
+        //     console.log("??",sum);
+        // });
+        // add(getX(4), getX(4), function(sum) {
+        //     console.log(sum);
+        // });
+        // add(x=>getchX(4), y=>getchY(4), function(sum) {
+        //     console.log(sum);
+        // });
+        // add(getchX(4), getchY(4), function(sum) {
+        //     console.log(sum);
+        //     // console.log((x,y)=>sum = x+y);
+        // });
+        add(x => x(4), y => y(4), function (sum) {
+            console.log(sum);
+        });
+        // we are treating x and y are as future values, add function from outside doesn't care whether x or y are both available right away or not
+        // it normalizes now and later and thus we can rely on a predictable outcome of add function operation, we make both now and later to be later and all operation becomes async
+
+        // Promise Value, lets understand structure of Promise call first
+        function addPromise(xPromise, yPromise) {
+            // Promise.all([..]) takes an array of Promises
+            // add function returns a new Promise that waits on them all to finish
+            return Promise.all([xPromise, yPromise])
+                // when that promise is resolved, let's take the received "X" and "Y" values and add them together
+                .then(function (values) {
+                    // values is an array of message from previously resolved Promises
+                    return values[0] + values[1];  // once returns it's also a Promise, if needed it can be handled with as well
+                });
+        }
+        // fetchX or fetchY return promises for their respective values, which may be ready now or later
+        // addPromise(fetchX(), fetchY())
+        // // we get a promise back for sum of those two numbers, now we chain-call then(..) to wait for resolution of that returned promise
+        // .then(function(sum) {
+        //     console.log(sum)
+        // });
+        // addPromise(x=>4, y=>4)
+        // .then(function(sum) {
+        //     console.log(sum)
+        // });
+        // addPromise(x=>x(4), y=>y(4))
+        // .then(function(sum) {
+        //     console.log(sum)
+        // });
+        addPromise(4, 4)
+            .then(function (sum) {
+                console.log(sum)
+            });
+        // fetchX() and fetchY() are called on directly, are passed into add(..), they time-time independent future values
+        // second layer is returned Promise that add(..) creates via Promise.all([..]) which we wait on by calling then(..), after add(..)completes "sum" future value is ready and we can print it out
+        addPromise(2, 2)
+            .then(function (sum) {
+                console.log(sum)
+            },
+                // rejection handler
+                function (err) {
+                    console.log(err); // ahh bummer
+                }
+            );
+        // With Promises, then(..) can takee two functions, first for fullfilment and second one for rejection
+        // once a Promise is resolved, it becomes immutable value at that point of time can then be observed as many times as necessary
+        // Promise is externally immuatbble once resolved, which means it's not possible for one party to affect another party's ability to observe Promise resolution
+        // Promises are an easily repeatable mechanism for encapsulating and composing "future values"
+
+        // Completion Event or Continuation Event, as a flow-control-mechanism, a temporal this-then-that in an asynchronous task
+        // With callbacks "notification" of task finished, would be a our callback invoked by our task(e.g. foo(..)), but with Promises we turn relationship around and axpect that we can listen for an event from foo(..) and when notified, proceed accorrdingly
+        // function foo(x) {
+        //     // start something, that could take a while
+        //     return foo(x)
+        // }
+        // foo(42).then(
+        //     // on completion
+        //     function success(comp) {
+        //         // console.log(comp);
+        //         // do our next step
+        //     },
+        //     // on failure
+        //     function failure(err) {
+        //         // console.log(err);
+        //         // oops, something went wrong in foo(..)
+        //     }
+        // )
+        // here is more natuaral way we could express that in JS
+        // function foo(x) {
+        //     // start something
+        //     return listener;
+        // }
+        // let evt = foo(42);
+        // evt.on("completion", function() {
+        //     // now wee can do next step
+        // });
+        // evt.on("failure", function() {
+        //     // oops something went wrong
+        // })
+        // foo(..) expressively returns an event and calling code recieves and registers two event handlers against it
+        // as we know callback themselves represents inversion of control, so inverting callback pattern is actually inversion of inversion or an universion of control, restoring back to calling code where we wanted it in first place
+        // let evt = foo(42);
+        // // let bar(..) listen to foo(..)'s completion
+        // bar(evt);
+        // // let baz(..) listen to foo(..)'s completion
+        // baz(evt);
+        // uninversion of control enabes a nicer separation of concerns, where bar and baz doesn't need to invoke foo(..)
+        // similarly foo(..) doesn't need to know that bar and baz exist or not and are waiting to  be notified when finishes, essentially this evt is a nuetral third party negotiation between separate concerns
+    </script>
+</body>
+
+</html>

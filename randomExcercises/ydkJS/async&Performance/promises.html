@@ -169,6 +169,318 @@
         // baz(evt);
         // uninversion of control enabes a nicer separation of concerns, where bar and baz doesn't need to invoke foo(..)
         // similarly foo(..) doesn't need to know that bar and baz exist or not and are waiting to  be notified when finishes, essentially this evt is a nuetral third party negotiation between separate concerns
+
+        // Promise Events, as you may have guessed evt event listening capability is an analogy for a Promise,In a Promised based approach previous snippet would havee foo(..) creating and returning a Promise instance
+        //  and that Promise would then be passed to bar(..) and baz(..), then(..) registers "fullfilment" and/or "rejection" events(they are not typical events but sure behave as if they are)
+        // function foo(x) {
+        //     // start something that could take a while
+        //     // construct and return a Promise
+        //     return new Promise(function(resolve, reject) {
+        //         // eventually, call "resolve(..)" or "reject(..)" which are resolution callbacks for that Promise
+        //         // 
+        //     });
+        // }
+        // let p = foo(42);
+        // bar(p);
+        // baz(p);
+        // this pattern with new Promise(function(..){..}) is generally known "revealing constructor", function passed in is executed immediately (not async, to then(..)), its two parameters are resolution function for Promise
+        // function bar(fooPromise) {
+        //     // listen for "foo(..)" to complete
+        //     fooPromise.then(
+        //         function() {
+        //             // foo(..) has now finished, so do bar(..) task
+        //         },
+        //         function() {
+        //             // oops something went wrong
+        //         }
+        //     );
+        // }
+        // function baz(fooPromise) {
+        //     fooPromise.then(
+        //         // function() {
+        //         //     // do task for baz()
+        //         // },
+        //         function() {
+        //             // oops something went wrong
+        //         }
+        //     )
+        // }
+        // Promise resolution doesn't necessarily need to involve sending along a message as it did when we were examining Promises as future values
+        // It can just be a flow control signal, as used in previous snippet
+        // another way to approach this is:
+        // function bar() {
+        //     // foo(...) has definitely finished, so do bar(..) taask
+        // }
+        // function oopsBar() {
+        //     // oops something went wrong in foo(..) so bar(..) didn't run
+        // }
+        // function baz() {
+        //     // foo(...) has definitely finished, so do baz(..) taask
+        // }
+        // function oopsBaz() {
+        //     // oops something went wrong in foo(..) so baz(..) didn't run
+        // }
+        // let p = foo(42);
+        // p.then(bar, oopsBar);
+        // p.then(baz, oopsBaz);
+        // please make a note of that p.then(..).then(..) also know as chaining then and p.then(..); p.then(..) are two totally different behavior
+        // up until now what we've done is knows as "splitting/forking", primary difference of passing p to bar(..) and baz(..), where we use promise to control when bar(..) and baz(..) will get executed
+        // and from another approacch is in their error handling, in first snippet bar(..) gets to run in either resolution and same goes for baz(..) as well
+        // but in second or another approach snippet, bar(..) only gets to run when foo(..) succeeds otherwise oopsBar(..), ditto goes for baz(..) and oopsBaz(..)
+        // neither approach is correct per se but there will be scenarios where one is preferred  over than other, in either case Promise that comes back from foo(..) is used to control whtever happens next
+        // moreover in both snippets end up calling then twice against same Promise, which is that once resolved/rejected can be obsrved as many times as necessary, whenevr Promise is resolved, next step is always be same, both now and later
+
+        // Thenable Duck Typing, an important detail, how to know for sure, is it a vlaue that will behave like a Promise or not, given that Promises are constructed by new Promise(..) syntax, and p isinstamce of check would suffice but there a number of resasons that's not sufficient
+        // it was decided that a way to recognize a Promise (or somethign that behaves like a Promise) would be to define something called "thenable" as ant=y object r function has a then(..) method on it, it's assumed that any such value is a Promised coonforming thenable, type checks is also known as "duck typing" in thenable functions
+        // if (
+        //     p !== null
+        //     &&
+        //     (typeof p === "object" || typeof p === "function")
+        //     &&
+        //     (typeof p.then === "function")
+        // ) {
+        //     // assume it's a thenable
+        // } else {
+        //     // not thenable
+        // }
+        // if there is a then function present in an object/function its automatically considerd as a Promise/thenable, this is ven true for if you didn't realize value has a then(..) on it
+        let o = { then: function () { } };
+        // make v linked to o via prototype 
+        let v = Object.create(o);
+        v.someStuff = "cool";
+        v.someOtherStuff = "not so";
+        console.log(v.hasOwnProperty("then")); // false
+        // it doesn't need to be directly intentional as that:
+        Object.prototype.then = function () { };
+        Array.prototype.then = function () { };
+        let v1 = { hello: "world" };
+        let v2 = ["Hello", "World"];
+        console.log(v1.hasOwnProperty("then"), v2.hasOwnProperty("then")); // false false
+        // if what's specified is a function that doesn't call either of it's parameters as callbacks then any Promise resolved with such value will just silently hang forever, sound implausible or unlikely
+        // there were several well known non-Promise libraries with a method named then(..) called on them, and som are just incomaptible with Promise based coding, for their inablity to change to get out of way
+
+        // Promise Trust, lets review trust issues with callbacks-only coding, when you pass a callback to a utility foo(..) and it might:
+        // - call callback too early
+        // - call callback too late or never
+        // - call callback too few or too many times
+        // - Fail to pass along any necessary environment/parameters
+        // - swallow any errors/exceptions that may happen
+        // characteristics of Promises are intentionally designed to provide useful, repeatable answers to all those concerns admirably
+
+        // calling callback too early, where somtimes a task finishes synchronously and sometime asynchronously, and can lead to "race conditions", Promises can not be susceptible to this concern, because even an immediately fullfiled Promise cannot be observed synchronously
+        // that is to say, when called on then(..) on a Promise, even if that alreaddy resolved, callback provided to then(..) will always be called asynchronously, no need to insert setTimeout(..), Promises prevents Zalgo automatically
+
+        // calling callback too late, similar to prvious points, a Promise's callbacks (resolve(..) or reject(..)) by it's creation capability and predictably fired at next asynchronous tick or moment
+        // when a Prmoiseis resolved all then(..) registered callbacks on it will be called in order immediately at next asynchrnous oppotunity, nothing can delay or affect calling of other callbacks while inside of any callbacks
+        // p.then(function() {
+        //     p.then(function() {
+        //         console.log("C");
+        //     });
+        //     console.log("A");
+        // });
+        // p.then(function() {
+        //     console.log("B");
+        // });
+        // A B C
+        // C can not interrupt and precede B by virtue of how Promises are defined to operate
+
+        // Promise callback scheduling quirks, it's important to note thayt relative ordering between callbacks is not reliably predictable
+        // if two promises p1 and p2 are both already resolved, it should be true that p.then(..); p2.then(..) would end up calling p1 and then p2 but there are subtle cases where it mght not be true, such as:
+        let p3 = new Promise(function (resolve, reject) {
+            resolve("B");
+        });
+        p1 = new Promise(function (resolve, reject) {
+            // resolve("p3!!");
+            resolve(p3);
+        });
+        p2 = new Promise(function (resolve, reject) {
+            resolve("A");
+        });
+        p1.then(function (v) {
+            console.log(v);
+        });
+        p2.then(function (v) {
+            console.log(v);
+        });
+        // A B <--not as you might expect B A
+        // it's because pa is not resolved with an immediate value but with another Promise p3 with itself will resolved with value "B", p1's callback/s are behind p2's callback/s in asynchronousl Job Queue
+        // to avoid such nuanced unexpected behavior, it's a good practice not to code in such a way where Ordering of multiple callbacks matters at all, avoid it if and when possible
+
+        // Never calling any callback, nothing can prevent a Promise from notifying you of it's resolution(if resolved), one of two callbacks will always be called
+        // unless callbacks has JS errors you may see different outcome than expected but callback will in fact have been called, what if a Promise itself never gites resolved, either way Promises provides an answer for that, using a higher level abstraction called a "race"
+        // a utility for timing out a Promise
+        function timeoutPromise(delay) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    reject("Timeout!!");
+                }, delay)
+            });
+        }
+        // setup a timeout for foo(..)
+        Promise.race([
+            foo(),
+            timeoutPromise(2900)
+        ]).then(
+            function () {
+                // foo(..) fullfiled in time
+                console.log("done");
+            },
+            function (err) {
+                // either foo(..) rejected or just timed out
+                console.log(err);
+            }
+        );
+        function foo() {
+            // return 42;
+            // return Error;
+        }
+        // by this we can ensure a signal as to outcome of foo(..) to prevent it from not being called ever and hanging our program indefinitely
+
+        // Calling too few or too many times, by definition a callback needs to be called just "once", too few might be "never" scenerio we just exmined, too many is for some reason tries to call resolve(..) or reject(..) multiple times, Promise will accept first resolution and silently ignore any subsequent attempts
+        // Promise can only be resolved once, any then(..) registered callbacks will ever be called once for each, this guarantee you dont call it multiple times more than you needed causing enexpected behavior by program
+
+        // Failing to pass along any parameters or environment, if you don't explicitly resolve with a value either way, value is undefined as is typical in JS, whatever that value might be always passed to all registered callbacks either now or in future
+        // if you call resolve(..) or reject(..) with multiple parameters, alll sub sequent parameters will be ignored beyond first one, this way it's avoided by any invalid number of usages by any API calls of resolve(..) protecting of getting called more than once, so behavior is consistent and as of for environment we can always rely on to be passed on as intended by their scopes
+
+        // swallowing any errors/exception, if you reject a Promise with a reason (aka error message), that value is passed to rejection callback/s
+        // if at any point in creation of a Promise a JS exception error occurs that exception will be caught and will force Promise in question to become rejected
+        p = new Promise(function (resolve, reject) {
+            foo().bar(); // foo(..) is undefined, so error
+            resolve(42); // never gets to that
+        });
+        p.then(function fullfiled() {
+            // never get to this
+        },
+            function rejected(err) {
+                // err will be "TypeError" exception object from foo.bar() line
+                console.log(err);
+            }
+        );
+        // JS exception that occurs from foo.bar() becomes a Promise rejection that you can catch and response to in your thenable function as it's shown, and it also solves another potential Zalgo moment of synchronous reaction rather asynchronous behavior reducing race conditions chances
+        // wha happens if a Promise is fullfiled but JS exception is in observation( e.g. in then(..)), such as:
+        p = new Promise(function (resolve, reject) {
+            resolve(42);
+        });
+        p.then(
+            function fullfiled(msg) {
+                foo.bar();
+                console.log(msg); // never runs
+            },
+            function rejected(err) {
+                console.log(err); // never runs
+            }
+        );
+        // exception from foo.bar() did really got swallowed, but we failed to listen for it, which is wrong behavior, resulting p.then(..) to call itself another Promise and that'll be rejected with typeError exception
+        // we could implement error handler right there but it would violate fundamental priniciple of Promises that are immutable once resolved, p was already resolved after resolve(42), so it can't be changed later to a rejection because there's an error in observing p's resoluttion
+
+        // Trustable Promise, as you'd have noticed Promises don't get rid of calllbacks rather using it directly in foo(..) it gets sometting back from it and we pass callback to that something instead, why is this more trusting than just callbacks alone
+        // solution to this already included with native ES6 Promise with implementation of Promise.resolve(..), these two promises will behave basically identically:
+        p1 = new Promise(function (resolve, reject) {
+            resolve(42);
+        });
+        p2 = Promise.resolve(42);
+        console.log("<<", p1 === p2);
+        // but if you pass a genuine promise to Promise.resolve(..) you get same promise back
+        p1 = Promise.resolve(42);
+        p2 = Promise.resolve(p1);
+        console.log(">>", p1 === p2);
+        // even more importantly, if you pass a non-Promise thenable to Promise.resolve(..), it'll attaempt unwrap this value untill a concrete final non-Promise-like value is extracted
+        p = {
+            then: function (cb) {
+                cb(42);
+            }
+        };
+        // this works but only by chance!!
+        p.then(function fullfiled(val) {
+            console.log(val);
+        },
+            function rejected(err) {
+                console.log(err); // doesn't run
+            }
+        );
+        // that p is a thenable but not a genuine Promise, let's loook at it differently than earlier
+        p = {
+            then: function (cb, errCB) {
+                cb(42);
+                errCB("muhahahaha gotcha");
+            }
+        };
+        p.then(function fullfiled(val) {
+            console.log(val);
+        },
+            function rejected(err) {
+                // shouldn't run
+                console.log(err); // this runs as well
+            }
+        );
+        // that p is not quite trustablee as because it's not well behaved of a Promise even though a thenable as is
+        // nonetheless, we can pass either of these variations of p to Promise.resolve(..) and we'll get normilized, safe result as we'd expect
+        Promise.resolve(p).then(
+            function fullfiled(val) {
+                console.log(val);
+            },
+            function rejected(err) {
+                console.log(err); // doesn't run
+            }
+        );
+        // Promise.resolve(..) will accept any thenable and will unwrap until it's non-thenable value, you get a genuine Promise for Promise.resolve(..) that you can always trust
+        // let's assume we're calling a foo(..) and we don't trust it's return value a well behaving Promise or not but we know it's a thenable, Promise.resolve(..) will give us a trustable Promise wrapper, to chain off of
+        // don't just do this
+        // foo(42).then(function(v){console.log("::",v)});
+        // instead, do this
+        // Promise.resolve(foo(42)).then(function(v){console.log("<>",v)})
+        // another benefits to use Promise.resolve(..) around any function's return value(which is when thenable), it's much easier to normalize that function call into a well behavingasync task and avoiding Zalgo makes much better code
+        // Promises are a patern that augments callbacks with trustable semantics, so that behavior is more reliable, by uninverting inversion of control of callbacks, we place control with a trustable system that was designed specifically to bring sanity to our async functionality
+
+        // Chain Flow, Promises are not just a mechanism for a single-step this-then-that sort of operations, that's just building blocks, but it tturns out we can string along multiple Promises together to represent a sequence of async steps
+        // key to making this work is built on these two behaviors, which are intrinsicc to Promises:
+        // - everytime you call then(..) on Promise it creates and returns a new Promise which we can chain with
+        // - whatever value you return from then(..) call's fullfilment callback(usually it's first parameter) is automatically set as fullfilment of chained Promise from first first then/point
+        p = Promise.resolve(21);
+        p2 = p.then(function (v) {
+            console.log(v);
+            return v * 2; // fullfils p2 with a value of 42
+        });
+        // chaining off of p2
+        p2.then(function (v) {
+            console.log(v);
+        });
+        // it's a little annoying to have to create an intermediate variable like p2 or as such, that's when chaining comes into play
+        p = Promise.resolve(21);
+        p.then(function (v) {
+            console.log(v);
+            return v * 2;
+        }).then(function (v) {
+            console.log(v);
+        });
+        // what if we want step 2 wait for step 1 to do someting asynchronously rather than something immediate return
+        // like Promise.resolve(..), same sort of unwrapping happens if you return a theable or Promise from fullfilment or rejection function handler
+        p = Promise.resolve(21);
+        p.then(function (v) {
+            console.log(v);
+            // create a Promise and returning it
+            return new Promise(function (resolve, reject) {
+                // fulllfil value of 42
+                resolve(v * 2);
+            });
+        }).then(function(v) {
+            console.log(v); // prints 42
+        });
+        // if we introduce asynchrony to that wraping Promise, everything still works nicely and same
+        p = Promise.resolve(21);
+        p.then(function(v) {
+            console.log(v);
+            return new Promise(function(resolve, reject) {
+                setTimeout(() => {
+                    resolve(v*2);
+                }, 200);
+            });
+        }).then(function(v) {
+            console.log(v); // prints 42 after 200ms from previous step
+        });
+        // that's incredibly powerful, now we can construct sequence of however many async steps as we want and can delay next step as necessary
+        // if you dont return any value then an undefined value would passed on and Promise stiull chained together in same way, each Promise resolution is thus just a signal to proceed to next step
+        
     </script>
 </body>
 

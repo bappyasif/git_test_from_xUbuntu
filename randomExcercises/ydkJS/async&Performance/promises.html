@@ -463,23 +463,153 @@
                 // fulllfil value of 42
                 resolve(v * 2);
             });
-        }).then(function(v) {
+        }).then(function (v) {
             console.log(v); // prints 42
         });
         // if we introduce asynchrony to that wraping Promise, everything still works nicely and same
         p = Promise.resolve(21);
-        p.then(function(v) {
+        p.then(function (v) {
             console.log(v);
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
                 setTimeout(() => {
-                    resolve(v*2);
+                    resolve(v * 2);
                 }, 200);
             });
-        }).then(function(v) {
+        }).then(function (v) {
             console.log(v); // prints 42 after 200ms from previous step
         });
         // that's incredibly powerful, now we can construct sequence of however many async steps as we want and can delay next step as necessary
         // if you dont return any value then an undefined value would passed on and Promise stiull chained together in same way, each Promise resolution is thus just a signal to proceed to next step
+        // to illustrate more on chaining, let's create a utility function which will havee delay-Promise without resolution messages, so that we can reuse for multiple steps:
+        function delay(time) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(resolve, time);
+            });
+        }
+        delay(110).then(function step2() {
+            console.log("step2 after 110ms delay");
+            return delay(200);
+        }).then(function step3() {
+            console.log("step3 after 200ms delay");
+        }).then(function step4() {
+            console.log("step 4 next job");
+            return delay(47);
+        }).then(function step5() {
+            console.log("step after another 47ms");
+        });
+        // 200ms delay promise and chain promise that second tthen(..), it's easier to mentally combine these two promises together, because mechanism automatically does it for you
+        // you could think of return delay(200) as creating a promise that replaces earlier returned chained promise (e.g. delay(100))
+        // even though, sequences of delays with no message passing isn't a terribly useful example of Promise flow control
+        // lets look into something more probable and practical scenario, instead of timers lets consider using ajax requests:
+        // assume an ajax ({url}, {callback}) utility function
+        function request(url) {
+            return new Promise(function (resolve, reject) {
+                // ajax callback should be our Promise's resolve(..) funtion
+                //  ajax(url, resolve);
+                // fetch(url, resolve);
+            });
+        }
+        // let's define a request(..) utility that constructs a promise to represent completion of ajax(..) call:
+        request("https://some.url").then(function (response1) {
+            return request("https://some.url/2?v=" + response1);
+        }).then(function (response2) {
+            console.log(response2);
+        });
+        // once we have response from our initial request(..) call response that we had, we used it to construct our new returned  request(..) url for that call
+        // and within our second then(..) function we used that returned response from our async flow control andd prints it in console.
+        // Promise chain that w construct is not just for our multi step async sequence flow control but it's also acts as a message channel to propagate from stp to step
+        // An error or exception is on a per-Promise basis, which means it's possible to catch error at any time and reset chain back to normal at that point:
+        // step 1
+        request("https://some.url")
+            // step 2
+            .then(function (response1) {
+                foo.bar(); // undefined error
+                // never runs
+                return request("https://some.url/2?v=" + response1);
+            })
+            // step 3
+            .then(
+                function fullfiled(response2) {
+                    // never runs
+                },
+                function rejected(err) {
+                    console.log(err); // typeerror from foo.bar() error
+                    return 42;
+                }
+            )
+            // step 4
+            .then(function (msg) {
+                console.log(msg); // 42
+            });
+        // when error occurs in step 2, rejection handler catches in step 3 and returns 42(if any) and handler fullfils promise for step 4 succh that chain is now back in fullfilment state
+        // when returning a Promise from either fullfilment or rejection handler, as it's in step 3 instead of returning an immediate value we could have returned a new Promise which could delay step 4
+        // if there was any error in either handler of any then(..) causes next chained promise to be immediately rejected with that exception, if you only pass a fullfilment handler in your Promise and rejection handler is subsituted:
+        p = new Promise(function (resolve, reject) {
+            reject("oops");
+        });
+        p2 = p.then(function fullfiled() {
+            // never runs
+        }
+            // assumed rejection handler, which is not available here
+        );
+        // as you can see assumed rejection handler simply rethrows error, which ends up in p2 rejecting with same error as well, this allows error to propagate along promise chain until an explicitly defined rejection handler is encountered if any
+        // what if a proper fullfilment function is never passed into a promise parameter to then(..), there's also a default handler substituted:
+        p = Promise.resolve(42);
+        p.then(
+            // assumed a fullfilment handler, if ommited or anyother non function value is passed then null
+            null,
+            function rejected(err) {
+                console.log(err); // never runs
+            }
+        )
+        // .then(function(response) {console.log(response)})
+        // then(null, function(err) {..}) pattern only handling rejections(if any) but letting through fullfilment response, let's review Promises chaining flow control:
+        // - a then(..) call against a Promise automatically produces a new Promise to return from call
+        // - within fullfilment/rejection handlers upon returning a value or exception is thrown, new returned chainable Promise is resolved accordingly
+        // - in fullfilment/ rejection handler returns a Promise and it is unwraped so that whatever it's resolution might be becomes resolution for chained Promise returneed from current then(..)
+        // Promises normalize asynchrony and encapsulate time dependent value state, and that is whaat lets us chain them together in this useful way
+        
+        // Terminology: resolve, fullfil and reject
+        p = new Promise(function(x,y) {
+            // x or first parameter means resolve/fullfil
+            // y or second parameter means reject/rejection
+        });
+        // event though it doesn't matter what you actually call these Promise parameters but in a way it actually does, because when other developers are interpreting it differently than what it's intended to do than it can turn out to be more disasterous than spaghetti-code alternative
+        // resolution of a Promise means either fullfiling or rejecting promise to a value or state
+        let fulfilledPr = Promise.resolve(42);
+        let rejectedPr = Promise.reject("oops");
+        // Promise.resolve(..) createes a non-Promise or non-thenable value and resolved to a value given to it, and Promise.reject(..) rejects a Promise for reason given to it
+        // let's see why this word "resolve" is such unambiguos and indeed more accurate term to use over "fullfil":
+        let rejectedTh = {
+            then: function(resolved, rejected) {
+                rejected("Oops");
+            }
+        };
+        rejectedPr = Promise.resolve(rejectedTh);
+        // as we know Promise.resolve(..) will return a recieved genuine Promise directly or unwrap a recieved thanable, so if that thenable unwrapping reveals a rejected state, so does in returned value from Promise.resolve(..)
+        // as we know first callback to a Promise(..) contructor will unwrap a thenable (identically to Promise.resolve(..)) or a genuine Promise:
+        rejectedPr = new Promise(function(resolve, reject) {
+            // resove this promise with a rejected promise
+            resolve(Promise.reject("Oops"));
+        });
+        rejectedPr.then(
+            function fullfiled() {
+                // never runs
+            },
+            function rejected(err) {
+                console.log(err); // prints "Oops"
+            }
+        );
+        // it's imortant to note that reject(..) does not unwrap as resolve(..) does, a subseuent rejection handler would receive actual untouched Promise/thenble passed to reject(..) not it's underlying immediate value\
+        // let's see in callbacks what should they be called in literature, suggested language is fullfiled(..) and rejected(..):
+        function fullfilled(msg) {
+            console.log(msg);
+        }
+        function rejected(err) {
+            console.log(err);
+        }
+        p.then(fullfilled, rejected);
+        // here first parameter to then(..)is unambiguously always fullfilment case, so there's no need for duality of resolve terminology, and second one is for rejection behavior
         
     </script>
 </body>

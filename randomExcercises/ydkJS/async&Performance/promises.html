@@ -568,9 +568,9 @@
         // - within fullfilment/rejection handlers upon returning a value or exception is thrown, new returned chainable Promise is resolved accordingly
         // - in fullfilment/ rejection handler returns a Promise and it is unwraped so that whatever it's resolution might be becomes resolution for chained Promise returneed from current then(..)
         // Promises normalize asynchrony and encapsulate time dependent value state, and that is whaat lets us chain them together in this useful way
-        
+
         // Terminology: resolve, fullfil and reject
-        p = new Promise(function(x,y) {
+        p = new Promise(function (x, y) {
             // x or first parameter means resolve/fullfil
             // y or second parameter means reject/rejection
         });
@@ -581,14 +581,14 @@
         // Promise.resolve(..) createes a non-Promise or non-thenable value and resolved to a value given to it, and Promise.reject(..) rejects a Promise for reason given to it
         // let's see why this word "resolve" is such unambiguos and indeed more accurate term to use over "fullfil":
         let rejectedTh = {
-            then: function(resolved, rejected) {
+            then: function (resolved, rejected) {
                 rejected("Oops");
             }
         };
         rejectedPr = Promise.resolve(rejectedTh);
         // as we know Promise.resolve(..) will return a recieved genuine Promise directly or unwrap a recieved thanable, so if that thenable unwrapping reveals a rejected state, so does in returned value from Promise.resolve(..)
         // as we know first callback to a Promise(..) contructor will unwrap a thenable (identically to Promise.resolve(..)) or a genuine Promise:
-        rejectedPr = new Promise(function(resolve, reject) {
+        rejectedPr = new Promise(function (resolve, reject) {
             // resove this promise with a rejected promise
             resolve(Promise.reject("Oops"));
         });
@@ -610,7 +610,259 @@
         }
         p.then(fullfilled, rejected);
         // here first parameter to then(..)is unambiguously always fullfilment case, so there's no need for duality of resolve terminology, and second one is for rejection behavior
-        
+
+        // Error Handling, most natuaral way for error handling is try..catch construct, which is only valid in synchronous only coding, thus fails in async code patterns:
+        function foo() {
+            setTimeout(() => {
+                // baz.bar();
+            }, 110);
+        }
+        try {
+            foo();
+            // later it throws global error from baz.bar();
+        } catch (err) {
+            // never runs
+            console.log("??", err);
+        }
+        // in callbacks, some  standards have emerged for patterned error handling, most notably error-first-callback style:
+        function foo(cb) {
+            setTimeout(() => {
+                try {
+                    let x = baz.bar();
+                    cb(null, x); // success?!
+                } catch (err) {
+                    cb(err);
+                }
+            }, 110)
+        }
+        foo(function (err, val) {
+            if (err) {
+                console.log(err); // bummer!?
+            } else {
+                console.log(val);
+            }
+        });
+        // here try catch works because baz.bar() call will resolve(either success or failure) immediately, synchronously, if it was itself an async function then error inside of it wouldn't be catchable
+        // callback we passed to foo(..) expeects err as it's first parameter and if exist error is assumed, else success and value would be printed, this sort fo error handling is known as async capable but it doesn't compose well
+        // mutiple level of error-callbacks sequenced together with these if..else conditionals, inevitably will lead to perils of callback-hell
+        // when we look into error handling for Promises with rejection handler parameter passed into then(..), Promises use split callbacks style, one for each success and rejection:
+        p = Promise.reject("Ooopss!!");
+        p.then(
+            function fullfiled() {
+                // never runs
+            },
+            function rejected(err) {
+                console.log("??", err); // prints Ooopss!!
+            }
+        );
+        // even though this pattern makes total sense but for some nuances it's but difficult to grasp:
+        p = Promise.resolve(42);
+        p.then(
+            function fullfiled(msg) {
+                // numbers dont have string functions, so it'll throw an error
+                console.log(msg.toLowerCase());
+            },
+            function rejected(err) {
+                // never runs
+                console.log(err);
+            }
+        );
+        // as msg.toLowerCase() throws an error our error handler function doesn't get to run, as we know once a Promise gets resolve it's immutable
+        // and only promise that can notify about this error is one that returned form p.then(..), which in this case we dont capture
+        // in Promise API when used in an invalid way and an error occurs that prevents proper Promise construction, resulting immediately thrown exception, not a rejected Promise
+        // you can't get a reject Promise, if you don't use Promise API validly enough to actualy construct a Promise in fist place, some faile Promise construction examples: new Promise(null), Promise.all(), Promise.race(42), aand so on
+
+        // Pit of dispair, in Promise error handling is one of those pattern, by default you expect any error to be swallowed by Promise state, when failed to observe this state usually goes to despair
+        // to avoid loosing an unattended error in silence, as it's a bad practice, so, for Promise chains is to always end with a final catch(..) like:
+        p = Promise.resolve(42);
+        p.then(
+            function fullfiled(msg) {
+                // number dont have string methods, so it'll throw an error
+                console.log(msg.toLowerCase());
+            }
+        )
+        // .catch(handleErrors);
+        // but this doesn't solve this problem, what if handleErrors has errorneous itself, we'll end up loosing litening to it then, because it too could fail due to that
+
+        // Uncaught Handling, it's not an exactly easy problem to sove, there are other ways to approach this, where many would say are better, some Promise libraries have added methods for registering something liek a Global Unhandled rejection handler, which would be called instead of globally thrown error
+        // this pattern is also troublesome because, significant delay prior to rejejction can be false positives, and sometime you might want a request to follow through till you have got something, before throwing an error
+        // another suggested approach is to use done(..), it doesn't create and return a Promise, so it doesn't report problems to a chaained Promise that doesn't exist
+        // what happens instead is, inside done(..) rejection handler would be thrown as a global uncaught error, in developer console basically:
+        p = Promise.resolve(42);
+        p.then(
+            function fullfiled(msg) {
+                // numbers dont have string methods, so it'll throw error
+                console.log(msg.toLowerCase());
+            }
+        )
+        // .done(null, handleErrors); // if handleError(..) caused it own exception it'd be thrown globally here as well
+        // even though it looks a lot cleaner but it's not part of ES6 standard, interestingly Browsers can track and report Promise objects while its garbase collected for unhandleed errors, and thus it knows to report to developer console, there are other alternative as well and we'll see
+
+        // Pit of Success, it's just theoretical how a Promise could changed to behave, lets take a look:
+        // - Promises could default to reporting any rejection(on to developer console) if no error handler been registered for that Promise
+        // - where you want a rejected Promise to hold on to it's rejected state indefinitely bfore observing, you could call defer(..) which seppresses automatic error handling on that Promise
+        // when rejected, by default it's reporting fact to developer console or explicitly define a method defer(..) to handle errors, in either case you control false positives
+        // p = Promise.reject("Ooppss").defer();
+        // foo(..) is Promise aware
+        // foo(42).then(
+        //     function fullfiled() {
+        //         return p;
+        //     },
+        //     function rejection(err) {
+        //         // handle foo(..) error 
+        //         console.log(err);
+        //     }
+        // );
+        // while we create p, we're going to wait until we observe its rejection so we call defer(..) thus avoiding global reporting, defer(..) simply returns ame Promisefor chaining purposes
+        // Promise returned from foo(..) gets an error handler attached right away so no global reporting (it's implicitly opted out) but Promise returned from then(..) has no defer(..) so if it rejects it'll be reported to developer console as an uncaught error
+
+        // Promise Patterns, there are a lot of variations on asynchronous patterns that we can build as abstractions on top of Promises, these patterns serve to simplify expression of async flow control, which makes our code more reasonable and maintainable even in most complex parts of our program
+        // two such patterns are codified in ES6 Promise API implementation, so we can get most of them for free and to use it as a building blocks for other patterns
+        // Promise.all([..]), in an async sequence(Promise chain), only one async task is being coordinated at any ggiven mmoment, step 2 follows steps 1 and 3 follow 2 and so on and so forth, but what about two or more steps concurrently or in parallel
+        // in classic programmin teerminology, a gate is a mechanism taht waits on two or more parallel/concurrent tasks to complete before continuing, doesn't matter what order they finish but they havee to be complete in order to gate to be open and let fflow control through, we call this pattern all([..])
+        p1 = request("https://some.url/1");
+        p2 = request("https://some.url/2");
+        Promise.all([p1, p2]).then(function (msgs) {
+            // both p1 and p2 fullfils and pass in their messages here
+            return request("https://some.url/3?v=" + msgs.join(","))
+        }).then(
+            function (msg) {
+                console.log(msg);
+            }
+        );
+        // Promise.all([..]) expects an array all those fullfilment messages will be found, from those passed in Promises and in samee order, Promise.all([..]) can include Promises, thenables or even immediate values
+        // each value is passed through Promise.resolve(..) to ensure a genuine Promise to be waited on, so an immediate value will be normalized into a Promise for that value
+        // main Promise returned from promise.all([...]) wil only be fullfiled when all its constituent Promises are fullfiled , if any of those promises are rejected main Promise is immediately rejected, discarding all results from any other Promises
+        // always attach an error/rejection handler to every Promise even and specially which come back fro Promise.all([..])
+
+        // Promise.race([..]), it only concerns with one of those (usually only first promise) promises when fullfiled letting other Promises fall away, classically known as latch but in Promises it's called a  "race" but dont confuse with "race condition" in classical term which is a bug and should be avoided at all times
+        // Prromise.race([..]) also expects an array arguments, containing one or more Promises, thenables or immediate values, note to self first one listed in promise list will bviously win race
+        // similar to .all([..]) .race([..]) will fullfil if any Promise resolution is fullfiledand reject when any resolution rejects, a race requires at least one runner so when passed in an empty array instead of immediately resolving  main race never resolves, this is a footgun ES6 should throw some sort of synchronous error instead.
+        // so, never ppassed in an empty array to a Promise.race([..])
+        p1 = request("https://some.url/1");
+        p2 = request("https://some.url/2");
+        Promise.race([p1, p2]).then(function (msg) {
+            // either p1 or p2 fullfils and wins race
+            return request("https://some.url/3?v=" + msg)
+        }).then(
+            function (msg) {
+                console.log(msg);
+            }
+        );
+        // because only one promise wins, fullfilment value is a single message not an array as it was for Promise.all([..])
+
+        // Timeout Race:
+        // setup a timeout for foo(..)
+        Promise.race([
+            foo(),
+            timeoutPromise(2900)
+        ]).then(
+            function () {
+                // foo(..) fullfiled in time
+            },
+            function (err) {
+                // either foo(..) rejected or timedout
+            }
+        );
+        // this pattern works in most cases but threre some nuanced scenarios to consider, and they appply both to .all([..]) and .race([..]) equally
+
+        // Finally, developers proposed that Promises need a finally(..) callback registration, which is always called when a Promise resolves and allows you to specify any cleanup that may be ncessary
+        // it might look like this:
+        // p = Promise.resolve(42);
+        // p.then(somthing).finallly(cleanup).then(another).finallly(cleanup)
+        // in various Promise libraries, finally(..) still creates and returns a new Promise, to keep chain going, if cleanup(..) were to return a Promise, it'd linked into chain so that you could still have unhandled rejectio isssues discussed earlier
+        // meanwhile we can use static helper utility that lets us observe resolution of a Promise:
+        if (!Promise.observe) {
+            Promise.observe = function (pr, cb) {
+                // side observe pr resolution
+                pr.then(
+                    function fullfiled(msg) {
+                        // schedule callback async Job
+                        Promise.resolve(msg).then(cb);
+                    },
+                    function rejection(err) {
+                        // schedule callback async Job
+                        Promise.resolve(err).then(cb);
+                    }
+                );
+                // return Oringinal Promise
+                return pr;
+            };
+        }
+        // here's how we'd use it in timeout example from earlier:
+        Promise.race([
+            Promise.observe(
+                foo(),
+                function cleanup(msg) {
+                    // clean up after foo(..), even if it didn't finish before timeout
+                }
+            ),
+            timeoutPromise(2900)
+        ]);
+        // Promise.observe(..) is just an illlustration of how you could observe completions of Promises without interfering with them, other libraries have their own solutions, regardless make sure you aren't just silently ignoring your Promises by accident
+
+        // variation on all([..]) and race([..]), it's built in ES6 Promises, there are other several patterns with variations on those semantics:
+        // - none([..]) is like transposed of all([..]), which means all Promises needs to be rejected- rejections become fullfilment values and vice versa
+        // - any([..]) is like all([..]) but it ignores any rejection, so only needs one to bee fullfiled than all of them
+        // - first([..]) is like a race with any([..]), which is that it ignores any rejection and fullfils as soon as there's a first Promise fullfils
+        // - last([..]) is like first([..]) but only latest fullfils wins race
+        // some Promise libraries provide those abstractions but you can define for yourself using mechanics of Promises, race([..]) and all([..])
+        // polyfill safe guard check
+        if(!Promise.first) {
+            Promise.first = function(prs) {
+                return new Promise(function(resolve, reject) {
+                    // loops through all promises
+                    prs.forEach(function(pr) {
+                        // normalize value
+                        Promise.resolve(pr)
+                        // whichevver gets resolves first wins race, and gets to fullfil for main promise
+                        .then(resolve);
+                    });
+                });
+            };
+            // if(prs === null) {Promise.first.then(function(msg) {console.log(msg)})}
+        }
+        // if all rejects this implementation doesn't handle that scenerio
+
+        // concurrent iterations, sometimes you might want to iterate over a list of Promises and perform some task against all of them, like you do with synchronous array methods such as map(..), forEach(..), some(..) and every(..)
+        // lets consider an asynchronous map(..) utility that takes an array of vakues could be Promises or other anything else, with a function or task t perform on against each promise and whose fullfilments is an array that holds value from each task:
+        if(!Promise.map) {
+            Promise.map = function(vals, cb) {
+                // new promise that waits for all mapped promises
+                return Promise.all(
+                    // map(..) method turns into an array of Promises
+                    vals.map(function(val) {
+                        // replace val with a new Promise that resolves after val is async mapped
+                        return new Promise(function(resolve) {
+                            cb(val, resolve);
+                        });
+                    })
+                );
+            };
+        }
+        // in that implementation of map(..) async rejection wasn't signaled but if any synchronous rejection occurs inside of mapping callback cb(..) main Promise.map(..) returned Promise would reject too
+        // let's illustrates using map(..) with a list of Promises rather than just simple values:
+        p1 = Promise.resolve(21);
+        p2 = Promise.resolve(42);
+        p3 = Promise.reject("Ooppss!!");
+        // double values in ist if they're in promises
+        Promise.map([p1,p2,p3], function(pr, done) {
+            // make sure item itself is a Prromise
+            Promise.resolve(pr)
+            .then(
+                // extract value as v
+                function(v) {
+                    // map fullfilment v to new value of double
+                    done(v * 2);
+                },
+                // or, map to Promise rejection message
+                done
+            );
+        })
+        .then(function(vals) {
+            console.log(vals); // [42,84,"Ooppss!!"];
+        });
+
     </script>
 </body>
 

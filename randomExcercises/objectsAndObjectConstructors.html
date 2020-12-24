@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object and Object Constructors</title>
+</head>
+<body>
+    <script>
+        // objects as a design pattern
+        // consider these two models:
+        // model 01:
+        let p1Name = "tim";
+        let p2Name = "jenn";
+        let p1Marker = "X";
+        let p2Marker = "O";
+        // model 02:
+        let playerOne = {
+            name: "tim",
+            marker: "X"
+        };
+        let playerTwo = {
+            name: "jenn",
+            marker: "O"
+        };
+        // consider an ecommerce site product where keeping track of all these related information regarding any product so vital that individual naming like first model is unfeasible
+        // and that brings us to Object Constructors: when you have a specefic Object type and need to duplicate it often times then Constructor functions are way to go:
+        function Player(name, marker) {
+            this.name = name;
+            this.marker = marker
+        }
+        let player01 = new Player("rene", "X"); // calling function with new will create an instance of that Function
+        console.log(player01.name, player01.marker);
+        // just like object literal, it's possible to have object methods in it:
+        function Player(name, marker) {
+            this.name = name;
+            this.marker = marker;
+            this.sayName = function() {
+                console.log(name);
+            }
+        }
+        let player02 = new Player("hana", "O");
+        player01.sayName();
+        player02.sayName();
+
+        // Excercises:
+        // write a constructor for making Book objects with title, author, numOfPages and whether you have read that book or not
+        function Book(title, author, pages, read) {
+            this.title = title;
+            this.author = author;
+            this.pages = pages;
+            this.read = read;
+            this.info = function() {
+                return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read}`;
+            }
+        }
+        let theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, "have not read yet");
+        console.log(theHobbit.info());
+
+        // Object Prototype
+        // All objects in JS have a "prototype", to simply put it "prototype" is an another Object that original object inherits from, that is to say original object has access to ll of it's "prototype"'s object methods and properties
+        // - JS function/Object has "prototype" property initially empty but when new methods are addedto it, instance objects from  that function/Object will also have acces to those added methods as well, it's mainly for inheritance(designed) capability
+        // - "prototype" in JS is "prototype attribute" which means every Object inherits properties from some other Object and it is this other Object that's Object's "prototype" attribute or parent, and it works like a lineage, when not found in immediate/original object than it looks up into "prototype" chain untill it finds any or undefined
+        // Constructor, is a function and used for initialization of new Objects, and also inherits a property called constructor, which holds which constructor of an Object
+        console.log(theHobbit.constructor, theHobbit.constructor.name);
+        // - all objects areacted with object literals ( Object{} or Object.prototype) and constructors(new () or Object.prototype) inherits from Object.prototype
+        let uAcc = new Object(); // constructors
+        uAcc = {name: "mike"}; // lieterals
+        // prototype attribute of Objects created with a constructor function inherits from Object.prototype
+        // Prototype Usage:
+        // - Prototype Property, for prototype-based inheritance, all inheritance in JS made possible through "prototype" property
+        function Plant() {
+            this.country = "world";
+            this.isOrganic = true;
+        }
+        // adding more properties to Plant prototype property
+        Plant.prototype.showNameAndColor = function() {
+            console.log("this is a "+this.name+" and color is "+this.color);
+        }
+        // adding more methods to Plant prototype property
+        Plant.prototype.checkOrganic = function() {
+            if(this.isOrganic) {
+                console.log("Organic, yeah");
+            }
+        }
+        // Another constructor
+        function Fruit(name,color) {
+            this.name = name;
+            this.color = color;
+        }
+        // setting Fruit's prototype to Plant's prototype thus inheriting all of Plant's methods and propertis
+        // Fruit.prototype = Plant.prototype
+        // Fruit.prototype = Object.create(Plant);
+        Fruit.prototype = new Plant();
+        // creating a new Object
+        let aBanana = new Fruit("Banana", "Yellow");
+        console.log(aBanana.name, aBanana.color);
+        // lets access methods from Plant constructor function as they both share same prototype object
+        // console.log(aBanana.showNameAndColor());
+        // console.log(aBanana.isOrganic)
+        aBanana.showNameAndColor();
+        aBanana.checkOrganic();
+        // - Prototype attribute, accessing propertiees on objects through inheritence and move up "prototype" chain throughout lineage if not found returns undefined
+        // it's same concept as prototypeinheritance except we are now focusing specifically on how JS objects acccess properties and methods via prototype
+        let smFrnds = {name: "Bill"};
+        console.log(smFrnds.name); // first loks into original object than if not found would have moved up chain untill found or undefined
+        smFrnds.toString(); // as in original object there was no toString() method it moves up Object.prototype and looks for a method name toString which it finds and inherited from to be used in original object
+        // console.log(smFrnds.toString());
+        // - Object.prototype properties are inherited by all Objects:
+        function People() {
+            this.superstar = "Michael Jackson";
+        }
+        People.prototype.athlete = "Tiger Woods"; // creating another property "athlete"
+        let famousPerson =  new People();
+        console.log(famousPerson.superstar);
+        famousPerson.superstar = "Steve Jobs"; // overriding previous superstar value, as it's not available in famousPerson object directly it looks up in chain and finds it and does moderation to that,once found search is done through chain
+        console.log(famousPerson.superstar);
+        console.log(famousPerson.athlete); // with same concepts it gets value of "athlete" from up in prototype chain and prints ir
+    </script>
+</body>
+</html>

@@ -808,15 +808,15 @@
         // - last([..]) is like first([..]) but only latest fullfils wins race
         // some Promise libraries provide those abstractions but you can define for yourself using mechanics of Promises, race([..]) and all([..])
         // polyfill safe guard check
-        if(!Promise.first) {
-            Promise.first = function(prs) {
-                return new Promise(function(resolve, reject) {
+        if (!Promise.first) {
+            Promise.first = function (prs) {
+                return new Promise(function (resolve, reject) {
                     // loops through all promises
-                    prs.forEach(function(pr) {
+                    prs.forEach(function (pr) {
                         // normalize value
                         Promise.resolve(pr)
-                        // whichevver gets resolves first wins race, and gets to fullfil for main promise
-                        .then(resolve);
+                            // whichevver gets resolves first wins race, and gets to fullfil for main promise
+                            .then(resolve);
                     });
                 });
             };
@@ -826,14 +826,14 @@
 
         // concurrent iterations, sometimes you might want to iterate over a list of Promises and perform some task against all of them, like you do with synchronous array methods such as map(..), forEach(..), some(..) and every(..)
         // lets consider an asynchronous map(..) utility that takes an array of vakues could be Promises or other anything else, with a function or task t perform on against each promise and whose fullfilments is an array that holds value from each task:
-        if(!Promise.map) {
-            Promise.map = function(vals, cb) {
+        if (!Promise.map) {
+            Promise.map = function (vals, cb) {
                 // new promise that waits for all mapped promises
                 return Promise.all(
                     // map(..) method turns into an array of Promises
-                    vals.map(function(val) {
+                    vals.map(function (val) {
                         // replace val with a new Promise that resolves after val is async mapped
-                        return new Promise(function(resolve) {
+                        return new Promise(function (resolve) {
                             cb(val, resolve);
                         });
                     })
@@ -846,23 +846,240 @@
         p2 = Promise.resolve(42);
         p3 = Promise.reject("Ooppss!!");
         // double values in ist if they're in promises
-        Promise.map([p1,p2,p3], function(pr, done) {
+        Promise.map([p1, p2, p3], function (pr, done) {
             // make sure item itself is a Prromise
             Promise.resolve(pr)
-            .then(
-                // extract value as v
-                function(v) {
-                    // map fullfilment v to new value of double
-                    done(v * 2);
-                },
-                // or, map to Promise rejection message
-                done
-            );
+                .then(
+                    // extract value as v
+                    function (v) {
+                        // map fullfilment v to new value of double
+                        done(v * 2);
+                    },
+                    // or, map to Promise rejection message
+                    done
+                );
         })
-        .then(function(vals) {
-            console.log(vals); // [42,84,"Ooppss!!"];
+            .then(function (vals) {
+                console.log(vals); // [42,84,"Ooppss!!"];
+            });
+
+        // ES6 Promise API Recap
+        // new Promise(..) constructor, it must be provided a function callback that is synchronously/immediatelly called, this passes in function has two function callbacks in it, one for "fullfilment" and another for "rejection" for Promise
+        p = new Promise(function (resolve, reject) {
+            // resolve(..) to resolve/fullfil Promise
+            // reject(..) to reject promise
+        });
+        // reject(..) simply rejects but resolve(..) can either fullfil promise or reject it, depending on what is passed
+        // if an immediate value is passed then promise is fullfiled with that value, if a genuine Promise is passed or thenable value that value is then unwrapped until it's reached it's final state/resolution adopted by promise
+
+        // Promise.resolve(..) and Promise.reject(..) are shortcut for creating a resolved and rejected value respectively
+        p1 = new Promise(function (resolve, reject) {
+            reject("Oops");
+        });
+        p2 = Promise.reject("Opps");
+        // these two promises are same or equivalent, however Promise.resolve(..) alo unwraps thenable values, so returned Promise adopts final resolution of thenable you passed in, which could either be fullfilment or rejection:
+        let fullfiledTh = {
+            then: function (cb) { cb(44) }
+        };
+        rejectedTh = {
+            then: function (cb, errCb) { errCb("Oops") }
+        }
+        p1 = Promise.resolve(fullfiledTh);
+        p2 = Promise.resolve(rejectedTh);
+        // Promise.resolve(..) simply returns value directly
+
+        // then(..) and catch(..), each Promise instance(not Promise API namespace) has then(..) and catch(..) methods, which allow registering of fullfilment and rejection handlers for Promise, once Promise is resolved one or that other handlers will be called but not both and it'll always be called asynchronously
+        // then(..) takes two parameters, first one for fullfilment and other one for rejection callbacks, if either is omitted or passed as a non function value, a default callback is substituted respectively, catch(..) takes only rejection callback as a parameter and substitutes by default parameeter when a non function value is passed, its equivalent to then(null, ..)
+        p.then(fullfilled);
+        p.then(fullfilled, rejected);
+        p.catch(rejected); // equivalent
+        p.then(null, rejected); // equivalent
+        // then(..) and catch(..)also create and return a new Promise which can be used to Promise flow control, if callbacks have an exception then returned Promise is rejected, if wiether calllbacks returns an immediate value that value is set as resolution value for that Promise
+        // if fullfilment handler specifically returns a promise or thenable value, that value is unwrapped and becomes resolution of returned promise
+
+        // Promise.all([..]) and Promise.race([..]) on ES6 Promise API both create nd return a Promise as their value, resolution of that promise is controlled entirely by array of promises that are passed into it
+        // Promise.all([..]), all promises must be true for returned Promise to fullfil, if any rejected then main Promise gets rejected too 
+        // for fullfilment you receive an array of fullfiled values and for rejection you just recieve first rejected reason value
+        // Promise.race([..]), only first Promise that resolves(either fullfilment or rejection) wins race, and whatever that resolution is becomes returned Promise resolution as well, classically known as latch, first one to open latch gets through
+        p1 = Promise.resolve(44);
+        p2 = Promise.resolve("Hello World");
+        p3 = Promise.reject("Oops");
+        Promise.race([p1, p2, p3]).then(function (msg) {
+            console.log(msg);
+        });
+        Promise.all([p1, p2, p3])
+            .catch(function (err) {
+                console.log(err);
+            })
+        Promise.all([p1, p2])
+            .then(
+                function (msgs) {
+                    console.log(msgs).join(",");
+                }
+            );
+        // do remember if an empty array is passed into Promise.all([..]) it will fullfil immediately whereas Promise.race([..]) will hang forever and never resolve, please bear in mind
+
+        // Promise Limitations
+        // Sequence Error Handling, limitation is in their chaining, and specefically how an error can be silently ignored accidentally, promise chain is just constituents promises wired together, ther's no entity to refer to entire chain as a single thing which means no external way to observe any errors that may occur
+        // if you construct a Promise chain tat has no error handling in it, any error anywhere in chain will propagate indefinitely dow the chain until it's observed, as in by regiestering a error handler at any step otherwise it'll be logged into devloper console
+        p = foo(44)
+            .then(step2)
+            .then(step3);
+        // although it might seem sneakingly cconfusing but here p is pointing to then(Step3) call, as there is no error handling metthod obsrved in chain, we can use catch(..) method on p to get notified about errors if any occur anywhere in chain:
+        p.catch(handleErrors);
+        // this complete lack of ability to be notified of already handled rejection errors is a limitation that restricts capabilities in some use cases
+
+        // Single Value, Promises by definition have a single fullfilment or rejecton reason
+        // Splitting Values, consider this following snippet where foo(..) produces two values x, y, asynchronously:
+        function getY(x) {
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    resolve((3 * x) - 1);
+                }, 110);
+            });
+        }
+        function foo(bar, baz) {
+            let x = bar * baz;
+            return getY(x)
+                .then(function (y) {
+                    // wrap both values into an array container
+                    return [x, y];
+                });
+        }
+        foo(11, 20)
+            .then(function (args) {
+                let x = args[0];
+                let y = args[1];
+                console.log(x, y);
+            });
+        //  let's rearrange what foo(..) returns so that we don't have to wrap x and y into a single array value to transport through a Promise, instead we can wrap each value into it's own Promise:
+        function foo(bar, baz) {
+            let x = bar * baz;
+            // return both these promises
+            return [
+                Promise.resolve(x),
+                getY(x)
+            ];
+        }
+        Promise.all(
+            foo(11, 20)
+        )
+            .then(
+                function (msgs) {
+                    let x = msgs[0];
+                    let y = msgs[1];
+                    console.log(x, y);
+                }
+            );
+        // is an array of promises are really better than array of values passed into a single Promise, syntactically not much of an improvement
+        // but, this design approach embraces Promise design theory, it's cleanera nd flexible to let calling code decide how to orchestrate these two promises using Promise.all([..]) but certainly not an only option
+
+        // Unwrap or Spread Arguments, array destructuring:
+        Promise.all(
+            foo(11, 20)
+        ).then(function (msgs) {
+            let [x, y] = msgs;
+            console.log(x, y);
+        });
+        // or with parameter destructuring:
+        Promise.all(
+            foo(11, 20)
+        ).then(function ([x, y]) {
+            console.log(x, y);
         });
 
+        // Single Resolution, most intrinsic behavior of Promises is that it can only be resolved once, fomany async use cases, you're only retriving a value once
+        // imagine a scenario whwre you want to set off a sequence fo async steps in response to a stimulus such as events that cn happen multiple times like a button click, following won't work way you want it to be:
+        p = new Promise(function (resolve, reject) {
+            click("#smBtn", resolve);
+        });
+        p.then(function (evt) {
+            let btnID = evt.currentTarget.id;
+            return request("https://some.url/id=?" + btnID);
+        }).then(function (text) {
+            console.log(text);
+        });
+        // that behavior only works for if your application calls for button to be clicked once, when clicked more than once, p is already been resolved so rest of those calls will be ignored
+        // instead you might want something like this here you might want to create a whole new Promise for each event firing:
+        click("#smBtn", function (evt) {
+            let btnID = evt.currentTarget.id;
+            request("https://some.url/id=?" + btnID)
+                .then(function (text) {
+                    console.log(text);
+                });
+        });
+        // that approach would work because it's creating a whole new Promise for each click event firing on Button
+        // though it works just fine but this design violates in some respect Separation od Concerns/Capabilities, you might want to define your event handler in a differnt place in yourcode from whre you define response to event firing instead
+
+        // Innertia, a code base remain in motion with callbacks unless acted upon by someone who is Promise-aware developer, Promises offer different paradigm, approach to refactor your code can be from somewhat little to radically different and you have to be intentional about it
+        //consider callback-based scenario like following:
+        function foo(x, y, cb) {
+            // ajax(
+            //     "https://some.url/?x="+x+"&y="+y,
+            //     cb
+            // );
+        }
+        foo(11, 31, function (err, text) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(text);
+            }
+        });
+        // consider this helper utility:
+        if (!Promise.wrap) {
+            Promise.wrap = function (fn) {
+                return function () {
+                    let args = [].slice.call(arguments);
+                    return new Promise(function (resolve, reject) {
+                        fn.apply(
+                            null,
+                            args.concat(function (err, v) {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(v);
+                                }
+                            })
+                        );
+                    });
+                };
+            };
+        }
+        // this kind of utility functions are called Promisories, so that it can aid in our Promise aware coding
+        // lets refactor our earlier callback based foo(..) and ajax(..) methods:
+        request = Promise.wrap(ajax);
+        // refactoring foo(..) but keeping it externally callback- based compatibility with othr parts of code for now
+        // only use reuest(..) for Promises only internally
+        function foo(x,y,cb) {
+            request("https://some.url?x="+x+"&y="+y)
+            .then(
+                function fullfiled(text) {
+                    console.log(text);
+                },
+                cb
+            );
+        }
+        // better foo(..) using promisory:
+        let betterFoo = Promise.wrap(foo);
+        // using promisory
+        betterFoo(11,31)
+        .then(
+            function fullfiled(text) {
+                console.log(text);
+            },
+            function rejected(err) {
+                console.log(err);
+            }
+        );
+        // ES6 nativelly dont ship with utility functions for such promisoriesbut most libraries provide them or you can create your own, either way it's addressable without too much pain compared to callback hell
+
+        // Promise Uncancelable, once created a Promise and registers a fullfilment and/or rejection handler for it, there's nothing that you can do to stop that propagation if somting else happens to ake that task moot
+        
+        // Promise  Performance, promises has more guards to protect means they tidy slower than untrustable callbacks, if implementing all gurads in adhoc callbacks is it still better than promise then can say Promise is slower otherwise not
+        // another subtle issue with Promise is that, it makes everything  async even for immediately available values which makes it bit slower than ad hoc callbacks but making it predictable and avoiding race conditions which is weigh more than ad hoc call backs, Promises provides Trustablility, non-Zalgo predictablility and composability built in which benefits you immensely
+
+        // Promises are aweesome use them as often as possible, they solve inversion of control issues, they dont get rid of callbacks instead redirect them through trustable intermidiary mechanism, a better way to address async flow in sequential fashion which helps our brain to plan and maintain JS code better
     </script>
 </body>
 

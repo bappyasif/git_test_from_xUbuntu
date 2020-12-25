@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Object and Object Constructors</title>
 </head>
+
 <body>
     <script>
         // objects as a design pattern
@@ -35,7 +37,7 @@
         function Player(name, marker) {
             this.name = name;
             this.marker = marker;
-            this.sayName = function() {
+            this.sayName = function () {
                 console.log(name);
             }
         }
@@ -50,7 +52,7 @@
             this.author = author;
             this.pages = pages;
             this.read = read;
-            this.info = function() {
+            this.info = function () {
                 return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read}`;
             }
         }
@@ -65,7 +67,7 @@
         console.log(theHobbit.constructor, theHobbit.constructor.name);
         // - all objects areacted with object literals ( Object{} or Object.prototype) and constructors(new () or Object.prototype) inherits from Object.prototype
         let uAcc = new Object(); // constructors
-        uAcc = {name: "mike"}; // lieterals
+        uAcc = { name: "mike" }; // lieterals
         // prototype attribute of Objects created with a constructor function inherits from Object.prototype
         // Prototype Usage:
         // - Prototype Property, for prototype-based inheritance, all inheritance in JS made possible through "prototype" property
@@ -74,17 +76,17 @@
             this.isOrganic = true;
         }
         // adding more properties to Plant prototype property
-        Plant.prototype.showNameAndColor = function() {
-            console.log("this is a "+this.name+" and color is "+this.color);
+        Plant.prototype.showNameAndColor = function () {
+            console.log("this is a " + this.name + " and color is " + this.color);
         }
         // adding more methods to Plant prototype property
-        Plant.prototype.checkOrganic = function() {
-            if(this.isOrganic) {
+        Plant.prototype.checkOrganic = function () {
+            if (this.isOrganic) {
                 console.log("Organic, yeah");
             }
         }
         // Another constructor
-        function Fruit(name,color) {
+        function Fruit(name, color) {
             this.name = name;
             this.color = color;
         }
@@ -102,7 +104,7 @@
         aBanana.checkOrganic();
         // - Prototype attribute, accessing propertiees on objects through inheritence and move up "prototype" chain throughout lineage if not found returns undefined
         // it's same concept as prototypeinheritance except we are now focusing specifically on how JS objects acccess properties and methods via prototype
-        let smFrnds = {name: "Bill"};
+        let smFrnds = { name: "Bill" };
         console.log(smFrnds.name); // first loks into original object than if not found would have moved up chain untill found or undefined
         smFrnds.toString(); // as in original object there was no toString() method it moves up Object.prototype and looks for a method name toString which it finds and inherited from to be used in original object
         // console.log(smFrnds.toString());
@@ -111,11 +113,403 @@
             this.superstar = "Michael Jackson";
         }
         People.prototype.athlete = "Tiger Woods"; // creating another property "athlete"
-        let famousPerson =  new People();
+        let famousPerson = new People();
         console.log(famousPerson.superstar);
         famousPerson.superstar = "Steve Jobs"; // overriding previous superstar value, as it's not available in famousPerson object directly it looks up in chain and finds it and does moderation to that,once found search is done through chain
         console.log(famousPerson.superstar);
-        console.log(famousPerson.athlete); // with same concepts it gets value of "athlete" from up in prototype chain and prints ir
+        console.log(famousPerson.athlete); // with same concepts it gets value of "athlete" from up in prototype chain and prints it
+
+        // More On Prototypal Inheritance
+        // "prototype" is either null or referenced to another object and thus implementing inheritance without copying or recreating same properties and methods in it, also can be accessed via "__proto__"
+        let animal = {
+            eats: true
+        };
+        let rabbit = {
+            jumps: true
+        };
+        rabbit.__proto__ = animal // which is equivalent to rabit.prototype = animal
+        console.log(Object.getPrototypeOf(rabbit));
+        // now if we read a property from "rabbit" and it's missing it'll automatically look into and find it from animal
+        console.log(rabbit.eats, rabbit.jumps);
+        console.log(animal.eats, animal.jumps); // "rabbit" prototypically inherited from "animal" not other way round
+        // so, when animal has some useful utitlity finctions in it, rabbit gets access to those as well with out redefinfing them for themselves
+        animal.walk = function () {
+            console.log("Animal Walk");
+        }
+        console.log(animal);
+        rabbit.walk(); // walk() is taken from animal through prototype inheritance
+        // prototype can or usually be longer:
+        let longEar = {
+            earLength: 11,
+            __proto__: rabbit
+        }
+        longEar.walk(); // inheriting from animal object
+        console.log(longEar.jumps); // inheriting from rabbit object
+        // when something you're looking for not available in object in question it move  up "prototype" chain until it finds it or else returned undefined
+        // - referneces can't go in cirlce, if we try to assign __proto__ in a circle JS will throw an error (e.g. animal.__proto__ = rabbit)
+        // - value of __proto__ can be either an object or null, other types are ignored, also an object can not be inherited from two others, meaning it can only have one "prototype" reference from it to "prototype" chain not multiple one's
+        // - __proto__ is not same as internal "prototype" property, __proto__ is a gettr/setter for "prototype"
+        // - __proto__ is bit outdated and modern JS suggests to use Object.getPrototypeOf/Object.setPrototypeOf functions instead for "prototype" getter/setter capabilities
+        // "prototype" is only for used for reading properties, write/delete operations work with object directly
+        rabbit.walk = function () {
+            console.log("Rabbit, Bounce-Boounce!!");
+        }
+        rabbit.walk(); // call immediately finds walk() in object and exceutes it without using "prototype" chain
+        // accessor properties are an exception as assignmentis handled by a setter function, when writing such a property is actually same as calling a function
+        let user = {
+            name: "Cecilia",
+            surname: "Prolly",
+            set fullName(value) {
+                [this.name, this.surname] = value.split(" ");
+            },
+            get fullName() {
+                return `${this.name} ${this.surname}`;
+            }
+        };
+        let admin = {
+            __proto__: user,
+            isAdmin: true
+        };
+        console.log(admin.fullName);
+        admin.fullName = "Alice Propper"; // admin state is modified
+        console.log(admin.fullName, user.fullName); // user state is protected
+        // admin.fullName property has a getter in user "prototype" so it's get called,  and for admin.fullName = "" calls on setter function from user "prototype"
+
+        // Value of "this", "this" is not affected by "prototype" at all rather it matters from call stack, as in where method is being called on, it's object before dot is value of "this"
+        // when inheriting objects runs inherited methods they will modify teir own state not in state of object it is inheriting from
+        animal.sleep = function () {
+            this.isSleeping = true;
+        };
+        rabbit.name = "White Rabbit";
+        console.log(rabbit.isSleeping);
+        rabbit.sleep(); /// modifies rabbit.isSleeping
+        console.log(rabbit.isSleeping);
+        console.log(animal.isSleeping); // undefined, animal didn't invoked sleep or defined isSleeping property for itself in "prototype", thus methods are shared but object state is not
+
+        // for..in loop, iterates over inherited properties too
+        console.log(Object.keys(rabbit)); // Object.keys(..) Object.values(..) operate on object itself, properties from "prototype" are not taken into account
+        // for(let key in rabbit) typeof(rabbit[key]) !== "object" ? console.log(key, rabbit[key]) : console.log(key, rabbit[key]())
+        for (let key in rabbit) console.log(key, rabbit[key]);
+        // we can use .hasOwnProperty(key) to be assured of if it has its own property named "key"
+        for (let key in rabbit) {
+            let isOwn = rabbit.hasOwnProperty(key); // hasOwnProperty(..) is inherited from Object.prototype, which is enumerable
+            if (isOwn) console.log(`our ${key}`);
+            else console.log(`inherited ${key}`);
+        }
+
+        // Excercises:
+        // task#01: working with prototype:
+        animal = {
+            jumps: null
+        };
+        rabbit = {
+            __proto__: animal,
+            jumps: true
+        };
+        console.log(rabbit.jumps); // true
+        delete rabbit.jumps;
+        console.log(rabbit.jumps); // null
+        delete animal.jumps;
+        console.log(rabbit.jumps); // undefined
+
+        // task02: searching algorithm:
+        let head = {
+            glasses: 1
+        };
+        let table = {
+            pen: 3,
+            __proto__: head
+        };
+        let bed = {
+            sheet: 1,
+            pillow: 2,
+            __proto__: table
+        };
+        let pockets = {
+            money: 2000,
+            __proto__: bed
+        };
+        console.log(pockets.pen, bed.glasses);
+        console.log(head.glasses, bed.glasses); // performance wise it amkes no difference whether we take a property from object or prototype, they remember where property was found and use it for next request, so optimization is safe
+
+        // task#03: where does it write:
+        animal = {
+            eat() {
+                this.full = true;
+            }
+        };
+        rabbit = {
+            __proto__: animal
+        };
+        rabbit.eat(); // eat() gets called from rabbit object and thus value of "this" will be object before dot meaning "rabbit"
+        console.log(rabbit.full, animal.full);
+
+        // task#04: why are both hamsters full:
+        let hamster = {
+            stomach: [],
+            eat(food) {
+                // this.stomach.push(food);
+                this.stomach = [food]; // this.stomach= does not look up a stomach, and value is directly written into object of calling "this"
+            }
+        };
+        let speedy = {
+            // stomach: [],
+            __proto__: hamster
+        };
+        let lazy = {
+            // stomach: [],
+            __proto__: hamster
+            // __proto__: speedy
+        }
+        // this one found food
+        speedy.eat("apple");
+        console.log(speedy.stomach); // apple
+        // so is this one, why? fix pleaase and fixed using this.stomach= or using individual stomach for each object
+        console.log(lazy.stomach);
+
+        // Object References and copying: from JavaScript.info
+        // fundamental difference between objects vs primitives is objects are stored and copied by "refernce" where as primitives are always copied as a whole "value"
+        let message = "Hello";
+        let phrase = message; // two distinc variables with value "Hello"
+        // unlike objects, stores not object directly rather memory address of it or reference to it
+        user = {
+            name: "someBody" // object stored somewhere in memory and user object has a reference to it
+        };
+        // when object variable is copied, only reference of it gets copid not object itself
+        admin = user; // reference copied, now both admin and user variables has reference to it or Object
+        admin.name = "another";
+        console.log(admin.name, user.name); // changes made from one variable will be passed on to other variables that share same reference to that object
+        // comparison by reference, two objects are only equal if they are same object
+        let a = {};
+        let b = a;
+        console.log(a == b, a === b); // both sharing same reference
+        a = {};
+        b = {};
+        console.log(a == b, a === b); // comparing two independent object
+        // cloning and merging, Object.assign, copying an object variable creates one or more reference to same object
+        // cloning is rarely used in JS, most times copying by reference is used instead and stand good for it
+        // but when needed to be duplicated and copying them on primitive value level, then we employ solution like this:
+        user = {
+            name: "Doe",
+            age: 29
+        };
+        let clone = {} // empty object
+        // lets clone all user properties into clone object
+        for (let key in user) clone[key] = user[key];
+        // now clone object also has same contents as user object andd they are independent of each other
+        console.log(clone.name);
+        clone.name = "Jane";
+        console.log(clone.name, user.name); // original object stays protected
+        // we can also use Object.assign for cloning as well, syntax Object.assign(dest, [src1,src2..])
+        // - first argument is destination object
+        // - firther arguments are source objects
+        // it copies properties from source object to destination object, and call returns destination object from argument list
+        let permission01 = { canView: true };
+        let permission02 = { canView: true };
+        // copies alll properties from permission01 and 02 into user object
+        Object.assign(user, [permission01, permission02]);
+        console.log(user);
+        // if copied name already exist then value gets overwritten
+        user = { name: "Doe" };
+        Object.assign(user, { name: "Jane" });
+        console.log(user.name);
+        // it can also be used as an replacement fo for..in loop use case
+        user = {
+            name: "Doe",
+            age: 29
+        };
+        // clone = Object.assign(clone, user);
+        clone = Object.assign({}, user);
+        console.log(clone.name);
+        // Nested Cloning, properties can also be referenced to other objects
+        // consider this:
+        user = {
+            name: "Jane",
+            sizes: {
+                height: 182,
+                width: 35
+            }
+        };
+        clone = Object.assign({}, user);
+        console.log(user.sizes === clone.sizes); // share same object rather needs to be independent
+        // to fix this we should use a cloning loop that examines if it;'s an object then replicate it's structure as it is known as "deep cloning"
+        // we'll have to use recursion or use library utility function _.cloneDeep(obj)
+        // recursion#01:
+        function deepCloning(obj) {
+            let cloned = {};
+            for (let key in obj) {
+                if (typeof obj[key] === "object" && obj[key] !== null) {
+                    cloned[key] = deepCloning(obj[key]);
+                } else {
+                    cloned[key] = obj[key];
+                    // Object.assign(clone, user);
+                }
+            }
+            return cloned;
+        }
+        // recursion#02:
+        function deepCloning(obj) {
+            if (obj instanceof Object) {
+                let cloned = {};
+                for (let key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        cloned[key] = deepCloning(obj[key]);
+                    }
+                }
+                return cloned;
+            }
+        }
+        clone = deepCloning(user);
+        console.log(user.sizes === clone.sizes); // two independent object compared
+
+        // Garbage collection: when reachablilty is not there fro any variables or memory location than it can be garbage collected
+        user = { name: "Doe" };
+        admin = user;
+        user = null;
+        console.log(admin.name);
+        admin = null;
+        // console.log(admin.name); // now it's garbage collected
+        // Interlinked Objects:
+        function marry(man, woman) {
+            woman.husband = man;
+            man.wife = woman;
+            return {
+                father: man,
+                mother: woman
+            }
+        }
+        let family = marry({ name: "John" }, { name: "Jane" });
+        console.log(family);
+        // lets remove two references
+        delete family.father;
+        delete family.mother.husband;
+        console.log(family); // outgoing references don't matter only incoming ones matters and make object reachable, now "John" is unreachble but "Jane" is available
+        delete family.mother;
+        console.log(family);
+        // unreachable island, when refenrece is removed from memory 
+        family = null;
+        console.log(family);
+        // garbage collection algorthim is caled "mark-and-sweep", all objects that are not marked gets removed
+
+        // Object methods and "this", ojects are created to representt real world entities
+        user = {
+            name: "Doe",
+            age: 29
+        };
+        // objects can have methods
+        user.sayHi = function () {
+            console.log("Hello");
+        };
+        user.sayHi();
+        function sayHi() {
+            console.log("Hello");
+        }
+        user.sayHi = sayHi;
+        user.sayHi();
+        // when we write objects to represent entities that's called OOP, and how to organize interactions between them
+        user = {
+            sayHi: function () {
+                console.log("Hello");
+            },
+            sayHello() {
+                console.log("Hello");
+            }
+        };
+        user.sayHi();
+        user.sayHello();
+        // methods use of "this", its common that an object method needs to access information stored in object to do it's job, to access object a method can use "this"
+        user = {
+            name: "Doe",
+            age: 29,
+            sayHi() {
+                // console.log("Hello "+this.name+" age: "+user.age);
+                console.log("Hello " + this.name + " age: " + this.age);
+            }
+        }
+        user.sayHi(); // value of "this" is what's before dot, in this case it's user
+        // but such user.name type of hard cooding within an object is unreliable, consider this:
+        admin = user;
+        user = null;
+        // admin.sayHi(); // TypeError for user null
+        admin.sayHi(); // now it works duee to use of "this" instead of "user" in sayHi(..)
+        // "this" is not bound, it can be bound by any function even if it's not a method of an object
+        user = { name: "Jane" };
+        admin = { name: "Petra" };
+        function sayHi() {
+            console.log(this.name);
+        }
+        // using same funtion in both objects
+        user.f = sayHi;
+        admin.f = sayHi;
+        // "this" have different context in eacc these call, calling without an object value of "this" is "undefined" in this case otherwise it's Global Object
+        user.f();
+        admin.f(); // accessing using dot notation
+        admin['f'](); // using object bracket notation
+        // consequeence of undounded "this", in JS "this" value is dependent on not where method/property is declared but in where it's been called on from, as in wht's before dot matters
+        // in JS "this" is bound free, thus it has greater flexibility can create more possiblities for mistakes but can be use for different objects which is a huge benefactor of "this"
+        // Arrow function doesn't have any "this", but lexicallly allow this and access value of "this" from outer function
+        user = {
+            firstName: "Ilya",
+            sayHi() {
+                let arrow = () => console.log(this.firstName); // it's useful when we dont want separetly define "this" but rather takee it from outer function around it's context
+                arrow();
+            }
+        }
+        user.sayHi();
+
+        // Excercises:
+        // Task#01: using "this" in object lieteral
+        function makeUser() {
+            return {
+                name: "Jane",
+                ref: this,
+                ref2() {
+                    return this;
+                }
+            };
+        }
+        user = makeUser(); // "this" undefined, because it's called as a function not as a method on an object
+        console.log(user.ref.name); // an error
+        console.log(user.ref2().name); // but this works because, user.ref() is a method and context of "this" is returning object and thus accessing "name"
+
+        // Task#02: create a calculator:
+        let calculator = {
+            // num1: null,
+            // num2: null,
+            read() {
+                this.num1 = +prompt("enter value: ", 1);
+                this.num2 = +prompt("enter value: ", 1);
+            },
+            sum() {
+                return this.num1+this.num2;
+            },
+            mult() {
+                return this.num1 * this.num2;
+            }
+        };
+        calculator.read();
+        console.log(calculator.sum());
+        console.log(calculator.mult());
+
+        // Task#03: Chaining:
+        let ladder = {
+            step: 0,
+            up() {
+                this.step++;
+                return this;
+            },
+            down() {
+                this.step--;
+                return this;
+            },
+            showStep() {
+                console.log(this.step);
+                // return this;
+            }
+        };
+        ladder.up().up().down().showStep(); // return object itself from every call and that's how you can chain them up like that instead linearly putting them in sequence
+        
     </script>
 </body>
+
 </html>

@@ -267,6 +267,102 @@
         // so is this one, why? fix pleaase and fixed using this.stomach= or using individual stomach for each object
         console.log(lazy.stomach);
 
+        // F.prototype, new objects can be created with a constructor function like new F(), F.prototype === new F()
+        animal = {
+            eats: true
+        };
+        function Rabbit(name) {
+            this.name = name;
+        }
+        Rabbit.prototype = animal;
+        rabbit = new Rabbit("white Rabbit"); // rabbit.__proto__ =  animal
+        console.log(rabbit.eats); // true, through prototype property or chain
+        // F.prototype only used when new F() is called and assigns "prototype" of this new object
+        // Default F.prototype, constructor property, every function has "prototype" even if we don't supply it
+        // Default "prototype" object has only "constructor" property in it, that points back to constructor function itself
+        function Rabbit() {} // default prototype, Rabbit.prototype = {constructor: Rabbit};
+        // console.log(Rabbit.prototype.constructor === Rabbit, Rabbit.constructor === Rabbit);
+        // console.log(Rabbit.prototype.constructor);
+        rabbit = new Rabbit(); // inherits from {constructor: Rabbit}
+        // console.log(rabbit.constructor === Rabbit, rabbit.prototype.constructor === Rabbit);
+        // Rabbit.prototype.constructor = Rabbit
+        console.log(rabbit.constructor === Rabbit);
+        function Rabbit(name) {
+            this.name = name;
+            console.log(name, this.name);
+        }
+        rabbit =  new Rabbit("White Rabbit");
+        // let rabbit02 = new rabbit.constructor("Black Rabbit");
+        let rabbit02 = new rabbit.constructor("Black Rabbit");
+        console.log(rabbit, rabbit02, rabbit.name, rabbit02.name);
+        // JS doesn't ensure right "constructor" value, it depends on us, if we replace defaultt "prototype" there'll be no "constructor" in it:
+        function Rabbit1() {}
+        Rabbit1.prototype = {
+            jumps: true
+        };
+        rabbit = new Rabbit1();
+        console.log(rabbit.constructor === Rabbit1, Rabbit1.prototype.jumps === true);
+        Rabbit1.prototype = {
+            jumps: true,
+            constructor: Rabbit1 // manually adding constructor property
+        };
+        rabbit = new Rabbit1();
+        console.log(rabbit.constructor === Rabbit1);
+        // Excercises:
+        // Task#01.01: Changing "prototype":
+        function Rabbit2() {}
+        Rabbit2.prototype = {
+            eats: true
+        };
+        rabbit = new Rabbit2();
+        Rabbit2.prototype = {}; // Rabbit2.prototype setsup "prototype" for new objects but not fr already existing ones
+        console.log(rabbit.eats); // !undefined but true!!
+        // Task#01.02:
+        function Rabbit2() {}
+        Rabbit2.prototype = {
+            eats: true
+        };
+        rabbit = new Rabbit2();
+        Rabbit2.prototype.eats =  false
+        // console.log(Rabbit2.prototype.eats); // undefined
+        console.log(rabbit.eats); // false
+        // Task#01.03:
+        function Rabbit2() {}
+        Rabbit2.prototype = {
+            eats: true
+        };
+        rabbit = new Rabbit2();
+        delete rabbit.eats; // eats in Rabbit2.prototype not in rabbit
+        console.log(rabbit.eats); // !undefined but true!!
+        // Task#01.04:
+        function Rabbit2() {}
+        Rabbit2.prototype = {
+            eats: true
+        };
+        rabbit = new Rabbit2();
+        delete Rabbit2.prototype.eats;
+        console.log(rabbit.eats); // undefined
+        // Task#02:01:Create an object with same constructor: create another with "obj" unknown constructor: where such code works:
+        function Obj() {
+            this.name = "Baeeebeee";
+        }
+        let obj = new Obj();
+        let obj2 = new obj.constructor();
+        // let obj2 = new Obj();
+        // console.log(Object.getPrototypeOf(obj2).name);
+        console.log(obj2.name, Obj.prototype.constructor === Obj);
+        // Task#02:01:where such code does not work: when Obj.prototype gets overwritten and forget to recreate "constructor" to reference Obj then it'd fail:
+        function Obj2(name) {
+            this.name = name;
+        }
+        Obj2.prototype = {}
+        obj = new Obj2("Baeeeebeee");
+        obj2 = new obj.constructor("sayWho");
+        console.log(obj2.name); // undefined, asd "constructor" is not referenced to Obj2 after overwritting Obj2.prototype default object without recreating "constructor" in it
+
+
+
+        /**
         // Object References and copying: from JavaScript.info
         // fundamental difference between objects vs primitives is objects are stored and copied by "refernce" where as primitives are always copied as a whole "value"
         let message = "Hello";
@@ -509,6 +605,302 @@
         };
         ladder.up().up().down().showStep(); // return object itself from every call and that's how you can chain them up like that instead linearly putting them in sequence
         
+        // Constructor, operator "new", litaral syntax allows us to create on object but when we need multiple similar objects we need to use "new"
+        // Constructor Function, they are similar t normal functions but naming conventions requires it to start with Capital letters and should be executed with only "new" operator
+        function User(name) {
+            this.name = name;
+            this.isAdmin = false;
+        }
+        user = new User("Lassi");
+        console.log(user.name, user.isAdmin);
+        // when a function is executed with "new", it does following steps:
+        // - a new empty object is created and assigned to "this"
+        // - function body executes, usually it modifies "this" adds new properties to it (e.g. this.name = name)
+        // - value of "this" is returned
+        // in other words, new User(..) does something like this:
+        function User(name){
+            // this = {}; // implicitly
+            // adds properties to "this"
+            this.name = name;
+            this.isAdmin = false;
+            // return "this" // implicitly
+        }
+        // so when user = new User("Claire") gives same result as:
+        user = {
+            name: "Claire",
+            isAdmin: false
+        };
+        // if we want to create other users using new User(..) will make our code much maintainable and easy to read
+        // and that's main purpose of using Constructor functions- to implement reusable object creation code
+        // when you need to encapsulate your code tht construct a single complex object without future reuse then we can wrap them in a constructor function like this:
+        user = new function() {
+            this.name = "someBody";
+            this.isAdmin = false;
+        };
+        // constructor Mode Test: new.target: this syntax is rarely used, and it's used  to check whether it was called with "new" operator or without it, using new.target property
+        // it's empty for regular function calls and equals function if called with "new":
+        function User() {
+            console.log(new.target);
+        }
+        // without "new", regular call
+        User(); // undefined
+        // with new, constructor mode
+        new User(); // function User() {..}
+        //  we can also make both new and regular calls to do same, like this:
+        function User(name) {
+            if(!new.target) return new User(name) // when not used "new" operator add new name
+            this.name = name;
+        }
+        let someBody = User("someBody"); // redirects call to new User() {..}
+        // console.log(someBody.name);
+        someBody = new User("someBody");
+        console.log(someBody.name);
+        // Return from Constructor Functions, usually constructors doesn't have a return statement, their task is to write stuff into "this" and becomes result
+        // but if ther's any "return" statement then rules are simple:
+        // - "return" is called with an "object" then that object is returned instead of "this"
+        // - "return" is called with a primitive value then it's ognored
+        // in other words "return" with an "object" returns that object, in all other cases "this" is returned
+        // consider this scenario where "return" overrides "this" by returning an object:
+        function BigUser() {
+            this.name = "Claire";
+            return {name: "Baeebeee"}; // returns this object instead
+        }
+        console.log(new BigUser().name); // got that object property
+        // another scenario where an empty "return":
+        function SmallUser() {
+            this.name = "shimiee";
+            // return;
+            return; // returns "this"
+        }
+        console.log(new SmallUser().name);
+        // user = new SmallUser;
+        // console.log(new SmallUser.name); // we can omit parentheses if constructor doesn't have any parameters
+        // console.log(user.name);
+        // Methods in Constructor Function, constructor fuction can have proeprties and as well as methods and can have access to them
+        function User(name) {
+            this.name = name;
+            this.sayHi = function() {
+                console.log("Some Name : "+this.name);
+            };
+        }
+        someBody = new User("Baeebeee");
+        someBody.sayHi();
+        // Excercises:
+        // Task#01:two functions - one object: new A() === new B()? it's only possible when "new" returns shared object instead of "this":
+        obj = {};
+        function A() {
+            this.check = true;
+            // return obj;
+            return obj;
+        }
+        function B() {
+            // this.check = false;
+            this.check = true;
+            // return obj;
+            return obj;
+        }
+        a = new A();
+        b = new B();
+        console.log(a === b); // true, unless returns default "this" from constructor function
+        // Task#02:Create "new" Calculator: read(2 params), sum(), mult():
+        function Calculator() {
+            this.read = function() {
+                this.a = +prompt("enter value", 1);
+                this.b = +prompt("enter value", 1);
+            };
+            this.sum = function() {
+                return this.a + this.b;
+            };
+            this.mult = function() {
+                return this.a*this.b;
+            };
+        }
+        calculator =  new Calculator();
+        calculator.read();
+        console.log("Sum = "+calculator.sum(), "Mult = "+calculator.mult());
+        // Task#03:Create "new" Accumulator: store current value in property "value", read(1 param) to add it to value:
+        function Accumulator(startingValue) {
+            this.value = startingValue;
+            this.read = function() {
+                // let a = +prompt("enter value", 0);
+                // this.value += a;
+                this.value += +prompt("enter value", 0);
+            }
+        }
+        let accumulator = new Accumulator(1);
+        accumulator.read();
+        accumulator.read();
+        console.log(accumulator.value);
+        
+        //  Optional Chaining
+        user = {};
+        console.log(user.address); // undefined
+        // console.log(user.address.street);  // error
+        // in web development when we look for an elelment that is not available we get a null pointer exception but when tried to do some acitivity on it we get an error for Null pointer activity
+        // to compensate and workaround that situation we can use ternary operator to throw an undefined rather than an error:
+        console.log(user.address?user.address.street:undefined);
+        // or alternatively bettwer way to write it using && operator:
+        console.log(user.address && user.address.street);
+        // to avoid repetition of property names, comes uses of Optional Chaining:
+        // "?." stops evaluation if ppart before it is "undefined/null" andd returns that part, (e.g. value?.prop - value otherwise null/undefined)
+        console.log(user?.address?.street); // object traversal is same as usual if you had anything after street.road.house, it'd try to access just same after Optional Chaining
+        console.log(user.address?.street); // "user" exists but address and rest is optional, also "?." immediately stops or short circuits if left side evaluates to undefined or null or doesn't exist
+        // console.log(notuser?.what) // if variable object is not declared then triggers an error
+        // other variants ?.() or ?.[], "?." is not an operator rather a special syntax construct, which also works with functions and square brackets
+        let userAdmin = {
+            admin() {
+                console.log("An Admin");
+            }
+        };
+        userAdmin.admin?.(); // an admin, admin property exist in userAdmin
+        let userGuest = {};
+        console.log(userGuest.admin?.()); // undefined, evaluations stops without any error
+        let user01 = {
+            firstName: "Jane"
+        };
+        let user02 = null;
+        let key = "firstName";
+        console.log(user01?.[key], user02?.[key], user01?.[key]?.something?.not?.existing); // "jane", "undefined" "undefined"
+        // we can also use it (?.) with "delete" operator
+        delete user01?.firstName;
+        console.log(user01?.firstName);
+        // "?." is safe for reading and deleting but not for writing:
+        user02 = {};
+        // user02?.name = "Nope"; // Error, because it evaluates to undefined, and assignment into an undefined doesn't work
+
+        // Symbol Type: by specification object property keys maybe either string type or symbol type only, lets explore how using symbol can be beneficial to us
+        // "symbol" represents an unique identifier, a value of thi type can be created using Symbol():
+        let id = Symbol();
+        // we can also give symbol description, known as symbol name, it's most useful in debuging processes:
+        id = Symbol("id");
+        // symbols are guranteed to be unique, even if wee create many symbols with same descriptions, they are of different values:
+        id2 = Symbol("id");
+        console.log(id === id2);
+        // symbols don't auto convert to a string:
+        // console.log(id2); // TypeError?.
+        console.log(id2, id2.toString(), id2.description);
+        // Hidden Properties, symbols allows us to create "hidden" properties of an object that no other part of code can accidentally access or overwrite:
+        user = {
+            name: "Claire"
+        };
+        id = Symbol("id");
+        user[id] = 1;
+        console.log(user[id]); // we can access data using symbol key and there will be no conflict of names or identifiers even if they share same descriptions
+        // when sing symbols vallue overwritten is not an option as it would be for usual string type variables when appeared to be samee named
+        // Symbols in object literals, we need to put square bracket around it:
+        id = Symbol("id");
+        user = {
+            name: "Baeebeee",
+            [id]: 1234 // not "id":123, rather [id]:123
+        };
+        console.log(user[id]);
+        // Symbols are skipped by for..in loop:
+        id = Symbol("id");
+        user = {
+            name: "Baeeebeeeee",
+            age: 29,
+            [id]: 4321
+        };
+        for(let key in user) console.log(key); // no symbols showed up, also Object.keys(..) ignores them
+        console.log(user[id]) // direct access is avaialble
+        // Object.assign(..) copies both string and symbol characters:
+        id = Symbol("id");
+        user = {
+            [id]: 1212,
+            name: "Jane"
+        };
+        clone = Object.assign({}, user);
+        console.log(clone.name, clone[id]);
+        // Global Symbols, sometimes w want same named symbols to be same entities, meaning exactly same property
+        // there exist a Global Symbol Registry, we can create symbols in it and keep it there for posterity and it also guarantees samee symbols are being used when used repeatedly with same symbol name
+        // to read from registry: Symbol.for(key)
+        // consider following:
+        // read from global registry
+        id = Symbol.for("id"); // if symbols was not there previously , now it's created
+        // read it again perhaps from another code base or part of code
+        id2 = Symbol.for("id");
+        // check equality
+        console.log(id === id2);
+        //  if we want application widee symbol and accessible everywhere in code base, that's what they are for
+        // Symbol.keyFor(..) is reversed of Symbol.for(key), where it returns a name by a global symbol unlike returning a symbol by name:
+        // get symbol by name
+        let sym = Symbol.for("name");
+        let sym2 = Symbol.for("id");
+        // get name by symbol
+        console.log(Symbol.keyFor(sym), Symbol.keyFor(sym2)); // internally uses global registry for symbol name, it doesn't work for non global symbols, it'll return "undefined"
+        //  any symbols have it's description property:
+        let globalSymbol = Symbol.for("name");
+        let localSymbol = Symbol("name");
+        console.log(Symbol.keyFor(globalSymbol), Symbol.keyFor(localSymbol)); // name, undefined
+        console.log(localSymbol.description, globalSymbol.description); // name name
+        user = {
+            name: "Baeeebeeeee",
+            age: 29,
+            [id]: 4321
+        }; 
+        console.log(Object.getOwnPropertySymbols(user), Reflect.ownKeys(user)) // to get all keys,  all keys including sybolic one's
+
+        // Object to Primitives Conversions, to do conversion JavaScript tries to find and call these three object methods:
+        // - call obj[Symbol.toPrimitive](hint), method with symbolic key Symbol.toPrimitive(as in System Symbol), if such method exists
+        // - otherwise if hint is "string", try obj.toString() and obj.valueOf(), whatever exist
+        // - otherwise if hint is "number" or "default", try obj.valueOf() and obj.toString(), whatever exists
+        // Symbol.toPrimitive:
+        user = {
+            name: "Delilah",
+            money: 1100,
+            [Symbol.toPrimitive](hint) {
+                console.log(`hint : ${hint}`);
+                return hint === "string" ? `{name: "${this.name}"}` : this.money
+            }
+        };
+        // conversion demo:
+        console.log(user); // hint: string -> {name:"delilah"}
+        console.log(+user); // hint: number: 1100
+        console.log(user + 500) // hint: default: 1600
+        // user becomes a self descriptive string or money ammmount depending on conversion, user[Symbol.toPrimitive] handles all converesions
+        // toString/valueOf: toString -> valueOf for "string" hint and valueOf -> toString for "number" or otherwise
+        // - toString returns a string "[object Object]"
+        // - valueOf method returns object itself
+        user = {name: "Baeebeee"};
+        console.log(user); // [object Object]
+        console.log(user.valueOf() === user); // true, it returns object itself
+        // consider following: instead of Symbol.toPrimitive, using both toString and valueOf methods
+        user = {
+            name: "Claire",
+            money: 1100,
+            // for "string" as hint
+            toString() {
+                return `{name:"${this.name}"}`;
+            },
+            //  for "number" as hint
+            valueOf() {
+                return this.money;
+            }
+        }
+        console.log(user); // toString -> {name: "Claire"}
+        console.log(+user); // valueOf -> 1100
+        console.log(user+500); // valueOf -> 1600
+        //  often we want a single catch-alll place to handle all primitives conversion, we can implement toString only like this:
+        user = {
+            name: "Baeebeee",
+            // mmoney: 1100,
+            toString() {
+                return this.name;
+            }
+        };
+        console.log(user);
+        console.log(user+500);
+        // Futher Conversion, type conversion converts operands to appropriate types before operations:
+        obj = {
+            // toString handles alll coonversions in absence of other methods
+            toString() {
+                return "2"
+            }
+        };
+        console.log(obj * 2); // 4, converted to 2 from "2" and multiplied
+        console.log(obj + 2) // "22" conversion to primitive and returned concatenated strings
+        // 3 types of hints: "string", "number" and "default", "default" hint handled same way as "number"
+        **/
     </script>
 </body>
 

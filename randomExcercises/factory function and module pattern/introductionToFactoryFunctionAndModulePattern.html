@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factory Function and Module Pattern</title>
+</head>
+<body>
+    <script>
+        // it's pattern is similarr to constructors but instead of using "new" to create an object
+        // factory function simply sets up and return new object when called upon this function:
+        let personFactory = (name, age) => {
+            let sayHello = () => console.log("hello");
+            return {name, age, sayHello};
+        }
+        let claire = personFactory("Claire", 29);
+        console.log(claire.name, claire.age);
+        claire.sayHello();
+
+        // same functionality using Constructor:
+        let Person = function(name,age) {
+            this.name = name;
+            this.age = age;
+            this.sayHello = function() {
+                console.log("Hello");
+            }
+        }
+        claire = new Person("Claire", 29);
+        console.log(claire.name, claire.age);
+        claire.sayHello();
+
+        // Object shorthand, 
+        // return {name:name, age:age, sayHello:sayHello}  // without shorthand
+        // return {name,age,sayHello} // with shorthand, when variable name is exactly same as property name
+        let name = "Baeebee";
+        let color = "purple";
+        let number = 34;
+        let food = "continental";
+        // without using object syntax
+        console.log(name,color,number,food);
+        // with using object syntax where it will turn those variables into an object and seems to be much more intellegible
+        console.log({name,color,number,food});
+        
+        // In JavaScript, any function can return a new object, when it's not a constructor function or class, it's known as a factory function
+        // Difference is Coonstructors/Class force callers to use "new" where Factories don't, it has relevant side effects:
+        // - instantiates a new instance object and binds "this" to it within constructor
+        // - binds instance.__proto__ to Constructor.prototype
+        // - as a side effect of "2" binds instance.__proto__.constructor to Contructor
+        // - implicitly returns "this" which reffers to instance
+        // Refactoring example from class to factory implementation:
+        // class Car {
+        //     drive() {console.log("vroom vroom")}
+        // }
+        // let car = new Car();
+        // car.drive();
+        // let autoMaker = {Car};
+        // autoMaker.drive();
+        
+        // refactoring using factory function:
+        let autoMaker = {
+            car(bundleType) {
+                return Object.create(this.bundle[bundleType]);
+            },
+            bundle: {
+                premium: {
+                    drive() {console.log("vroom vroom")},
+                    getOptions: function() {return ["leather", "wood", "pearl", "sea green"]}
+                }
+            }
+        };
+        // implementations expects a bundleType
+        let car = autoMaker.car("premium");
+        car.drive();
+        // car =  new autoMaker.car(); // will throw undefined error
+
+        // constructors enables deceptive instanceof: instanceof is a prototypee identity check not a a type check:
+        function foo() {}
+        let bar = {a:"a"};
+        foo.prototype = bar;
+        // console.log(bar instanceof foo, foo instanceof bar); // false, not callable
+        console.log(bar instanceof foo); // false
+        let baz = Object.create(bar);
+        console.log(baz instanceof foo) // true?!, as mentioned earlier not a type check rather identity check
+        // instanceof does an identity check, comparing object's __proto__ "object" to Contructor.prototype "property"
+        // it also doesn't work if Constructor.prototype property gets replaced and not manually adjusted accordingly
+
+        // benefits of using factories:
+        // - return any arbitary object and use any arbitary prototype which allows more flexible prototypal inheritance models
+        // - no refoactoring worries whatsoever, it's usually other way around from constructor/class implementation to factory function
+        // - no "new" is required, as "new" is ambiguous to classical Class styled archetecture in JS
+        // - quite standard "this" behavior, "this" refers to caller as anyother invocation method would, also you reassiging with call(..) and apply(..) possible and gets expected outcome
+        // - no deceptive "instanceof" behavior, because it implicitly returning constructing object with it's prototype included
+        // - its simpler expression without have to use of "new" while creting any objects, there is a nice tone to it as well
+
+        // Scope and Closure, to understand and using Factory Function more readily and effortlessly, concept of "Scope" and "Closure" is paramount
+        // what do you think this following snippet output will be on last line:
+        let a = 17;
+        let func = x => {
+            // a = x; // changes global scoped variable
+            let a = x; // changes locally, globally unaffected
+            // console.log(a, window.a); // previously it was accessible but due to stop complications and better usage of function scope it's better to use local variables iinstead or use global variable directly
+        }; 
+        func(99); // to avoid any scoping misuse try using "use strict" this will prevent from creating root level scoped vriables
+        console.log(a); // 17 but not 99 due to "scope" of variable "a"
+        // Scoping means where these variables are available to access, usually ther function scoped otherwise globally scoped
+        // if you need something outsidef of a function that might need to have ccess of we can return it from function and save it in a variable
+        // also there is a significant difference in "var" and "let" scopes, "var" is gobally scope whereas "let" is scoped to its closest curly braces
+        let yrs = 110;
+        if(yrs > 12) {
+            // var dogYrs = console.log("In dog years : "+yrs*7);
+            let dogYrs = console.log("In dog years : "+yrs*7);
+            console.log(dogYrs); // "let" is scoped to it's nearest curly braces
+        }
+        // console.log(dogYrs); // "var" is scoped globally
+
+        // Private Variables and Functions:
+        let FactoryFunction = string => {
+            let capitalString = () => string.toUpperCase();
+            let printString = () => console.log(capitalString());
+            return {printString};
+        }
+        let taco = FactoryFunction("taco");
+        // printString(); // Error out of scope
+        // capitalString(); // Error out of scope
+        // taco.capitalString(); // Error out of scope
+        taco.printString(); // accessible due to closure
+        // concept of Closure is an Idea that functions retains their scopes even if they are passed around and called outside of that scope
+        // printString() has access to capitalString() even if it gets called outside of that function
+        let counterCreator = () => {
+            let count = 0;
+            return () => {
+                console.log(count);
+                count++;
+            };
+        };
+        let counter = counterCreator();
+        counter(); // 0
+        counter(); // 1
+        counter(); // 2
+        counter(); // 3
+        // counterCreator()() // 0, it stays same  unleess you want to change it's value over time or calling many times then have to use it like earlier way
+        // in that example counterCreator(..) creates a local count variable and then returns a function, to use that function we've to assign it to a variable and then invoke it or alternatively use immediately invokeed functions (e.g.() after counterCreater()())
+        // counter(..) is calling return value of counterCreator().. and thus confirming count state to be chaged over time when calling multiple times
+        // function counter() is a closure, it has acccess to variable "count" and can both print and increment,, but there is no other way too acccess it from outside that function
+        // factory functions allows us to create "private" variables and functions and only export methods that rest of our prgrams is going to use
+        // using factory function terminology we can say capitalizeString() is a "private" method where as printString() is a "public" method
+        // concept of "private" methods is very useful and should be used as often as possible, it easier to reason about for you and others to use your objects that you returned instead all of your available methods tucking it away for safety and maintainability
+        
+    </script>
+</body>
+</html>

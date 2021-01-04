@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Scopes and Closures</title>
+</head>
+<body>
+    <div class="nav">Nav Element</div>
+    <nav class="nav">
+        <li>lnk 01</li>
+        <li>lnk 02</li>
+    </nav>
+    <script>
+        // scope is variable acccess and whereas context means "this" value
+        // local scope is refers to any scope defined past oor beyond in global scope, each function has its own(also could be nested) local scope/s
+        // any function defined within another function has a local scope which is linked to its outer function, locally scoped variables are not accesible or visible from global scope, unless exposed
+        // function scope, new function means new scope, nested functions then can be visualized as gobal to local scoped depending on heirearchy of function declarations and variables defined in it or them
+        // lexical scope, whenever there is a neested function scope or local scope, inner function has access to outer functions and it's known as Lexical Scope or Static Scope or Closure
+        // lexical scope works in a waterfall or top down system not other way around, and this scope linking to it's outer function is known as Chain, it defines scope or position in code, when resolving a variable it bubbles up until it finds it in Scope Chain
+        // Cosures, are very close related to Lexical Scope, when returning a function reference, so that its available to it's parent scope:
+        let  sayHello = function(name) {
+            let text = "Hello "+name;
+            return function() {
+                console.log(text);
+            };
+        };
+        sayHello("Baeebee"); // nothing happens, but no errors just in silence
+        // function is returning a funnction which means it needs an assignment and then calling
+        let helloDear = sayHello("Baeebee");
+        helloDear();
+        // or invoke scope immediately
+        sayHello("Baeebee")();  // runs function with closure to invoke returning function call value
+        // a function doesn't have to return in order to be called a closure though, simply accessing variables outside of it's immediatee lexical scope creates a closure
+        // Scope and "this", each scope binds different value of "this" depending on how function is called or invoked
+        // by default "this" refers to most global object "window", invoking functions in diferent ways binds "this" value differntly:
+        let myFunc = function() {
+            console.log(this); // global object
+        };
+        myFunc();
+        let myObj = {};
+        myObj.myMethod=function() {
+            console.log("<>",this); // this points to "myObj"
+        }
+        myObj.myMethod();
+        let nav = document.querySelector(".nav");
+        let toggleNav = function() {
+            console.log(this); // this points to <nav>
+        }
+        nav.addEventListener("click", toggleNav, false);
+        // "this" value can be changed inside same function scope:
+        toggleNav = function() {
+            console.log(this); // <nav> element
+            setTimeout(() => {
+                console.log(this); // arrow function has no "this" get's it from outer function
+            }, 200);
+            setTimeout(function() {
+                console.log(this); // points to window object
+            },200);
+        };
+        nav.addEventListener("click", toggleNav, true);
+        // to strictly defnine value of "this", try using "that" or "self" to refer to lexical binding instead of global object:
+        toggleNav = function() {
+            let that = this,self = this;
+            console.log(this);
+            setTimeout(function() {console.log(that, self)},200);
+        }
+        nav.addEventListener("click", toggleNav, true);
+        // changing scope with call() apply() and bind(): when you need to mnipulate scopes of your code:
+        let links = document.querySelectorAll("nav li");
+        for(let i = 0; i < links.length; i++) {
+            console.log("<..>",this); // window object but not to our elments
+        }
+        // "this" here is not invoked meaning we are not chanign it's default scope which is window
+        // but we can change it's scope and context of how it's been called by calling call(..) and apply(..)
+        // call(..) and apply(..) methods allows us to pass in a scope of a function which binds correct "this" value:
+        links = document.querySelectorAll("nav li");
+        for(let i = 0; i < links.length; i++) {
+            (function() {
+                console.log("<??>",this); // points to each element
+            }).call(links[i]); // passing in current element, which changes scope of function ss that "this" becomes that iterated element
+        }
+        // we can use either call(..) or apply(..), key difference betwenn these two methods are call(scope,arg1,arg2..) and apply(scope, [arg1,arg2..]) in how they manages arguments
+        // call(..) and apply(..) function actuallly invokes function: rather calling function directly (e.g. myFunc()) we can call through call(e.g. myFunc.call(this))
+        // bind(..), unlike above two methods, it doesn't invoke function, it merely binds values before function is invoked:
+        // nav.addEventListener("click", toggleNav, true); // it works
+        // nav.addEventListener("click", toggleNav(arg1,arg2), true); // will invoke function immediately
+        nav.addEventListener("click", toggleNav(links), true);
+        // lets fix this by creating a new function inside it so that it can handle two arguments:
+        nav.addEventListener("click", function() {
+            toggleNav(arg1, arg2);
+        }, false);
+        // then again, to change it's scope we had to create a needless function, it could be costly if it were inside a loop and binding event listeners
+        // this is where bind(..) shines through, as we can pass in arguments but functions are not called:
+        // nav.addEventListener("click", toggleNav.bind(scope, arg1,arg2), false);
+        nav.addEventListener("click", toggleNav.bind(links), false);
+        // function isn't invoked and scope can be changed if needed but arguments are sat waiting to be passed in
+        // Private and Public Scope, in JavaScript there is no truely "public" or "private" like as other languagees but can be emulated through things like Closures
+        // by using patterns like "Module" we can create "public" and "private" scope, by wrapping our function inside a function we can make it "private" but it would be out of scope:
+        (function() {
+            let peivateFunction = function() {console.log("Private Function")};
+        })();
+        // privateFunction(); // created but out of scope
+        // to make it "public" scoped there's a pattern called "Module Pattern[and Revealing Modulee Patteern]" which alllows us to scope our functions correctly
+        // "Module Pattern" uses private and public scope and an Object:
+        let Module = (function() {
+            return {
+                publicMethod: function() {
+                    console.log("Public Method has called")
+                }
+            }
+        })();
+        Module.publicMethod(); // call Module + methods
+        // "return" statement is what returns our "public" methods which are accessible in our global scope but are "namespaced" which takes care of our namesapce and can contain as many methods as needed, means extendable:
+        Module = (function() {
+            return {
+                publicMethod: function() {
+                    console.log("Public Method");
+                },
+                anotherMethod: function() {
+                    console.log("Another Public Method Called");
+                }
+            }
+        })();
+        Module.publicMethod();
+        Module.anotherMethod();
+        // "private" need not be accessed by global scope, which means it can not be called and by that way we are making it "private" scoped
+        Module = (function() {
+            let _privateMethod = function() {
+                console.log("Private Method");
+                return 42;
+            };
+            return {
+                publicMeethod: function() {
+                    _privateMethod();
+                    console.log(_privateMethod(),"Public Method");
+                }
+            }
+        })();
+        Module.publicMeethod();
+        // due to Scope we can have access to our private methods in our returning public methods so that they can be interacted when needeed be but still inaccessible in global scope
+        // by that way we can ensure our code security, cause keeping everything in global scope can be vulnerable to outside attacks, and Module  pattern saves us from it
+        // a neat naming convention for "private" methods to begin with an underscore"_" and "Module" can siply assign function reference from private to public
+        Module = (function() {
+            let _privateMethod = function() {return 42;}
+            let essentiallyPublic = function() {console.log("Became Public")};
+            return {
+                becamePublic: essentiallyPublic,
+                anotherPublic: function() {console.log("another public")}
+            }
+        })();
+        Module.becamePublic();
+    </script>
+</body>
+</html>

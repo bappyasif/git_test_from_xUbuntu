@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All About Module Pattern</title>
+</head>
+<body>
+    <header id="target"></header>
+    <script>
+        // Module  pattern is easy to use and creates encapsulation of code, used mostly as singleton style objects whhere only one instancce exists
+        // Module Patterns is good for Services and Teesting/TDD
+        // Creating a Module, using IIFE:
+        (function() {
+            "use strict";
+            console.log("Inside IIFE Pattern Module");
+        })();
+        // Exporting module, basically assigns module to a variable that we can later on call to use modules method through that variable
+        let myModule = (function() {
+            function sayHello() {
+                console.log("Saying Hello from module");
+            }
+            return {
+                sayHello,
+                publicMethod: function() {console.log("Hello again from IIFE");}
+            } // exposing sayHello() to code outside our module, which becomes a public method
+        })();
+        myModule.sayHello();
+        myModule.publicMethod();
+        // Private Methods and Properties, JavaScript doesn't have a private keyword but using Closures we can create private methods and properties/private state:
+        myModule = (function() {
+            "use strict";
+            let _privateProperty = "This is Private Property";
+            function _privateMethod() {
+                console.log(_privateProperty);
+            }
+            return {
+                publicMethod: function() {
+                    _privateMethod();
+                }
+            }
+        })();
+        myModule.publicMethod(); // outputs correctly as expected
+        // myModule._privateMethod(); // not accessible for Closures
+        // as our private methods are not returned they are not accesible outside of this module, only our public methods has given access to access our private methods or properties if needed be
+        // that gives us ability to craete and keep private state, encapsulation within code, please notice that private methods are using a "_" as a naming convention for it to be identified easily
+        // Revealing Module Pattern, it's one of most popular ways of creating modules, using return statement we can return an object literl that reveals only methods or properties that needs to be available publicly
+        myModule = (function() {
+            "use strict";
+            let _privateProperty = "Private Property";
+            let publicProperty = "Public Property";
+            function _privateMethod() {console.log(_privateProperty);}
+            function publicMethod() {_privateMethod();}
+            return {
+                publicMethod: publicMethod,
+                publicProperty: publicProperty
+            };
+        })();
+        myModule.publicMethod();
+        console.log("<>",myModule.publicProperty);
+        // myModule._privateMethod(); // protected by module closure
+        console.log(myModule._privateProperty) // protected by module closure
+        // benefits to Revealing Module Pattern is that we can look at bottom of our modules and quickly see what is publicly available for use
+
+        // More on Module Pattern, modulee is created mostly as an IIFE with a function inside:
+        let someModule = ( function() {} )();
+        // everything with that said function is bound to that module and accessible to them only, module also emulates "private", "public" by creating metioned scope and exposing thhose things tat are declared internally within module
+        // Private functions are memebers of given entity that can be seen only within said entity, whereas Public one's can be seen from outside given entity
+        let formatter = ( function() {
+            let log = msg => console.log([Date.now()], msg);
+        } )();
+        // as you can see formatter.log(..) isn't accessible from outside that module, beecause our module doesn;t return anything, and that's why returning "undfined"
+        // formatter.log("Hello");
+        // accessing a module is actually accessing whatever it returns, log function can be treated as a private function, and can be accessed within module
+        formatter = ( function() {
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => text.toUpperCase();
+        } )();
+        // thats just another privatee method that doesn;t have access outside of module, thus appear exposing a module
+        // Expose a module, by returning an object literal with intended properties and methods in it
+        formatter = ( function() {
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => text.toUpperCase();
+            let makingLowercase = text => {
+                log("making lowercase");
+                return text.toLowerCase();
+            }
+            return {
+                makeUppercase,
+                makingLowercase
+            };
+        } )();
+        console.log(formatter.makeUppercase("dothis"));
+        console.log(formatter.makingLowercase(formatter.makeUppercase("dothis")));
+        // Modules can house not only functions but arrays, objects and primitives as well:
+        formatter = ( function() {
+            let timesRun = 0;
+            let setTimesRun = () => {
+                log("Setting times run ....");
+                // ++timesRun;
+                return ++timesRun;
+            }
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => text.toUpperCase();
+            let makingLowercase = text => {
+                log("making lowercase");
+                return text.toLowerCase();
+            }
+            return {
+                makeUppercase,
+                makingLowercase,
+                timesRun,
+                // setTimesRun
+                setTimesRun
+            };
+        } )();
+        console.log(formatter.makingLowercase("WHATNOW"));
+        console.log(formatter.timesRun); // 0, can be overritten from outsidde as it's publicly exposed
+        formatter.timesRun = 11;
+        console.log(formatter.timesRun);
+        console.log(formatter.setTimesRun())
+        // things that are exposed publicy can be changed deliberately and it's one of it's drawbacks
+        // reference types works differently, you can define it and will be poppulated as you go:
+        formatter = ( function() {
+            let timesRun = [];
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => {
+                log("Making Uppercase");
+                timesRun.push(null);
+                return text.toUpperCase();
+            }
+            let makingLowercase = text => {
+                log("making lowercase");
+                return text.toLowerCase();
+            }
+            return {
+                makeUppercase,
+                makingLowercase,
+                timesRun,
+            };
+        } )();
+        console.log(formatter.makeUppercase("dothis"));
+        console.log(formatter.makeUppercase("dothis"));
+        console.log(formatter.timesRun);
+        // Declaring Module Dependencies, modules are mostly closed entities but sometimes you might need to work with DOM obbject, to achieve that module may have dependencies:
+        formatter = ( function() {
+            let timesRun = [];
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => {
+                log("Making Uppercase");
+                timesRun.push(null);
+                return text.toUpperCase();
+            }
+            let makingLowercase = text => {
+                log("making lowercase");
+                return text.toLowerCase();
+            }
+            let writeToDom = (selector, message) => {
+                // document.querySelector(selector).innerHTML = message;
+            }
+            return {
+                makeUppercase,
+                makingLowercase,
+                timesRun,
+                writeToDom
+            };
+        } )();
+        formatter.writeToDom("#target", "Wassup Wassup");
+        // document is available only when DOM is accessible, running that on a server would produce an error, how to avoid that from happening, solution check first if document exists or not
+        formatter.writeToDom = (selector, message) => {
+            if(!!document && "querySelector" in document) {
+                document.querySelector(selector).innerHTML = message;
+            }
+        }
+        formatter.writeToDom("#target", "Ohh Yeah");
+        // but we can do better, by decalring our modules dependencies and inject them as we go:
+        formatter = ( function(doc) {
+            let timesRun = [];
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => {
+                log("Making Uppercase");
+                timesRun.push(null);
+                return text.toUpperCase();
+            }
+            let makingLowercase = text => {
+                log("making lowercase");
+                return text.toLowerCase();
+            }
+            let writeToDom = (selector, message) => {
+                if(!!doc && "querySelector" in doc) {
+                    doc.querySelector(selector).innerHTML = message;
+                }
+            }
+            return {
+                makeUppercase,
+                makingLowercase,
+                timesRun,
+                writeToDom
+            };
+        } )(document); // now it doesn't shadow, it's declaring dependencies as it calling module's IIFE, no chance of breaking
+        formatter.writeToDom("#target", "what now");
+        //  let's test with a document mock:
+        let documentMock = (() => ({
+            querySelector: (selector) => ({
+                innerHTML: null
+            }),
+        }))();
+        formatter = ( function(doc) {
+            let timesRun = [];
+            let log = msg => console.log([Date.now()], msg);
+            let makeUppercase = text => {
+                log("Making Uppercase");
+                timesRun.push(null);
+                return text.toUpperCase();
+            }
+            let makingLowercase = text => {
+                log("making lowercase");
+                return text.toLowerCase();
+            }
+            let writeToDom = (selector, message) => {
+                doc.querySelector(selector).innerHTML = message;
+            }
+            return {
+                makeUppercase,
+                makingLowercase,
+                timesRun,
+                writeToDom
+            };
+        } )(document || documentMock);
+        // even if you dont put in an extra conditional checkin with this, it'll run smoothly as we are providing dependenciees and spares as well to be safe
+        
+    </script>
+</body>
+</html>

@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factory Function and Module Pattern</title>
 </head>
+
 <body>
     <script>
         // it's pattern is similarr to constructors but instead of using "new" to create an object
         // factory function simply sets up and return new object when called upon this function:
         let personFactory = (name, age) => {
             let sayHello = () => console.log("hello");
-            return {name, age, sayHello};
+            return { name, age, sayHello };
         }
         let claire = personFactory("Claire", 29);
         console.log(claire.name, claire.age);
         claire.sayHello();
 
         // same functionality using Constructor:
-        let Person = function(name,age) {
+        let Person = function (name, age) {
             this.name = name;
             this.age = age;
-            this.sayHello = function() {
+            this.sayHello = function () {
                 console.log("Hello");
             }
         }
@@ -37,10 +39,10 @@
         let number = 34;
         let food = "continental";
         // without using object syntax
-        console.log(name,color,number,food);
+        console.log(name, color, number, food);
         // with using object syntax where it will turn those variables into an object and seems to be much more intellegible
-        console.log({name,color,number,food});
-        
+        console.log({ name, color, number, food });
+
         // In JavaScript, any function can return a new object, when it's not a constructor function or class, it's known as a factory function
         // Difference is Coonstructors/Class force callers to use "new" where Factories don't, it has relevant side effects:
         // - instantiates a new instance object and binds "this" to it within constructor
@@ -55,7 +57,7 @@
         // car.drive();
         // let autoMaker = {Car};
         // autoMaker.drive();
-        
+
         // refactoring using factory function:
         let autoMaker = {
             car(bundleType) {
@@ -63,8 +65,8 @@
             },
             bundle: {
                 premium: {
-                    drive() {console.log("vroom vroom")},
-                    getOptions: function() {return ["leather", "wood", "pearl", "sea green"]}
+                    drive() { console.log("vroom vroom") },
+                    getOptions: function () { return ["leather", "wood", "pearl", "sea green"] }
                 }
             }
         };
@@ -74,8 +76,8 @@
         // car =  new autoMaker.car(); // will throw undefined error
 
         // constructors enables deceptive instanceof: instanceof is a prototypee identity check not a a type check:
-        function foo() {}
-        let bar = {a:"a"};
+        function foo() { }
+        let bar = { a: "a" };
         foo.prototype = bar;
         // console.log(bar instanceof foo, foo instanceof bar); // false, not callable
         console.log(bar instanceof foo); // false
@@ -99,16 +101,16 @@
             // a = x; // changes global scoped variable
             let a = x; // changes locally, globally unaffected
             // console.log(a, window.a); // previously it was accessible but due to stop complications and better usage of function scope it's better to use local variables iinstead or use global variable directly
-        }; 
+        };
         func(99); // to avoid any scoping misuse try using "use strict" this will prevent from creating root level scoped vriables
         console.log(a); // 17 but not 99 due to "scope" of variable "a"
         // Scoping means where these variables are available to access, usually ther function scoped otherwise globally scoped
         // if you need something outsidef of a function that might need to have ccess of we can return it from function and save it in a variable
         // also there is a significant difference in "var" and "let" scopes, "var" is gobally scope whereas "let" is scoped to its closest curly braces
         let yrs = 110;
-        if(yrs > 12) {
+        if (yrs > 12) {
             // var dogYrs = console.log("In dog years : "+yrs*7);
-            let dogYrs = console.log("In dog years : "+yrs*7);
+            let dogYrs = console.log("In dog years : " + yrs * 7);
             console.log(dogYrs); // "let" is scoped to it's nearest curly braces
         }
         // console.log(dogYrs); // "var" is scoped globally
@@ -117,7 +119,7 @@
         let FactoryFunction = string => {
             let capitalString = () => string.toUpperCase();
             let printString = () => console.log(capitalString());
-            return {printString};
+            return { printString };
         }
         let taco = FactoryFunction("taco");
         // printString(); // Error out of scope
@@ -145,7 +147,171 @@
         // factory functions allows us to create "private" variables and functions and only export methods that rest of our prgrams is going to use
         // using factory function terminology we can say capitalizeString() is a "private" method where as printString() is a "public" method
         // concept of "private" methods is very useful and should be used as often as possible, it easier to reason about for you and others to use your objects that you returned instead all of your available methods tucking it away for safety and maintainability
-        
+
+        // More about Factory Functions, factories are plain old JavaScript that return objects for us to use in our code:
+        let Player = (name, level) => {
+            let health = level * 2;
+            let getLevel = () => level;
+            let getName = () => name;
+            let die = () => {
+                console.log("character dead");
+            };
+            let damage = x => {
+                health = x;
+                if (health <= 0) {
+                    die();
+                }
+            };
+            let attack = enemy => {
+                if (level < enemy.getLevel()) {
+                    damage(1);
+                    console.log(`${enemy.getName()} has damaged ${name}`);
+                }
+                if (level >= enemy.getLevel()) {
+                    enemy.damage(1);
+                    console.log(`${name} has damaged ${enemy.getName()}`);
+                }
+            };
+            return { attack, damage, getLevel, getName };
+        };
+        let clair = Player("Claire", 11);
+        let flaire = Player("flaire", 8);
+        clair.attack(flaire);
+        flaire.damage(0);
+        console.log(flaire.getLevel(), flaire.getName());
+        console.log(flaire.health, clair.health); // undefined, undefined
+        flaire.die // not exposed to use
+        flaire.health = -2000; // not exposed to use
+        // those things(die,health) are not exposed publicly so we would get an undefined error, this is a very good thing
+        // setting up objects like this makes it eassire for us to use them because we've actually out some thought into it how and when we are going to want to use that information, because logic is encapsulated
+
+        // Inheritance with Factory Functions, concept of Prototypes and inheritance or giving our objects access to methods or properties of another object
+        // there are few easy ways to do so using Factory Functions:
+        Person = name => {
+            let sayName = () => console.log("Name : " + name);
+            return { sayName };
+        };
+        let Nerd = name => {
+            // simply create a person and pull out sayName() with destructuring assignment syntax
+            let { sayName } = Person(name);
+            let doSomethingWithNerd = () => { console.log("Nerd stuff") };
+            return { sayName, doSomethingWithNerd };
+        }
+        flaire = Nerd("flaire");
+        flaire.sayName();
+        flaire.doSomethingWithNerd();
+        // that pattern is awesome because it allows you to pick and choose which functions you want to include in your new object
+        // it can also be done using Object.assign: here is a snippet for understanding copying accessors:
+        let obj = {
+            foo: 1,
+            get bar() {
+                return 2;
+            },
+            baz() {
+                return 4;
+            }
+        };
+        let copy = Object.assign({}, obj);
+        console.log(copy); // value copy.bar is obj.bar's getter's return value
+        console.log(copy.bar, obj.bar, copy.baz(), obj.baz());
+        //  using that Object.assign into our Factory Function implmentation from earlier when copying them into our returning objct:
+        Nerd = name => {
+            let prototype = Person(name);
+            let doSomethingWithNerd = () => console.log("Nerdy stuff");
+            // return Object.assign({}, prototype, doSomethingWithNerd);
+            return Object.assign({}, prototype, { doSomethingWithNerd });
+        }
+        clair = Nerd("claire");
+        clair.sayName();
+        clair.doSomethingWithNerd();
+        // factory function using Object.create(): any function can create new objects, when it's not a constructro function it's a Factory function:
+        let someProto = {
+            hello() {
+                console.log("Hello " + this.name);
+            },
+            helloAgain() {
+                return "Hello " + this.name;
+            }
+        };
+        let greeter = name => Object.assign(Object.create(someProto), {
+            name
+        });
+        clair = greeter("claire");
+        clair.hello();
+        let msg = clair.helloAgain();
+        console.log(msg);
+        // one major drawback to delegation is that it's not very good for storing state, if you try to store state in objects/arrays, 
+        // mutating it in for any member wil mutate for every instance that shares this same prototype, to preserve safety, make a copy of state for each object
+        // Concatenative Inheritance/Cloning/Mixins: concatenative inheritance is a process of copyingproperties from one object to another without retaining a reference between teo objects
+        // cloning is an awesome way to store default state for objects, this process is commoly achieved by using Object.assign():
+        someProto = {
+            hello: function hello() {
+                console.log("Hello " + this.name);
+            },
+            helloAgain: function () {
+                console.log("Hello " + this.name);
+            }
+        };
+        flaire = Object.assign({}, someProto, { name: "flaire" });
+        flaire.hello();
+        flaire.helloAgain();
+        // concatenative inheritance is very powerful and gets even better whn used with closures
+        // Functional Inheritance also makes use of a Factory function and then tacks on new propertiesusing concatenative inheritance
+        let barker = state => ({
+            bark: () => console.log("Woof, " + state.name)
+        });
+        let driver = state => ({
+            drive: () => state.position = state.position + state.speed
+        });
+        let killer = state => ({
+            shout: () => console.log("Killer robot Dog " + state.name)
+        });
+        barker({ name: "todd" }).bark();
+        let murderRobotDog = name => {
+            let state = {
+                name,
+                speed: 1100,
+                position: 4,
+            };
+            return Object.assign(
+                {},
+                barker(state),
+                driver(state),
+                killer(state)
+            )
+        }
+        murderRobotDog("KillerRobot").bark();
+        murderRobotDog("KillerRobot").shout();
+        console.log(murderRobotDog("KilelrRobot").drive());
+
+        // Module Pattern, modules are very similar to Factory functions, main difference is how they're created:
+        let calculator = ( () => {
+            let add = (a,b) => a+b;
+            let sub = (a,b) => a-b;
+            let mul = (a,b) => a*b;
+            let div = (a,b) => a/b;
+            return {
+                add,
+                sub,
+                mul,
+                div
+            };
+        })();
+        console.log(calculator.add(5,4), calculator.sub(5,4), calculator.mul(5,4), calculator.div(5,4));
+        // concept of Module Pattern is exactly same as Factory Function, however instead of creating a factory that we can use over and over again to createe mmuliple object, module pattern wraps Factory Function in an IIFE
+        // primary reason to use IIFE is to obtain data privacy, any variables declared within IIFE cannot be accessed from outside of that IIFE scope:
+        (function() {
+            let foo = "bar";
+            console.log(foo);
+        })();
+        // console.log(foo); // not accessible
+        //  it's apparently not much differnet than normal function except it doesn't ytake up namespace for accidentally called up on more than once as it intended to be
+        // IIFE can also take up arguments into it as parameeters as well
+        let foo1 = "foo";
+        (function(innerFoo) {
+            console.log(innerFoo, foo1)
+        })(foo1);
     </script>
 </body>
+
 </html>

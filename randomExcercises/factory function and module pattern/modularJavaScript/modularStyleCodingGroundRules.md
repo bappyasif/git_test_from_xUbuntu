@@ -1,0 +1,11 @@
+Some Modular Style Coding Ground Rules:
+- self-contaained module
+  - everything to do with module at hand is within module
+  - no global variables usage
+  - if a modulemanages more than one thing it should be splitted up
+- separation of concerns
+- DRY Code: as in Don't Repeate Yourself
+- effecient DOM usage
+  - very few $('selectors')
+- no memory leaks
+  - all events can be unbounded

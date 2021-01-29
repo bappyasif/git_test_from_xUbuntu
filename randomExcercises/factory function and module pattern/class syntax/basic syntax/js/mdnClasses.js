@@ -125,4 +125,106 @@ console.log(speak());
 eat = animal.eat;
 // this = "global";
 console.log(eat());
+// Instance properties: those properties muct be defined inside class definition, within class methods:
+// Static(class-specific) data properties and prototype data properties must be deefined outside of Class body declaration:
+Rectangle.staticWidth = 20;
+Rectangle.prototype.prototypeWidth = 25;
 
+// Field Declarations: public and private field declartions available:
+// public field declarations:
+class RectanglePFD {
+    height = 0;
+    width;
+    constructor(h,w) {
+        this.height = h;
+        this.width =  w;
+    }
+}
+console.log(new RectanglePFD(11,11).height, RectanglePFD.height);
+// by declaring fields up-front, class definitions become more self documenting and fields are always present
+// Private field declarations:
+class RectanglePRFD {
+    #height = 0;
+    #width;
+    constructor(h,w) {
+        this.#height = h;
+        this.#width = w;
+    }
+}
+// console.log(RectanglePRFD.#height, new RectanglePRFD().#height, new RectanglePRFD(11,11).#height)
+// it's an error to access or reference private fields from outside of class definition, they can only be read or written within "class" body
+// by defining things that are not visible outside of class, it's ensuring that you are introducing encapsulation for your "class"
+// Sub classing with extends: keyword "extends" is used to create a "class" as a child of another "class":
+class AnimalBase {
+    constructor(name) {this.name = name;}
+    speak(){console.log(this.name+" makes a noise");}
+}
+class Dog extends AnimalBase {
+    constructor(name) {
+        super(name); // calling super class constructor
+    }
+    speak() {console.log(this.name+" barks");}
+}
+let dog = new Dog("scooch");
+dog.speak();
+// if there is a constructor present in subclass then it needs to call super() before using "this" for it' own class properties
+// it's also possible to extend traditional function based "classes"
+function animalBase(name) {
+    this.name = name;
+}
+animalBase.prototype.speak = function() {console.log(this.name+" makes a noise");};
+class Dog02 extends animalBase {
+    speak() {console.log(this.name+" barks");}
+}
+dog = new Dog02("Mitzie");
+dog.speak();
+// for similar methods, chid class method takes precedence over super class method, also known as polymorphism inclassical Inheritance term
+// classes can not extend regular (non-contsructible) objects, if it needs to be inherited from then usee Object.setPrototypeOf() method to do so:
+let animalObject = {
+    speak() {console.log(this.name+ " makes a noise");}
+}
+class DogIFRO {
+    constructor(name) {this.name = name;}
+}
+Object.setPrototypeOf(DogIFRO.prototype, animalObject);
+dog = new DogIFRO("billy");
+dog.speak();
+// Species: when it's needed to return an Array objects from any derived array class, species pattern lets us to overwrite default constructors
+class someArray extends Array {
+    // overwrite species to parent Array constructor
+    static get [Symbol.species]() {return Array;}
+}
+let array = new someArray(1,2,3,4);
+let mapped = array.map(x=>x*x);
+console.log(mapped instanceof someArray); // false
+console.log(mapped instanceof Array); // true
+// Super class calls with "super" keyword: "super" keyword is used to call corresponding methods of super class, this is an advanntage over prototype based inheritance:
+class Cat {
+    constructor(name) {this.name = name;}
+    speak() {console.log(this.name+" makes a noise");}
+}
+class Lion extends Cat {
+    speak() {
+        super.speak(); // super lets you directly access that method from super class
+        console.log(this.name+ " roars");
+    }
+}
+let lion = new Lion("Fuzzy");
+lion.speak();
+// Mix-ins: abstract subclasses or mix-ins are templates for classes, a class can have single superclass
+// multiple inheritance from tooling classes are not possible, that functionality needs to be provided by superclass
+// a function with a superclass as input and a subclass extending that superclass as output can be used to implement Mix-Ins
+let calculatorMixin = base => class extends base {
+    calc() {console.log("calculator");}
+};
+let randomizerMixin = base => class extends base {
+    randomize() {console.log("randomizer");}
+}
+// example of classes using Mixins is:
+class Foo {constructor(name) {this.name = name;}}
+class Bar extends calculatorMixin(randomizerMixin(Foo)) {speak() {console.log(this.name+ "  mix-ins");}}
+let b = new Bar("check");
+b.speak();
+b.calc();
+b.randomize();
+// redeclarations of class definitions will cause a Syntax error

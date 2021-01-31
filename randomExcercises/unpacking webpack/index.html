@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unpacking Webpack In Progression</title>
+    <!-- <script src="plainJS/js/moment.js/moment-min.js"></script> -->
+    <!-- even though this is simpler to download and use any library script but 
+    it becomes unfeasible as library function dispatched new updates and you have to download and it as well-->
+    <!-- <script src="plainJS/moment.min.js"></script> -->
+    <!-- <script src="plainJS/js/plain.js"></script> -->
+</head>
+<body>
+    <title>JavaScript Example</title>
+    <header>JavaScript Example</header>
+    <!-- <script src="plainJS/js/moment.js/moment-min.js"></script> -->
+    <!-- <script src="plainJS/js/plain.js"></script> -->
+    <!-- when package manager is used .json file will track installed dependencies like moments after installing through npm cmd 
+    when ever this directory gets shared just simply share .json file and after that recievers can just simply type in "npm install" to get a kickstart-->
+    <script src="nodeJS/node_modules/moment/min/moment.min.js"></script>
+    <script src="plainJS/js/plain.js"></script>
+    <!-- even that can get monotonous as we have to manually dig through node_modules and find our inteneded file and add it in layout
+    and that's where module bundlers comes in handy to automate that process of adding it into html layout-->
+    <!-- originally JS wasn;t meant to import code from another file as it was meant to run on browser only so it had no access client file system due to securty reasons -->
+    <!-- when we were actually adding moment.min/js it was adding a global variable named "moment" which is available after any file loaded after moment.min.js file, whether they require it or not-->
+    <!-- CommonJS let us import and export files across most PL without have to resorting to global variables, most well known CommonJS modules is nodeJS -->
+    <script src="moduleBundler/usingNPM.js"></script>
+    <!-- <script src="plainJS/js/plain.js"></script> -->
+</body>
+</html>

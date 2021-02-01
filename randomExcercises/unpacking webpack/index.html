@@ -24,7 +24,8 @@
     <!-- originally JS wasn;t meant to import code from another file as it was meant to run on browser only so it had no access client file system due to securty reasons -->
     <!-- when we were actually adding moment.min/js it was adding a global variable named "moment" which is available after any file loaded after moment.min.js file, whether they require it or not-->
     <!-- CommonJS let us import and export files across most PL without have to resorting to global variables, most well known CommonJS modules is nodeJS -->
-    <script src="moduleBundler/usingNPM.js"></script>
+    <!-- <script src="moduleBundler/usingNPM.js"></script> -->
+    <script src="moduleBundler/dist/main.js"></script>
     <!-- <script src="plainJS/js/plain.js"></script> -->
 </body>
 </html>

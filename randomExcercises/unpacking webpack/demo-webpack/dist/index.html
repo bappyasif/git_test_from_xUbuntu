@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://unpkg.com/lodash@4.17.20"></script> -->
+    <!-- as we know using that way for including scripts are not reliable, many a things can go wrong or updated and we'll have to constantly lookout for any changes 
+        that being brought up by library developer and adjus accrodingly as wel in our script -->
+    <!-- also if included in wrong order or if a dependency is missing aplication won't run, also unnecessary unused library dependency code will be downloaded hampering app overall performance -->
+    <!-- we'll use webpack to manages these scripts instead to overcome all those above mentioned concurrencies -->
+    <!-- we'll do so by creating a bundle, by tweaking our directory structure as it is now, with another folder called "dist"  where our distribution code wil be and used by our browser-->
+    <!-- distribution code is minimized and optimized output for our build process that'll eventually be loaded in our browser -->
+    <title>Demo Webpack</title>
+</head>
+<body>
+    <!-- as we'll be using distribution ./dist llets use that instead -->
+    <!-- <script src="src/index.js"></script> -->
+    <!-- after that use "npx webpack" command to kickstart configuration for our webpack, it'll generate a main.js file in ./dist -->
+    <!-- "npx" command which runs webpack package we installed in beginnig of this expedition -->
+    <!-- <script src="main.js"></script> -->
+    <!-- after using --config file explicitly we can use that script instead which does same as we did with "np webpack" earlier -->
+    <script src="newMain.js"></script>
+</body>
+</html>

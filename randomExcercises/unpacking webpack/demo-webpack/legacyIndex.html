@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/lodash@4.17.20"></script>
+    <!-- as we know using that way for including scripts are not reliable, many a things can go wrong or updated and we'll have to constantly lookout for any changes 
+        that being brought up by library developer and adjus accrodingly as wel in our script -->
+    <!-- also if included in wrong order or if a dependency is missing aplication won't run, also unnecessary unused library dependency code will be downloaded hampering app overall performance -->
+    <!-- we'll use webpack to manages these scripts instead to overcome all those above mentioned concurrencies -->
+    <!-- we'll do so by creating a bundle, by tweaking our directory structure as it is now, with another folder called "dist"  where our distribution code wil be and used by our browser-->
+    <!-- distribution code is minimized and optimized output for our build process that'll eventually be loaded in our browser -->
+    <!-- we'll also move our index.html to ./dist later on we'll generate index.html rather than edit manulaly, once  this is done it should be safe to empty ./dist and regenerate all files within it -->
+    <title>Demo Webpack</title>
+</head>
+<body>
+    <script src="src/index.js"></script>
+</body>
+</html>

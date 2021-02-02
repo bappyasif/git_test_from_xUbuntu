@@ -1,0 +1,1 @@
+(()=>{"use strict";document.body.append(function(){let e=document.createElement("div");return e.innerHTML="hello "+"Lassies",e}())})();

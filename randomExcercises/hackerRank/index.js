@@ -1,27 +1,34 @@
 function aVeryBigSum(ar) {
-    return BigInt(ar.reduce((a,c)=>a+c));
+  return BigInt(ar.reduce((a, c) => a + c));
 }
 
-let output = aVeryBigSum([10000000000,200000000,300000000,400000000,5000000000]);
+let output = aVeryBigSum([
+  10000000000,
+  200000000,
+  300000000,
+  400000000,
+  5000000000,
+]);
+
 console.log(output);
 
-function compareTriplets(a,b) {
-    let fa = [], fb = [];
-    for(let i=0; i<a.length; i++) {
-        for(let j=0;j<b.length;j++) {
-            if(i===j && a[i] > b[j]) {
-                fa.push(a[i]);
-            } else if (i === j && a[i] < b[j]) {
-                fb.push(b[j]);
-            }
-        }
+function compareTriplets(a, b) {
+  let fa = [],
+    fb = [];
+  for (let i = 0; i < a.length; i++) {
+    for (let j = 0; j < b.length; j++) {
+      if (i === j && a[i] > b[j]) {
+        fa.push(a[i]);
+      } else if (i === j && a[i] < b[j]) {
+        fb.push(b[j]);
+      }
     }
-    return [fa.length, fb.length];
+  }
+  return [fa.length, fb.length];
 }
 
-output = compareTriplets([17,28,30], [99,16,8]);
+output = compareTriplets([17, 28, 30], [99, 16, 8]);
 console.log(output);
-
 
 /**
  * 

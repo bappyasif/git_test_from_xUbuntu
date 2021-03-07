@@ -1,0 +1,56 @@
+.container {
+    padding: 29px;
+    display: flex;
+    justify-content: space-around;
+    background: yellowgreen;
+    text-align: center;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    transition: transform 290ms ease-in-out 2ms;
+    pointer-events: none;
+    /* position: absolute; */
+}
+
+a {
+    border: 1.1px solid yellow;
+    /* align-self: center; */
+    /* text-align: center; */
+    min-width: 110px;
+    /* margin: auto; */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.nav-div nav, .on-hover nav {
+    display: none;
+}
+
+.nav-div, .on-hover {
+    border: 2px solid silver;
+    min-width: 200px;
+    /* position: relative; */
+}
+
+/* trying to keep dropdowns position center when it's in "absolute" mode but not happening */
+.nav-div:hover nav{
+    display: flex;
+    /* margin: auto; */
+    /* position: absolute; */
+}
+
+.nav-div:hover nav a {
+    background: yellow;
+    border-color: silver;
+}
+
+/* trying to target nav a element within .nav-div to change color but it's not changing */
+/* .nav-div nav a:hover {
+    color: skyblue;
+    background: skyblue;
+} */

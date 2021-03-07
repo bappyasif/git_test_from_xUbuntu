@@ -1,0 +1,139 @@
+body {
+  padding: 47px;
+}
+
+.box {
+  width: 92px;
+  height: 110px;
+  display: block;
+  background: yellowgreen;
+  transition: transform 290ms ease-in-out 2ms;
+}
+
+/* using css on element to animate or transition will cause jittery expperience on front end */
+.box:hover {
+  transform: translate(200px, 119px) rotate(29deg);
+}
+
+/* to overcome that we will have to create target a container element that will get triggered instead and use pointer-event:none into transitioned element */
+/* so that when animation containing elements gets triggered it does not have any pre existing animation on it */
+.trigger {
+  display: block;
+  background: yellow;
+  width: 92px;
+  height: 110px;
+  border: 11px solid silver;
+}
+
+/* as it will still be inflicting that jittery experience so to remedy that we'll use our trigger action on .trigger instaed */
+/* .trigger:hover .box {
+    transform: translate(200px, 119px) rotate(29deg);
+} */
+
+/* another thing that wwe will do is to use pointer-events:none into our animatable element so that it does not registers any event on that rather stay as an element that animates */
+.box {
+  pointer-events: none;
+}
+
+
+
+/* as we'll be using Javascript for animation trigerring that just :hover action our css triggered need to have that class included in it as well */
+.trigger.clicked .box {
+  transform: translate(110px, 119px) rotate(20deg);
+}
+
+/* using css animation property */
+.box-two {
+  width: 92px;
+  height: 110px;
+  display: block;
+  background: yellowgreen;
+  animation-name: livenFrames;
+  animation-duration: 2.9s;
+  animation-timing-function: ease-in-out;
+  /* this delay will be acted on element just once at begining of animation not for each iteration */
+  animation-delay: 2ms;
+  animation-iteration-count: infinite;
+  /* animation-iteration-count: 2; */
+  animation-direction: alternate-reverse;
+  /* animation-fill-mode: normal; */
+  animation-fill-mode: forwards;
+  /* animation-play-state: running; */
+  /* animation-play-state: paused; */
+}
+/* this will cause animation to stop and when clicked upon again resumes */
+.box-two.is-paused, .box-three.is-paused {
+    animation-play-state: paused;
+}
+
+.box-three {
+    width: 92px;
+    height: 110px;
+    display: block;
+    background: turquoise;
+    animation: volgenFrames 380ms ease-in-out 2ms 2 normal forwards;
+}
+
+/* keyframes can be also used with percentile for more robust usablility */
+@keyframes volgenFrames {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes livenFrames {
+  0% {
+    height: 110px;
+  }
+  29% {
+    width: 200px;
+  }
+  47%,
+  100% {
+    width: 128px;
+  }
+  56%,
+  74% {
+    width: 92px;
+    /* this will create an impression of pausing before growing in height */
+    height: 110px;
+  }
+  100% {
+    height: 470px;
+    background: yellow;
+  }
+}
+
+/* using css animation property */
+/* .box-two {
+    width: 92px;
+    height: 110px;
+    display: block;
+    background: yellowgreen;
+    animation: livenFrames 2s ease-in-out 2ms infinite;
+    animation: livenFrames 2s ease-in-out 2ms infinite normal forwards running;
+} */
+
+/* this is default way of setup keyfrmaes */
+/* @keyframes livenFrames {
+    from {
+        height: 110px;
+    }
+    to {
+        height: 470px;
+        background: yellow;
+    }
+} */
+
+/* .box will look like this after that following addition */
+/* .box {
+    width: 92px;
+    height: 110px;
+    display: block;
+    background: yellowgreen;
+    transition: transform 290ms ease-in-out 2ms;
+    pointer-events: none;
+} */

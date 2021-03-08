@@ -1,0 +1,10 @@
+img {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 11px;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+}

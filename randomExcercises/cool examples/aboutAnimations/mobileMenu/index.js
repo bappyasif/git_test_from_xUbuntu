@@ -1,5 +1,99 @@
 function createMenuNavDD(menuItems) {
-  let navDiv = document.querySelector(".nav-div");
+  let navDiv = document.querySelector(".nav-div nav");
+
+  let allMenus = (menuObj) => {
+    return document
+      .createRange()
+      .createContextualFragment(
+        `<a href="${menuObj.hrefRet}"><img src="${menuObj.foto.url}" alt="${menuObj.foto.alt}"></img>${menuObj.text}</a>`
+      ).firstChild;
+  };
+
+  navDiv.append(...menuItems.map(allMenus));
+
+  // clearing initial nav display
+  navDiv.style.display = "none";
+
+  // usiing event listener in a function call so that it happens when an action occurs rather than resulting outcome immediately without calling of that event
+  let menuSpan = document.querySelector("span");
+  menuSpan.addEventListener("click", (evt) => showMenus(navDiv, evt));
+
+  // trying to use highlight when menuItem is clicked
+  navDiv.querySelectorAll("a").forEach((item) => {
+    item.addEventListener("click", (evt) => {
+      evt.preventDefault();
+      // evt.target.style.backgroundColor = "Red";
+      if (evt.target.classList.contains("clicked")) {
+        evt.target.style.color = "";
+        evt.target.closest("a").classList.remove("clicked");
+        evt.target.classList.remove("clicked");
+        // console.log(evt.target.closest("a"));
+      } else {
+        evt.target.closest("a").classList.add("clicked");
+        evt.target.style.color = "Red";
+        // console.log(evt.target.closest("a"));
+        evt.target.classList.add("clicked");
+        // evt.target.style.color = "Red";
+        // console.log(evt.target.closest("a"));
+      }
+    });
+  });
+}
+
+function showMenus(navDiv, evt) {
+  if (navDiv.style.display !== "none") {
+    navDiv.style.display = "none";
+    evt.target.classList.remove("clicked");
+    evt.target.textContent = "Click Here!!";
+  } else {
+    navDiv.style.display = "flex";
+    evt.target.textContent = "Click Again!!";
+    evt.target.classList.add("clicked");
+  }
+}
+
+let menuItems = [
+  {
+    text: "First Item",
+    hrefRet: "",
+    foto: {
+      alt: "menu icon first foto",
+      url: "./icons/menu-02.svg",
+    },
+  },
+  {
+    text: "Second Item",
+    hrefRet: "",
+    foto: {
+      alt: "menu icon second foto",
+      url: "./icons/home-01.svg",
+    },
+  },
+  {
+    text: "Third Item",
+    hrefRet: "",
+    foto: {
+      alt: "menu icon third foto",
+      url: "./icons/addIcon.svg",
+    },
+  },
+  {
+    text: "Fourth Item",
+    hrefRet: "",
+    foto: {
+      alt: "menu icon fourth foto",
+      url: "./icons/alarm-clock.svg",
+    },
+  },
+];
+
+createMenuNavDD(menuItems);
+
+/**
+ * 
+ * 
+ function createMenuNavDD(menuItems) {
+  let navDiv = document.querySelector(".nav-div nav");
 //   let allNavs = navDiv.querySelectorAll("nav a");
 
   let allMenus = (menuObj) => {
@@ -11,30 +105,35 @@ function createMenuNavDD(menuItems) {
   };
 
   navDiv.append(...menuItems.map(allMenus));
+  // navDiv.addEventListener("click", showMenus);
+  // navDiv.addEventListener("click", evt => showMenus(evt));
+  let menuSpan =  document.querySelector("span");
+  // menuSpan.addEventListener("click", showMenus(navDiv));
+  // menuSpan.addEventListener("click", ()=>showMenus(navDiv));
+  navDiv.style.display = "none";
+  menuSpan.addEventListener("click", (evt)=>showMenus(navDiv, evt));
 }
 
-let menuItems = [
-    {
-      text: "First Item",
-      hrefRet: "",
-      foto: {
-        alt: "menu icon first foto",
-        url: "./icons/menu-02.svg",
-      },
-    },
-    {
-      text: "Second Item",
-      hrefRet: "",
-      foto: {
-        alt: "menu icon first foto",
-        url: "./icons/menu-02.svg",
-      },
-    },
-  ];
-
-createMenuNavDD(menuItems);
-
-/**
+function showMenus(navDiv, evt) {
+  // if(evt.target.style.display !== "none") {
+  //   evt.target.style.display = "none";
+  // } else {
+  //   evt.target.style.display = "flex";
+  // }
+  if(navDiv.style.display !== "none") {
+    navDiv.style.display = "none";
+    evt.target.classList.remove("clicked");
+    evt.target.textContent = "Click Here!!";
+    // evt.target.classList.add("notClicked");
+    // evt.target.classList.remove("clicked","nav-div", "span");
+  } else {
+    navDiv.style.display = "flex";
+    evt.target.textContent = "Click Again!!";
+    evt.target.classList.add("clicked");
+    // evt.target.classList.remove("notClicked");
+    // evt.target.classList.add("clicked","nav-div", "span");
+  }
+}
  * 
  * 
  function createMenuNavDD() {

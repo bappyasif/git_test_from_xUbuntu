@@ -27,6 +27,11 @@ span {
   margin: auto;
 }
 
+.clicked {
+  background: yellowgreen;
+  /* animation: showMenus alternate ease-in-out 2; */
+}
+
 /* using media queries to make it responsive and presentable in mobilee devices */
 @media only screen and (min-width:291px) and (max-width: 560px) {
   body {
@@ -55,10 +60,10 @@ span {
     font-size: xx-large;
     background: powderblue;
   }
-  .clicked {
+  /* .clicked {
     background: yellowgreen;
-    /* animation: showMenus alternate ease-in-out 2; */
-  }
+    animation: showMenus alternate ease-in-out 2;
+  } */
   /* .notClicked {
         background: powderblue;
     } */
@@ -87,8 +92,66 @@ span {
     }
 } */
 
-@media screen and(min-width: 20px) and (max-width: 290px) {
+@media screen and (min-width: 20px) and (max-width: 290px) {
   span {
-    font-size: 200px;
+    font-size: 11px;
+    height: 20px;
+    padding-top: 4vw;
+    /* margin: auto; */
+    background: cadetblue;
   }
+  *::-webkit-scrollbar {
+    width: -8%px;
+    height: 8px;
+  }
+  nav::-webkit-scrollbar-track {
+    background: cadetblue;
+  }
+  nav::-webkit-scrollbar-thumb {
+    background: cornflowerblue;
+    border-radius: 20px;
+    border: 2px solid greenyellow;
+    max-width: 4px;
+  }
+  .nav-div nav {
+    flex-direction: row;
+    width: 110vw;
+    overflow-x: scroll;
+    scroll-behavior: auto;
+    /* animation: showMenus 380ms alternate-reverse 2ms 2; */
+    animation: showMenus 380ms reverse 2ms 2;
+  }
+  nav a:link {
+    margin: 4px;
+    background: greenyellow;
+    font-weight: bolder;
+  }
+  nav a:hover {
+    background: darkseagreen;
+  }
+  @keyframes showMenus {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(.088);
+    }
+  }
+  /* .clicked {
+    background: yellowgreen;
+    animation: showMenus alternate ease-in-out 2;
+  } */
+  /* nav ::-webkit-scrollbar-track {
+    background: cadetblue;
+    border: chartreuse solid 2px;
+  } */
 }
+
+/* @keyframes showMenus {
+  0% {
+      transform: scale(1);
+  }
+  100% {
+      transform: scale(1.04);
+  }
+} */

@@ -22,19 +22,12 @@ function createMenuNavDD(menuItems) {
   navDiv.querySelectorAll("a").forEach((item) => {
     item.addEventListener("click", (evt) => {
       evt.preventDefault();
-      // evt.target.style.backgroundColor = "Red";
-      if (evt.target.classList.contains("clicked")) {
+      if (evt.target.closest("a").classList.contains("clicked")) {
         evt.target.style.color = "";
         evt.target.closest("a").classList.remove("clicked");
-        evt.target.classList.remove("clicked");
-        // console.log(evt.target.closest("a"));
       } else {
         evt.target.closest("a").classList.add("clicked");
         evt.target.style.color = "Red";
-        // console.log(evt.target.closest("a"));
-        evt.target.classList.add("clicked");
-        // evt.target.style.color = "Red";
-        // console.log(evt.target.closest("a"));
       }
     });
   });
@@ -90,6 +83,38 @@ let menuItems = [
 createMenuNavDD(menuItems);
 
 /**
+ * 
+ * 
+   // trying to use highlight when menuItem is clicked
+  navDiv.querySelectorAll("a").forEach((item) => {
+    item.addEventListener("click", (evt) => {
+      evt.preventDefault();
+      // evt.target.style.backgroundColor = "Red";
+      if (
+        // evt.target.closest("img").classList.contains("clicked") ||
+        evt.target.closest("a").classList.contains("clicked") ||
+        evt.target.classList.contains("clicked")
+      ) {
+        evt.target.style.color = "";
+        evt.target.closest("a").classList.remove("clicked");
+        // evt.target.closest("img").classList.remove("clicked");
+        // evt.target.querySelector("img").classList.remove("clicked");
+        // evt.target.closest("a").closest("img").classList.remove("clicked");
+        // evt.target.classList.remove("clicked");
+        // console.log(evt.target.closest("a"));
+      } else {
+        evt.target.closest("a").classList.add("clicked");
+        // evt.target.closest("img").classList.add("clicked");
+        // evt.target.querySelector("img").classList.add("clicked");
+        // evt.target.closest("a").closest("img").classList.add("clicked");
+        evt.target.style.color = "Red";
+        // console.log(evt.target.closest("a"));
+        // evt.target.classList.add("clicked");
+        // evt.target.style.color = "Red";
+        // console.log(evt.target.closest("a"));
+      }
+    });
+  });
  * 
  * 
  function createMenuNavDD(menuItems) {

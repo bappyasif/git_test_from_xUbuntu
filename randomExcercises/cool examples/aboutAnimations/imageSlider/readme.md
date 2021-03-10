@@ -1,0 +1,6 @@
+- setup a very wide "div" which will contain each slides of image, you can choose which slide is visible at any given moment by clicking on corresponding circle
+- once slider is positioned properly, build functions for "next"  and "previous" whicch will advance to next or previous sildes accordingly, make transitions smooth using simple effects
+- setup arrow buttons which activates those functions and play with cycling through images
+- add in some navigation dots at the bottom of the slides, make a horizontal series of empty circles with CSS immediately below this slideshow,each circle represents a slide, so whenever a new slides is activated, it's corresponding circle gets filled in so you can tell where in slideshow you currently are, you can click on any circle and jump right to that slide
+- add a timeout which advances slides every 5 seconds or so
+- play around with this slideshow!!

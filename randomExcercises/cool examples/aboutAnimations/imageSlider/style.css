@@ -13,7 +13,7 @@ body {
   margin-left: 1.1vw;
   /* padding-left: 2vw; */
   /* padding-right: 1.1vw; */
-  display: flex;
+  /* display: flex; */
 }
 
 .slide-view {
@@ -21,6 +21,8 @@ body {
     margin: 0vw 4vw 0vw 4vw;
     height: 99%;
     width: 91.1%; */
+    display: flex;
+    /* overflow-x: scroll; */
 }
 .slide {
   border: powderblue solid 1.1px;
@@ -30,6 +32,40 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.prev, .next {
+  display: flex;
+  /* width: max-content; */
+  align-self: center;
+}
+
+.prev span, .next span {
+  /* transform: translateY(47vh); */
+  transform: translateX(1.01vw);
+  margin: auto;
+}
+.prev .symb {
+  transform: translateX(-1.01vw);
+}
+.next  .symb{
+  /* align-items: center; */
+  /* text-align: left; */
+  transform: translateX(-2.09vw);
+}
+.next .text {
+  transform: translateX(-.01vw);
+}
+.prev, .next{
+  border: 1.1px solid silver;
+  justify-self: center;
+  width: 11vw;
+}
+.prev:hover, .next:hover, .symb {
+  transform: scale(1.19);
+}
+/* .prev .text {
+  transform: translateX(11vw);
+} */
 
 /* img {
     max-width: 100%;

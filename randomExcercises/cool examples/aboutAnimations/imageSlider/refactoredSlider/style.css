@@ -1,0 +1,42 @@
+.container {
+    margin: 11vmin;
+    width: 90.02vw;
+    height: 83vh;
+    border: 1.1px solid greenyellow;
+    /* display: flex; */
+    /* flex-direction: column; */
+}
+
+.slider-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0vmin 2vmin 0vmin 2vmin;
+}
+
+.slide-content {
+    margin: 0vmin 2vmin 0vmin 2vmin;
+    border: 1.1px solid silver;
+    width: 89.02vw;
+    height: 83vh;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.prev, .next {
+    /* transform: translateY(40.07vmin); */
+    border: 1.1px solid silver;
+    background: silver;
+    /* height: max-content; */
+}
+
+.prev:hover, .next:hover {
+    /* height: max-content; */
+    background: greenyellow;
+    transform: scale(1.19);
+    /* margin: auto; */
+}

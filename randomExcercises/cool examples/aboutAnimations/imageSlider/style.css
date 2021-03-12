@@ -42,15 +42,17 @@ body {
 .prev span, .next span {
   /* transform: translateY(47vh); */
   transform: translateX(1.01vw);
-  margin: auto;
+  /* margin: auto; */
 }
 .prev .symb {
   transform: translateX(-1.01vw);
+  transform: translateY(3.8vw);
 }
-.next  .symb{
+.next .symb{
   /* align-items: center; */
   /* text-align: left; */
-  transform: translateX(-2.09vw);
+  transform: translateX(-30.8vw);
+  transform: translateY(3.8vw);
 }
 .next .text {
   transform: translateX(-.01vw);

@@ -49,12 +49,15 @@ function sliderHandler(evt) {
 
     action = evt.target.parentNode.className;
 
+    // clearSlide();
     showSlide(Number(slideID - 1), action);
-    clearSlide();
+    // clearSlide();
+    // renderSlides(imgArr);
     // showSlide(Number(slideID), action);
   }
-//   clearSlide();
+  clearSlide();
   renderSlides(imgArr);
+  removingNonDisplayedNodes();
 }
 
 function removingNonDisplayedNodes() {
@@ -67,28 +70,25 @@ function removingNonDisplayedNodes() {
 }
 
 function showSlide(id, action) {
-  for (let i = 0; i < imgArr.length; i++) {
-    //   console.log(i === id);
-    if (i === id) {
-      // console.log(action);
-    //   imgArr[id].displayStatus = "none";
-      if (action === "next") {
-        // imgArr[id].displayStatus = "none";
-        imgArr[i].displayStatus = "none";
-        console.log("next", id, id + 1, i + 1);
-        imgArr[i + 1].displayStatus = "block";
-      } else if (action === "prev") {
-        // imgArr[id].displayStatus = "none";
-        imgArr[i].displayStatus = "none";
-        console.log("prev", id, id - 1, i - 1);
-        imgArr[i - 1].displayStatus = "block";
-      }
-    }
-    removingNonDisplayedNodes();
+  let showIndex;
+  if(action === "prev") {
+    showIndex = (id -1) >= 0 ? (id - 1) : imgArr.length - 1;
+  } else {
+    showIndex = (id + 1) < imgArr.length ? (id + 1) : 0;
   }
-  //   clearSlide();
-  //   renderSlides(imgArr);
-  //   console.log(imgArr);
+  console.log("current: "+id," following: "+showIndex);
+  // updating imgArr
+  imgArr = imgArr.map((slide, idx) => {
+    // it's returning an object along with changed "displayStatus" for intended ID match
+    let obj = {};
+    if(idx === showIndex) {
+      obj = {...slide, displayStatus: "block"}
+    } else {
+      obj = {...slide, displayStatus: "none"}
+    }
+    // what it's doing is, mostly sending a snapshot of DOM elements that'll be rendered after any event ("Prev/Next") happens
+    return obj;
+  });
 }
 
 function clearSlide() {
@@ -97,7 +97,8 @@ function clearSlide() {
   // slides.childNodes.forEach(node => node.firstChild = "");
   // slides.childNodes.forEach(node => node.parentNode.removeChild(node));
   // while(slides.childNodes.firstChild) slides.childNodes.forEach(node => node.remove());
-  slides.textContent = "";
+  // slides.textContent = "";
+  slides.innerHTML = "";
 // if(slides.childNodes.length )
 }
 
@@ -136,6 +137,59 @@ renderSlides(imgArr);
 sliderActivities();
 
 /**
+ * 
+ * 
+ function showSlide(id, action) {
+  let showIndex;
+  if(action === "prev") {
+    showIndex = (id -1) >= 0 ? (id - 1) : imgArr.length - 1;
+  } else {
+    showIndex = (id + 1) < imgArr.length ? (id + 1) : 0;
+  }
+  console.log("current: "+id," following: "+showIndex);
+  // updating imgArr
+  imgArr = imgArr.map((slide, idx) => {
+    // it's returning array object along with changed "displayStatus" for intended ID match
+    if(idx === showIndex) {
+      console.log({...slide, displayStatus: "block"});
+      return {...slide, displayStatus: "block"}
+    } else {
+      // console.log({...slide, displayStatus: "none"});
+      return {...slide, displayStatus: "none"}
+    }
+  });
+}
+ * 
+ * 
+ function showSlide(id, action) {
+  for (let i = 0; i < imgArr.length; i++) {
+    //   console.log(i === id);
+    console.log("<>",imgArr[i].slideNo, id)
+    if (i === id) {
+      // console.log(action);
+      // imgArr[id].displayStatus = "none";
+      imgArr[i].displayStatus = "none";
+      if (action === "next") {
+        imgArr[id].displayStatus = "none";
+        // imgArr[i].displayStatus = "none";
+        console.log("next", id, id + 1, i + 1);
+        // imgArr[i + 1].displayStatus = "block";
+        // console.log(i + 1 > imgArr.length ? i= 0 : true);
+        imgArr[(i + 1) > imgArr.length ? (i)= 0 : i+1].displayStatus = "block";
+      } else if (action === "prev") {
+        // if()
+        // imgArr[id].displayStatus = "none";
+        imgArr[i].displayStatus = "none";
+        console.log("prev", id, id - 1, i - 1);
+        imgArr[i - 1].displayStatus = "block";
+      }
+    }
+    removingNonDisplayedNodes();
+  }
+  //   clearSlide();
+  //   renderSlides(imgArr);
+  //   console.log(imgArr);
+}
  * 
  * 
  function sliderHandler(evt) {

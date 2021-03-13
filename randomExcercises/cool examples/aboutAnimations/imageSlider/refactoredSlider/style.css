@@ -13,11 +13,14 @@
     justify-content: center;
     margin: 0vmin 2vmin 0vmin 2vmin;
 }
-
+.slide-view {
+    display: flex;
+    flex-direction: column;
+}
 .slide-content {
     margin: 0vmin 2vmin 0vmin 2vmin;
     border: 1.1px solid silver;
-    width: 89.02vw;
+    /* width: 89.02vw; */
     height: 83vh;
 }
 
@@ -39,4 +42,10 @@ img {
     background: greenyellow;
     transform: scale(1.19);
     /* margin: auto; */
+}
+
+.caption {
+    text-align: center;
+    color: crimson;
+    transform: translateY(-13vmin);
 }

@@ -17,7 +17,7 @@
     display: flex;
     flex-direction: column;
 }
-.slide-content {
+.slide-content, figure {
     margin: 0vmin 2vmin 0vmin 2vmin;
     border: 1.1px solid silver;
     /* width: 89.02vw; */
@@ -49,3 +49,23 @@ img {
     color: crimson;
     transform: translateY(-13vmin);
 }
+
+figure, .next-anim {
+    animation: slideRight 290ms 1 2ms
+  }
+  
+  .prev-anim {
+    animation: slideLeft 290ms 1 2ms
+  }
+  
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-200%)
+    }
+  }
+  
+  @keyframes slideLeft {
+    0% {
+      transform: translateX(200%)
+    }
+  }

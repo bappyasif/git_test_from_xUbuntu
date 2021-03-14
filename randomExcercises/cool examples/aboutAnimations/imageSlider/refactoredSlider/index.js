@@ -30,50 +30,55 @@ function sliderManager(showTitle) {
 
   let renderSlides = function () {
     sliderView.append(...slidesObj.map(slideElement));
+    // removeNonDisplayedNodes();
   };
 
-  //   let add = (slide) => slideElement(slide);
   let add = (slide) => {
     slides.push(slide);
     clear();
     renderSlides();
+    // start();
   };
 
   let next = (evt) => {
     nodeID = evt.target.parentNode.querySelector(".slide-content").id;
     id = Number(nodeID.split("-")[1]) - 1;
-    // console.log(id);
-    followingIndex = id + 1 < slidesObj.length ? id + 1 : 0;
+    followingIndex = (id + 1) < slidesObj.length ? (id + 1) : 0;
     slidesObj = slidesObj.map(showFollowing);
     clear();
-    renderSlides();
+    start();
+    removeNonDisplayedNodes();
   };
-  
+
   let showFollowing = (slide, index) => {
     if (index === followingIndex) {
+      console.log({...slide, displayStatus: "display:block"})
       return { ...slide, displayStatus: "display:block" };
     } else {
+      console.log({ ...slide, displayStatus: "display:none" })
       return { ...slide, displayStatus: "display:none" };
     }
   };
-  
+
   let prev = (evt) => {
     nodeID = evt.target.parentNode.querySelector(".slide-content").id;
     id = Number(nodeID.split("-")[1]) - 1;
-    followingIndex = id - 1 >= 0 ? id - 1 : slidesObj.length - 1;
+    followingIndex = (id - 1) >= 0 ? (id - 1) : (slidesObj.length - 1);
     slidesObj = slidesObj.map(showFollowing);
-    // console.log(id, slidesObj);
     clear();
-    renderSlides();
+    start();
+    removeNonDisplayedNodes();
   };
-  //   let clear = () => sliderView.querySelector(".slide-content").textContent = "";
+
   let clear = () => (sliderView.textContent = "");
+  
   let removeNonDisplayedNodes = () =>
     sliderView.childNodes.forEach((node) => {
+      if (node.style.display == "none") node.remove();
       console.log("<>", node.id);
-      if (node.style.display !== "block") node.remove();
     });
-  let start = function () {
+  
+    let start = function () {
     renderSlides();
   };
   return { start, add, next, prev, removeNonDisplayedNodes, clear };
@@ -94,6 +99,20 @@ let slides = [
     02,
     "display:none",
   ],
+  [
+    "../slides/slide-03.jpg",
+    "Slide 03 caption text",
+    "slide 03 alt text",
+    03,
+    "display:none",
+  ],
+  [
+    "../slides/slide-04.jpg",
+    "Slide 04 caption text",
+    "slide 04 alt text",
+    04,
+    "display:none",
+  ],
 ];
 
 let slidesObj = slides.map((item) => {
@@ -106,12 +125,15 @@ let slideShow = sliderManager("sample show");
 slideShow.start();
 
 let next = document.querySelector(".next");
-let prev = document.querySelector(".prev");
 next.addEventListener("click", (evt) => {
   // slideShow.removeNonDisplayedNodes();
+  console.log(evt.target.parentNode.querySelector(".slide-content").id)
   slideShow.next(evt);
   slideShow.removeNonDisplayedNodes();
+  // slideShow.clear();
 });
+
+let prev = document.querySelector(".prev");
 prev.addEventListener("click", (evt) => {
   slideShow.prev(evt);
   slideShow.removeNonDisplayedNodes();
@@ -123,19 +145,249 @@ prev.addEventListener("click", (evt) => {
 //     "slide 03 alt text",
 //     03,
 //     "display:block",
-//   ],
-//   [
-//     "../slides/slide-04.jpg",
-//     "Slide 04 caption text",
-//     "slide 04 alt text",
-//     04,
-//     "display:none",
-//   ])
-
-
-
+//   ]);
+// slideShow.add([
+//   "../slides/slide-04.jpg",
+//   "Slide 04 caption text",
+//   "slide 04 alt text",
+//   04,
+//   "display:none",
+// ]);
+// slidesObj = slides.map((item) => {
+//   let [file, caption, alt, num, display] = [...item];
+//   return creatingSlider(file, caption, alt, num, display);
+// });
+// console.log(slides);
 
 /**
+ * 
+ * 
+ function sliderManager(showTitle) {
+  this.title = showTitle;
+  let sliderView = document.querySelector(".slide-view");
+  let followingIndex, nodeID, id;
+
+  let slideElement = (imgObj) => {
+    let domString = `<div class="slide-content" id="slide-${imgObj.slideNum}" style="${imgObj.displayStatus}">
+            <img src="${imgObj.imgLoc}" alt="${imgObj.altData}"/>
+            <div class="caption">${imgObj.imgCaption}</div>
+        </div>`;
+    return document.createRange().createContextualFragment(domString)
+      .firstChild;
+  };
+
+  let renderSlides = function () {
+    sliderView.append(...slidesObj.map(slideElement));
+    // removeNonDisplayedNodes();
+  };
+
+  //   let add = (slide) => slideElement(slide);
+  let add = (slide) => {
+    slides.push(slide);
+    clear();
+    renderSlides();
+    // start();
+  };
+
+  let next = (evt) => {
+    // clear();
+    nodeID = evt.target.parentNode.querySelector(".slide-content").id;
+    id = Number(nodeID.split("-")[1]) - 1;
+    followingIndex = (id + 1) < slidesObj.length ? (id + 1) : 0;
+    slidesObj = slidesObj.map(showFollowing);
+    // removeNonDisplayedNodes();
+    clear();
+    start();
+    // clear();
+    removeNonDisplayedNodes();
+  };
+
+  let showFollowing = (slide, index) => {
+    if (index === followingIndex) {
+      console.log({...slide, displayStatus: "display:block"})
+      return { ...slide, displayStatus: "display:block" };
+    } else {
+      console.log({ ...slide, displayStatus: "display:none" })
+      return { ...slide, displayStatus: "display:none" };
+    }
+  };
+
+  let prev = (evt) => {
+    nodeID = evt.target.parentNode.querySelector(".slide-content").id;
+    id = Number(nodeID.split("-")[1]) - 1;
+    followingIndex = (id - 1) >= 0 ? (id - 1) : (slidesObj.length - 1);
+    slidesObj = slidesObj.map(showFollowing);
+    // console.log(id, slidesObj);
+    // clear();
+    // renderSlides();
+    clear();
+    start();
+    removeNonDisplayedNodes();
+  };
+  //   let clear = () => sliderView.querySelector(".slide-content").textContent = "";
+  let clear = () => (sliderView.textContent = "");
+  let removeNonDisplayedNodes = () =>
+  // console.log(sliderView.childNodes.length)
+    sliderView.childNodes.forEach((node) => {
+      // console.log("<>", node.id);
+      if (node.style.display == "none") node.remove();
+      console.log("<>", node.id);
+    });
+  let start = function () {
+    renderSlides();
+    // removeNonDisplayedNodes();
+    // renderSlides();
+    // console.log(sliderView.childNodes.length)
+  };
+  return { start, add, next, prev, removeNonDisplayedNodes, clear };
+}
+
+let slides = [
+  [
+    "../slides/slide-01.jpg",
+    "Slide 01 caption text",
+    "slide 01 alt text",
+    01,
+    "display:block",
+  ],
+  [
+    "../slides/slide-02.jpg",
+    "Slide 02 caption text",
+    "slide 02 alt text",
+    02,
+    "display:none",
+  ],
+  [
+    "../slides/slide-03.jpg",
+    "Slide 03 caption text",
+    "slide 03 alt text",
+    03,
+    "display:none",
+  ],
+  [
+    "../slides/slide-04.jpg",
+    "Slide 04 caption text",
+    "slide 04 alt text",
+    04,
+    "display:none",
+  ],
+];
+
+let slidesObj = slides.map((item) => {
+  let [file, caption, alt, num, display] = [...item];
+  return creatingSlider(file, caption, alt, num, display);
+});
+console.log(slidesObj);
+
+let slideShow = sliderManager("sample show");
+slideShow.start();
+
+let next = document.querySelector(".next");
+next.addEventListener("click", (evt) => {
+  // slideShow.removeNonDisplayedNodes();
+  console.log(evt.target.parentNode.querySelector(".slide-content").id)
+  slideShow.next(evt);
+  slideShow.removeNonDisplayedNodes();
+  // slideShow.clear();
+});
+
+let prev = document.querySelector(".prev");
+prev.addEventListener("click", (evt) => {
+  slideShow.prev(evt);
+  slideShow.removeNonDisplayedNodes();
+});
+ * 
+ * 
+ function sliderManager(showTitle) {
+  this.title = showTitle;
+  let sliderView = document.querySelector(".slide-view");
+  let followingIndex, nodeID, id;
+
+  let slideElement = (imgObj) => {
+    let domString = `<div class="slide-content" id="slide-${imgObj.slideNum}" style="${imgObj.displayStatus}">
+            <img src="${imgObj.imgLoc}" alt="${imgObj.altData}"/>
+            <div class="caption">${imgObj.imgCaption}</div>
+        </div>`;
+    return document.createRange().createContextualFragment(domString)
+      .firstChild;
+  };
+
+  let renderSlides = function () {
+    sliderView.append(...slidesObj.map(slideElement));
+    // removeNonDisplayedNodes();
+  };
+
+  //   let add = (slide) => slideElement(slide);
+  let add = (slide) => {
+    slides.push(slide);
+    clear();
+    renderSlides();
+    // start();
+  };
+
+  let next = (evt) => {
+    // clear();
+    nodeID = evt.target.parentNode.querySelector(".slide-content").id;
+    id = Number(nodeID.split("-")[1]) - 1;
+    // console.log(id);
+    // let followingIndex = (id + 1) < slidesObj.length ? (id + 1) : 0;
+    followingIndex = (id + 1) < slidesObj.length ? (id + 1) : 0;
+    // clear();
+    // console.log(id, followingIndex);
+    slidesObj = slidesObj.map(showFollowing);
+    // slidesObj = slidesObj.map((slide, index) => {
+    //   if (index === followingIndex) {
+    //     console.log({...slide, displayStatus: "display:block"})
+    //     return { ...slide, displayStatus: "display:block" };
+    //   } else {
+    //     console.log({ ...slide, displayStatus: "display:none" })
+    //     return { ...slide, displayStatus: "display:none" };
+    //   }
+    //   // return { ...slide, displayStatus: "display:none" };
+    // });
+    removeNonDisplayedNodes();
+    // clear();
+    start();
+    // renderSlides();
+    // removeNonDisplayedNodes();
+  };
+
+  let showFollowing = (slide, index) => {
+    if (index === followingIndex) {
+      console.log({...slide, displayStatus: "display:block"})
+      return { ...slide, displayStatus: "display:block" };
+    } else {
+      console.log({ ...slide, displayStatus: "display:none" })
+      return { ...slide, displayStatus: "display:none" };
+    }
+  };
+
+  let prev = (evt) => {
+    nodeID = evt.target.parentNode.querySelector(".slide-content").id;
+    id = Number(nodeID.split("-")[1]) - 1;
+    followingIndex = (id - 1) >= 0 ? (id - 1) : (slidesObj.length - 1);
+    slidesObj = slidesObj.map(showFollowing);
+    // console.log(id, slidesObj);
+    // clear();
+    renderSlides();
+  };
+  //   let clear = () => sliderView.querySelector(".slide-content").textContent = "";
+  let clear = () => (sliderView.textContent = "");
+  let removeNonDisplayedNodes = () =>
+  // console.log(sliderView.childNodes.length)
+    sliderView.childNodes.forEach((node) => {
+      // console.log("<>", node.id);
+      if (node.style.display == "none") node.remove();
+      console.log("<>", node.id);
+    });
+  let start = function () {
+    renderSlides();
+    // removeNonDisplayedNodes();
+    // renderSlides();
+    // console.log(sliderView.childNodes.length)
+  };
+  return { start, add, next, prev, removeNonDisplayedNodes, clear };
+}
  * 
  * 
  function creatingSlider(imgFile, slideCaption, altStr, slideNo, display) {

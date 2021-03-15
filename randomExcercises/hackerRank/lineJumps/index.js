@@ -1,19 +1,41 @@
 function kangarooJumps(k1, v1, k2, v2) {
-    let resp = "NO";
-    let catchUp = v2 < v1;
-    if(catchUp) {
-        let willMeet = (k1 - k2) % (v2 - v1) === 0;
-        if(willMeet) resp = "YES";
-    }
+  let resp = "NO";
+  let flag = false,
+    count = 0;
+  if (v2 > v1 && k2 > k1) {
+    resp = "NO";
     return resp;
+  } else {
+    // let flag = false, count = 0
+    while (!flag && count < 110) {
+      k1 += v1;
+      k2 += v2;
+
+      k1 === k2 ? (flag = true) : (flag = false);
+      count++;
+    }
+  }
+  if (flag) resp = "Yes";
+  return resp;
 }
 
-// output = kangarooJumps(0, 3, 4, 2);
+output = kangarooJumps(0, 3, 4, 2);
 // output = kangarooJumps(2, 1, 1, 2)
-output = kangarooJumps(0, 2, 5, 3)
+// output = kangarooJumps(0, 2, 5, 3);
 console.log(output);
 
 /**
+ * 
+ *
+ function kangarooJumps(k1, v1, k2, v2) {
+  let resp = "NO";
+  let catchUp = v2 < v1;
+  if(catchUp) {
+      let willMeet = (k1 - k2) % (v2 - v1) === 0;
+      if(willMeet) resp = "YES";
+  }
+  return resp;
+}
  * 
  * 
  function kangarooJumps(k1, v1, k2, v2) {

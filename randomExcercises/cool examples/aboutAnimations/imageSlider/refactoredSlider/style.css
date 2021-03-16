@@ -75,3 +75,25 @@ figure, .prev-anim {
       transform: translateX(0%)
     }
   }
+
+  .dots-div {
+    display: flex;
+    /* flex-direction: column; */
+    /* transform: translate(-43.08vmin, 38vh); */
+    transform: translateY(-4vh);
+    /* align-items: center; */
+    justify-content: center;
+  }
+
+  .dots {
+    width: 8px;
+    height: 8px;
+    border: 1.1px solid greenyellow;
+    border-radius: 50%;
+    margin-left: 1.1px;
+  }
+
+  .dots:hover {
+    background: greenyellow;
+    border-color: silver;
+  }

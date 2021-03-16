@@ -10,6 +10,29 @@ function inBetweenTwoSets(ar1, ar2) {
   return count.filter(el=>el===true).length;
 }
 
+function findFactors(num) {
+  let factors = [];
+  for(let i=0; i<=num; i++) {
+    if(num % i === 0) factors.push(i);
+  }
+  return factors;
+}
+
+function findFactorsOfArray(arr, k) {
+  // let maxNum = Math.max(...arr);
+  let factors = [];
+  // console.log(maxNum, typeof maxNum)
+  for(let i=0; i<arr.length; i++) {
+    if(k % arr[i] === 0) factors.push(arr[i]);
+  }
+  // return maxNum;
+  return factors;
+}
+
+output = findFactors(100);
+output = findFactorsOfArray([1,2,4,5,6], 6);
+console.log(output);
+
 function findGCD(n1, n2) {
   if (n2 === 0) return n1;
   return findGCD(n2, n1 % n2);

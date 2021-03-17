@@ -1,0 +1,13 @@
+input:invalid {
+    border: 1.1px dotted maroon;
+}
+input:valid {
+    border: 1.1px solid greenyellow;
+}
+input:invalid:required {
+    background-image: linear-gradient(to right, hotpink, slateblue);
+}
+input:defined {
+    /* background: linear-gradient(to left, snow, silver); */
+    background: linear-gradient(to left, greenyellow, silver);
+}

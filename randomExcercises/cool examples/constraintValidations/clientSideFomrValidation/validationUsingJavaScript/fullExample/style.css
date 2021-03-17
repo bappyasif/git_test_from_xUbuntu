@@ -1,0 +1,41 @@
+body {
+    font: 2em lucida;
+    width: 47vmax;
+    padding: 0%;
+    margin: 0% auto;
+}
+
+p * {
+    display: block;
+}
+
+input[type=email] {
+    appearance: none;
+    width: 100%;
+    border: 1.1px solid green;
+    margin: 0%;
+    font-size: 92%;
+    box-sizing: border-box;
+}
+
+input:invalid {
+    border-color: maroon;
+    background: linear-gradient(to left, silver, #fdd)
+}
+
+input:focus:invalid {
+    outline: none;
+}
+
+.error {
+    width: 100%;
+    padding: 0%;
+    font-size: 83%;
+    color: whitesmoke;
+    background-color: #900;
+    box-sizing: content-box;
+}
+
+.error-active {
+    padding: .29em;
+}

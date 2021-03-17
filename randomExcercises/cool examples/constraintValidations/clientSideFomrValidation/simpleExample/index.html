@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Side Form Validation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form>
+        <div>
+            <label for="choose">what would you prefer?</label>
+        <input id="choose" name="say-what" required pattern="[Aa]pple|[Gg]uava">
+        </div>
+        <div>
+            <label for="sure">Are you sure now?</label>
+            <input type="text" id="sure" required minlength="6" maxlength="11">
+        </div>
+        <div>
+            <label for="number">how many ?</label>
+            <input type="number" name="amount" id="number" value="1" step="4" min="0" max="20">
+        </div>
+        <button>OK</button>
+    </form>
+    <script src="index.js"></script>
+</body>
+</html>

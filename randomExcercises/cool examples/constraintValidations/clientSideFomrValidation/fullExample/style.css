@@ -1,0 +1,35 @@
+form {
+  font: 1.1em impact;
+  max-width: 38vw;
+}
+
+p > label {
+    display: block;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea,
+fieldset {
+    width: 100%;
+    border: 1.1px solid green;
+    box-sizing: content-box;
+}
+
+input:invalid {
+    box-shadow: 0 0 4px 2px maroon;
+    border-radius: 5%;
+}
+
+input:focus:invalid {
+    box-shadow: none;
+}
+
+input:focus {
+    background: linear-gradient(to left, greenyellow, silver);
+}
+
+input:focus:valid {
+    background: linear-gradient(to right, hotpink, silver);
+}

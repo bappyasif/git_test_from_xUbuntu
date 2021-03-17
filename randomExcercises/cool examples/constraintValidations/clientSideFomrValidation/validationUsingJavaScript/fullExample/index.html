@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Validation Using Javascript</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <form novalidate>
+      <p>
+        <label for="mail">
+          <span>Provide your email address</span>
+          <input type="email" name="main" id="mail" required minlength="6" />
+          <span class="error" aria-live="polite"></span>
+          <div class="errorTest" aria-live="polite"></div>
+        </label>
+      </p>
+      <button>OK</button>
+    </form>
+    <script src="index.js"></script>
+  </body>
+</html>

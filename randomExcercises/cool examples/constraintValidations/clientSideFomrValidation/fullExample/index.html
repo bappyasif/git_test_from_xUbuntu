@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A sample full example</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form>
+        <p>
+            <fieldset>
+                <legend>do you have a driving license? <abbr title="this field is mandatory" aria-label="required">*</abbr></legend>
+                <input type="radio" required name="d-licence" id="rad1" value="yes"><label for="rad1">Yes</label>
+                <input type="radio" name="d-licence" id="rad2" required value="no"><label for="rad2">No</label>
+            </fieldset>
+        </p>
+        <p>
+            <label for="num1">How old are you?</label>
+            <input type="number" name="age" id="num1" min="20" max="119" step="4" pattern="\d+">
+        </p>
+        <p>
+            <label for="frt1">what's your favorite fruit?<abbr title="this field is mandatory" aria-label="required">*</abbr></label>
+            <input type="text" id="frt1" list="list" name="fruit" required pattern="[Aa]pple|[Gg]uava|[Pp]ears|[Bb]erries">
+            <datalist id="list">
+                <option value="apple">Apple</option>
+                <option value="guava">Guava</option>
+                <option value="pears">Pears</option>
+                <option value="berries">Berries</option>
+            </datalist>
+        </p>
+        <p>
+            <label for=t2>What's your email address?</label>
+            <input type="email" name="email" id="t2" required pattern="\a+@\a.com">
+        </p>
+        <p>
+            <label for="t3">Leave a short message</label>
+            <textarea name="msg" id="t3" maxlength="146" rows="4"></textarea>
+        </p>
+        <p>
+            <button>OK</button>
+        </p>
+    </form>
+</body>
+</html>

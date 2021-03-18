@@ -1,0 +1,40 @@
+div {
+    width: 38vw;
+    margin-bottom: 4%;
+}
+
+div>input {
+    width: 100%;
+}
+
+textarea {
+    width: 100%;
+}
+
+form {
+    padding: 4%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+button {
+/* text-align: center; */
+/* margin: auto; */
+width: 103%;
+}
+
+input:invalid {
+    border: double 1.1px maroon;
+}
+
+input:focus {
+    outline: thin;
+    border: double 1.1px green;
+}
+
+input:valid {
+    background: linear-gradient(to Right, green, yellowgreen);
+}

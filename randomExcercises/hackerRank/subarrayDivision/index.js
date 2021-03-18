@@ -1,4 +1,47 @@
 function shareChocolate(arr, day, month) {
+    let squares = [], subs = [], t = [];
+    for(let i=0;i<arr.length; i++) {
+        // subs.push(arr.slice(i,i+month));
+        for(let j=i; j<month+i; j++) {
+            t.push(arr[j]);
+        }
+        subs.push(t)
+        t = [];
+    }
+    subs.forEach(item=>{
+        if(item.reduce((a,c)=>a+c,0) === day) {
+            squares.push(true);
+        }
+    });
+    return squares.length;
+  }
+
+
+
+
+output = shareChocolate([1, 2, 1, 3, 2], 3, 2);
+// output = shareChocolate([1,1,1,1,1,1], 3, 2);
+console.log(output);
+
+/**
+ * 
+ * 
+ function shareChocolate(arr, day, month) {
+  let squares = [], subs = [];
+  for(let i=0;i<arr.length; i++) {
+      subs.push(arr.slice(i,i+month));
+  }
+  subs.forEach(item=>{
+      if(item.reduce((a,c)=>a+c,0) === day) {
+          squares.push(true);
+      }
+  });
+  return squares.length;
+// return subs;
+}
+ * 
+ * 
+ function shareChocolate(arr, day, month) {
     let squares = [];
     for(let i=0; i<arr.length; i++) {
         let temp = arr.slice(i, month+i);
@@ -9,12 +52,6 @@ function shareChocolate(arr, day, month) {
     return squares.length;
     // return arr;
 }
-
-output = shareChocolate([1, 2, 1, 3, 2], 3, 2);
-// output = shareChocolate([1,1,1,1,1,1], 3, 2);
-console.log(output);
-
-/**
  * 
  * 
 function shareChocolate(arr, day, month) {

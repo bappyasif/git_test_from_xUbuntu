@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Validation Skills Test</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <form novalidate>
+      <div>
+        <!-- <span id="email"></span> -->
+        <label for="mail">Email Address</label>
+        <input type="email" name="mail" id="mail" pattern="(\w+)(@bigcorp.bd)" required />
+        <span id="email"></span>
+      </div>
+      <div>
+        <!-- <span id="number"></span> -->
+        <label for="mobile">Mobile Number</label>
+        <!-- <input type="number" name="mobile" id="mobile" required maxlength="15"> -->
+        <input type="text" name="mobile" id="mobile" required pattern="((\d{3})([-\s\.]))+(\d{4})">
+        <span id="number"></span>
+      </div>
+      <div>
+        <!-- <span id="uName"></span> -->
+        <label for="user">User Name</label>
+        <input type="text" name="user" id="user" pattern="(.)\.(\w{3})" required minlength="5" maxlength="20">
+        <span id="uName"></span>
+      </div>
+      <div>
+          <label for="cmnt">Comment Here</label>
+          <textarea name="comment" id="cmnt" cols="4" rows="6" maxlength="200"></textarea>
+      </div>
+      <div>
+          <button>OK</button>
+      </div>
+    </form>
+    <script src="index.js"></script>
+    <!-- <script src="../regexExamples.js"></script> -->
+  </body>
+</html>

@@ -1,0 +1,27 @@
+@font-face {
+    font-family: "sampleFont";
+    src: url("./resources/Reconstruct.ttf"),url("./resources/Universe.ttf");
+    font-weight: 650;
+    font-style: normal;
+}
+.hello {
+    color: maroon;
+    background: url("./resources/maps-01.jpg");
+    font-family: "sampleFont";
+}
+image, img {
+    height: 56vh;
+    width: 65vw;
+}
+/* as we have custom Font, so we can add them using @font-face */
+/* @font-face {
+    font-family: "sampleFont";
+    src: url("./resources/Reconstruct.ttf") format("ttf"),
+    url("./resources/Universe.ttf") format("ttf");
+    font-weight: 650;
+    font-style: normal;
+} */
+
+/* .hello {
+    font-family: "sampleFont";
+} */
